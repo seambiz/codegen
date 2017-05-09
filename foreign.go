@@ -29,12 +29,27 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		bb.Line("if ", table.initials, ".", fk.CustomName, " == nil {")
 		bb.Line("var err error")
 		bb.S(table.initials, ".", fk.CustomName, ",err = New", fkRefTable, "Store(db).")
+		var funcName string
 		if fk.IsUnique {
-			bb.S("One")
+			funcName = "OneBy"
 		} else {
-			bb.S("Query")
+			funcName = "QueryBy"
 		}
-		bb.Line("By", fkTable.Fields[fkTable.fieldMapping[fk.RefFields[0]]].title, "(", table.initials, ".", table.Fields[table.fieldMapping[fk.Fields[0]]].title, ")")
+		for i := range fk.Fields {
+			if i > 0 {
+				funcName += "And"
+			}
+			funcName += fkTable.Fields[fkTable.fieldMapping[fk.RefFields[i]]].title
+		}
+		bb.S(funcName, "(")
+		for i := range fk.Fields {
+			if i > 0 {
+				bb.S(",")
+			}
+			bb.S(table.initials, ".", table.Fields[table.fieldMapping[fk.Fields[i]]].title)
+		}
+		bb.Line(")")
+
 		bb.Line("return err")
 		bb.Line("}")
 		bb.Line("return nil")

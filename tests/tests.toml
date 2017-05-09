@@ -1,0 +1,150 @@
+Package ="tests"
+DirOut="/home/sl/gocode/src/bitbucket.com/codegen/tests/"
+FilePattern ="%s.gen.go"
+Templates  = [ "header", "type", "delete", "foreign", "index", "insert", "truncate", "update", "upsert", "end" ]
+MetaLinter = "gometalinter /home/sl/gocode/src/bitbucket.com/codegen/tests --sort=path --line-length=120 --enable-all --disable=goconst --disable=lll --disable=dupl --cyclo-over=15 --deadline=10s"
+LintPackage = "bitbucket.com/codegen/tests"
+
+[Database]
+	DSN  = "ab@/?parseTime=true"
+	Schemas =  [ "codegen" ]
+
+[[Schemas]]
+  Name = "codegen"
+
+  [[Schemas.Tables]]
+    Name = "tests"
+
+    [[Schemas.Tables.Fields]]
+      Name = "id"
+      DBType = "tinyint"
+      IsAutoincrement = true
+      IsPrimaryKey = true
+
+    [[Schemas.Tables.Fields]]
+      Name = "tinybool"
+      DBType = "tinyint(1)"
+
+    [[Schemas.Tables.Fields]]
+      Name = "smallint"
+      DBType = "smallint"
+
+    [[Schemas.Tables.Fields]]
+      Name = "mediumint"
+      DBType = "mediumint"
+
+    [[Schemas.Tables.Fields]]
+      Name = "int"
+      DBType = "int"
+
+    [[Schemas.Tables.Fields]]
+      Name = "integer"
+      DBType = "integer"
+
+    [[Schemas.Tables.Fields]]
+      Name = "bigint"
+      DBType = "bigint"
+
+    [[Schemas.Tables.Fields]]
+      Name = "utinyint"
+      DBType = "tinyint unsigned"
+
+    [[Schemas.Tables.Fields]]
+      Name = "usmallint"
+      DBType = "smallint unsigned"
+
+    [[Schemas.Tables.Fields]]
+      Name = "umediumint"
+      DBType = "mediumint unsigned"
+
+    [[Schemas.Tables.Fields]]
+      Name = "uint"
+      DBType = "int unsigned"
+
+    [[Schemas.Tables.Fields]]
+      Name = "uinteger"
+      DBType = "integer unsigned"
+
+    [[Schemas.Tables.Fields]]
+      Name = "ubigint"
+      DBType = "bigint unsigned"
+
+    [[Schemas.Tables.Fields]]
+      Name = "float"
+      DBType = "float"
+
+    [[Schemas.Tables.Fields]]
+      Name = "double"
+      DBType = "double"
+
+    [[Schemas.Tables.Fields]]
+      Name = "decimal"
+      DBType = "decimal"
+
+    [[Schemas.Tables.Fields]]
+      Name = "numeric"
+      DBType = "numeric"
+
+    [[Schemas.Tables.Fields]]
+      Name = "bit"
+      DBType = "bit"
+
+    [[Schemas.Tables.Fields]]
+      Name = "year"
+      DBType = "year"
+
+    [[Schemas.Tables.Fields]]
+      Name = "date"
+      DBType = "date"
+
+    [[Schemas.Tables.Fields]]
+      Name = "time"
+      DBType = "time"
+
+    [[Schemas.Tables.Fields]]
+      Name = "datetime"
+      DBType = "datetime"
+
+    [[Schemas.Tables.Fields]]
+      Name = "timestamp"
+      DBType = "timestamp"
+
+
+    [[Schemas.Tables.Fields]]
+      Name = "char"
+      DBType = "char"
+    [[Schemas.Tables.Fields]]
+      Name = "varchar"
+      DBType = "varchar"
+    [[Schemas.Tables.Fields]]
+      Name = "tinytext"
+      DBType = "tinytext"
+    [[Schemas.Tables.Fields]]
+      Name = "text"
+      DBType = "text"
+    [[Schemas.Tables.Fields]]
+      Name = "mediumtext"
+      DBType = "mediumtext"
+    [[Schemas.Tables.Fields]]
+      Name = "longtext"
+      DBType = "longtext"
+
+
+    [[Schemas.Tables.Fields]]
+      Name = "binary"
+      DBType = "binary"
+    [[Schemas.Tables.Fields]]
+      Name = "varbinary"
+      DBType = "varbinary"
+    [[Schemas.Tables.Fields]]
+      Name = "tinyblob"
+      DBType = "tinyblob"
+    [[Schemas.Tables.Fields]]
+      Name = "blob"
+      DBType = "blob"
+    [[Schemas.Tables.Fields]]
+      Name = "mediumblob"
+      DBType = "mediumblob"
+    [[Schemas.Tables.Fields]]
+      Name = "longblob"
+      DBType = "longblob"

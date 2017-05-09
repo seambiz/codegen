@@ -78,18 +78,18 @@ var goZeroMapping = map[string]string{
 }
 var goDbMappingFunc = map[string]string{
 	// numeric types
-	"int":    "Int",
-	"uint":   "Uint",
-	"int64":  "Int64",
-	"uint64": "Uint64",
-	"bool":   "Bool",
-	"[]byte": "Bin",
+	"int":    "sdb.ToInt",
+	"uint":   "sdb.ToUInt",
+	"int64":  "sdb.ToInt64",
+	"uint64": "sdb.ToUInt64",
+	"bool":   "sdb.ToBool",
+	"[]byte": "", //nothing to be done
 
-	"float32":   "Float",
-	"float64":   "Float",
-	"time.Time": "Localtime",
+	"float32":   "sdb.ToFloat32",
+	"float64":   "sdb.ToFloat64",
+	"time.Time": "sdb.ToTime",
 
-	"string": "Str",
+	"string": "string",
 }
 
 var goSliceScanMapping = map[string]string{

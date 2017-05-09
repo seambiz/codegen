@@ -42,6 +42,7 @@ func main() {
 	_, err := toml.DecodeFile(*configFile, &conf)
 	if err != nil {
 		fmt.Println("config not valid toml")
+		fmt.Println(err)
 		os.Exit(1)
 	}
 
