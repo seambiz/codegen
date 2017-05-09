@@ -1,0 +1,6 @@
+- test cases
+- comments per template so once generated files can be manipulated
+- custom output path per output file, so more domain like models are possible
+- upsert test
+- use sql.RawBytes and switch back to database/sql
+- bug: composite foreign keys
