@@ -100,7 +100,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line(table.initials, " := &", table.store, "{}")
 	bb.Line(table.initials, ".db = conn")
 	bb.Line(table.initials, ".withJoin = true")
-	bb.Line(table.initials, `.joinType = LEFT`)
+	bb.Line(table.initials, `.joinType = sdb.LEFT`)
 	bb.Line("return ", table.initials)
 	bb.FuncEnd()
 

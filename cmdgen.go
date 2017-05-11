@@ -471,7 +471,8 @@ func Generate(conf *Config) {
 						panic("newEnd == -1")
 					}
 
-					newContent := fileContents[:start]
+					var newContent []byte
+					newContent = append(newContent, fileContents[:start]...)
 					newContent = append(newContent, bb.Bytes()[newStart:newEnd]...)
 					newContent = append(newContent, fileContents[end:]...)
 

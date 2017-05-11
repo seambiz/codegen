@@ -48,7 +48,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// UpsertOne inserts the ", table.title, " to the database.")
 	bb.Func(table.storeReceiver, "UpsertOne")
 	bb.FuncParams("data *" + table.title)
-	bb.FuncReturn("error")
+	bb.FuncReturn("int64", "error")
 	bb.Line("return ", table.initials, ".Upsert([]*", table.title, "{data})")
 	bb.Line("}")
 
@@ -56,7 +56,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// Upsert executes upsert for array of ", table.title)
 	bb.Func(table.storeReceiver, "Upsert")
 	bb.FuncParams("data []*" + table.title)
-	bb.FuncReturn("error")
+	bb.FuncReturn("int64", "error")
 
 	bb.S(`sql := `)
 	bb.S(table.lower)
@@ -67,18 +67,20 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	}
 
 	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("`)
-	bb.S(table.title)
-	bb.S(`Upsert", zap.String("stmt", sql.String()))
+		logging.LogDB.Debug("`, table.title, `Upsert", zap.String("stmt", sql.String()))
 	}
-	_, err := `)
-	bb.S(table.initials)
-	bb.S(`.db.Exec(sql.Query())
+	res, err := `, table.initials, `.db.Exec(sql.Query())
 	if err != nil {
 		logging.SQLError(err)
-		return err
+		return -1, err
 	}
-	return nil
+	affected, err := res.RowsAffected()
+	if err != nil {
+		logging.SQLError(err)
+		return -1, err
+	}
+
+	return affected, nil
 }
 `)
 
