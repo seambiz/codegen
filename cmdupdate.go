@@ -41,15 +41,39 @@ func getTable(schema *Schema, tableName string) *Table {
 	return t
 }
 
-func getIndex(table *Table, i int) *Index {
+func getField(table *Table, fieldName string) *Field {
+	var f *Field
+
+	for i := range table.Fields {
+		if table.Fields[i].Name == fieldName {
+			f = table.Fields[i]
+			break
+		}
+	}
+	if f == nil {
+		f = &Field{}
+		table.Fields = append(table.Fields, f)
+		f.Name = fieldName
+	}
+
+	return f
+}
+
+func getIndex(table *Table, indexName string) *Index {
 	var ind *Index
 
-	if i > len(table.Indices)-1 {
+	for i := range table.Indices {
+		if table.Indices[i].Name == indexName {
+			ind = table.Indices[i]
+			break
+		}
+	}
+	if ind == nil {
 		ind = &Index{}
 		table.Indices = append(table.Indices, ind)
-	} else {
-		ind = table.Indices[i]
+		ind.Name = indexName
 	}
+
 	return ind
 }
 
@@ -94,19 +118,11 @@ func Update(conf *Config) ([]byte, error) {
 			}
 
 			for i := range fields {
-				if len(table.Fields) < i+1 {
-					table.Fields = append(table.Fields, &fields[i])
-				} else {
-					// reset bools
-					table.Fields[i].IsAutoincrement = false
-					table.Fields[i].IsNullable = false
-					table.Fields[i].IsPrimaryKey = false
-					mergo.MergeWithOverwrite(table.Fields[i], fields[i])
-				}
-			}
-
-			if len(table.Fields) > len(fields) {
-				table.Fields = table.Fields[:len(fields)]
+				f := getField(table, fields[i].Name)
+				f.IsAutoincrement = false
+				f.IsNullable = false
+				f.IsPrimaryKey = false
+				mergo.MergeWithOverwrite(f, fields[i])
 			}
 
 			var indices []string
@@ -122,7 +138,7 @@ func Update(conf *Config) ([]byte, error) {
 				panic(err)
 			}
 
-			for i, indexName := range indices {
+			for _, indexName := range indices {
 				sql = sdb.NewSQLStatement()
 				sql.Append("SELECT")
 				sql.Append("  index_name AS indexname,")
@@ -140,8 +156,7 @@ func Update(conf *Config) ([]byte, error) {
 					panic(err)
 				}
 
-				tableIndex := getIndex(table, i)
-				tableIndex.Name = indexName
+				tableIndex := getIndex(table, indexName)
 				tableIndex.IsUnique = index[0].IsUnique
 				tableIndex.Fields = make([]string, 0)
 				for _, field := range index {
