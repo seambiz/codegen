@@ -12,8 +12,8 @@ import (
 // every role gets own bitset
 // fct  4 stellig
 // type 1 stellig
-var startingNumber = 1000000
-var numberBits = 2000 + startingNumber
+var startingNumber = 4000
+var numberBits = 50 + startingNumber
 
 func BenchmarkMap(b *testing.B) {
 	for n := 0; n < b.N; n++ {

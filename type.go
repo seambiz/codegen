@@ -5,6 +5,49 @@ import (
 	"strings"
 )
 
+func fkVariable(bb *GenBuffer, conf *Config, table *Table, fks []*ForeignKey) {
+	for _, fk := range fks {
+		fkRefTable := strings.Title(fk.RefTable)
+		fkSchema := conf.getSchema(fk.RefSchema)
+		if t := fkSchema.getTable(fk.RefTable); t != nil {
+			fkRefTable = t.title
+		}
+		if fk.CustomName == "" {
+			fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+		}
+
+		bb.S(fk.CustomName)
+		bb.S(" ")
+		if !fk.IsUnique {
+			bb.S("[]")
+		}
+		bb.S("*")
+		bb.Line(fkRefTable)
+
+		if len(fk.ForeignKeys) > 0 {
+			fkVariable(bb, conf, table, fk.ForeignKeys)
+		}
+	}
+}
+
+func checkJoinFields(bb *GenBuffer, table *Table, fks []*ForeignKey) {
+	for _, fk := range fks {
+		if fk.IsUnique {
+			if fk.CustomName == "" {
+				fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+			}
+
+			bb.Line("if ", table.initials, ".", fk.CustomName, ".IsEmpty() {")
+			bb.Line(table.initials, ".", fk.CustomName, " = nil")
+			bb.Line("}")
+
+			if len(fk.ForeignKeys) > 0 {
+				checkJoinFields(bb, table, fk.ForeignKeys)
+			}
+		}
+	}
+}
+
 // TType template
 func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
@@ -29,24 +72,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	if len(table.ForeignKeys) > 0 {
 		bb.NewLine()
 	}
-	for _, fk := range table.ForeignKeys {
-		fkRefTable := strings.Title(fk.RefTable)
-		fkSchema := conf.getSchema(fk.RefSchema)
-		if t := fkSchema.getTable(fk.RefTable); t != nil {
-			fkRefTable = t.title
-		}
-		if fk.CustomName == "" {
-			fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
-		}
-
-		bb.S(fk.CustomName)
-		bb.S(" ")
-		if !fk.IsUnique {
-			bb.S("[]")
-		}
-		bb.S("*")
-		bb.Line(fkRefTable)
-	}
+	fkVariable(bb, conf, table, table.ForeignKeys)
 	bb.StructEnd()
 
 	bb.Line("// IsEmpty checks if primary key fields are zero.")
@@ -70,17 +96,9 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		bb.Func(table.receiver, "checkJoinFields")
 		bb.FuncParams()
 		bb.FuncReturn()
-		for _, fk := range table.ForeignKeys {
-			if fk.IsUnique {
-				if fk.CustomName == "" {
-					fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
-				}
 
-				bb.Line("if ", table.initials, ".", fk.CustomName, ".IsEmpty() {")
-				bb.Line(table.initials, ".", fk.CustomName, " = nil")
-				bb.Line("}")
-			}
-		}
+		checkJoinFields(bb, table, table.ForeignKeys)
+
 		bb.FuncEnd()
 	}
 
@@ -179,6 +197,36 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	queryCustom(bb, conf, schema, table)
 }
 
+func bindJoin(bb *GenBuffer, conf *Config, table *Table, numFields *int, fks []*ForeignKey) {
+	for _, fk := range fks {
+		if fk.IsUnique {
+			var fkRefTable *Table
+			fkSchema := conf.getSchema(fk.RefSchema)
+			if t := fkSchema.getTable(fk.RefTable); t != nil {
+				fkRefTable = t
+			}
+			if fk.CustomName == "" {
+				fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+			}
+
+			bb.Line(table.initials, ".", fk.CustomName, "= &", fkRefTable.title, "{}")
+			for i, f := range fkRefTable.Fields {
+				if f.mappingFunc != "" {
+					bb.Line(table.initials, ".", fk.CustomName, ".", f.title, " = ", f.mappingFunc, "(row[", strconv.Itoa(i+*numFields), "])")
+				} else {
+					bb.Line(table.initials, ".", fk.CustomName, ".", f.title, " = row[", strconv.Itoa(i+*numFields), "]")
+				}
+			}
+			*numFields += len(fkRefTable.Fields)
+
+			if len(fk.ForeignKeys) > 0 {
+				bindJoin(bb, conf, table, numFields, fk.ForeignKeys)
+			}
+		}
+	}
+
+}
+
 func bind(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	// func fields
 	bb.Func(table.receiver, "bind")
@@ -195,31 +243,50 @@ func bind(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	if len(table.ForeignKeys) > 0 {
 		numFields := len(table.Fields)
 		bb.Line("if withJoin {")
-		for _, fk := range table.ForeignKeys {
-			if fk.IsUnique {
-				var fkRefTable *Table
-				fkSchema := conf.getSchema(fk.RefSchema)
-				if t := fkSchema.getTable(fk.RefTable); t != nil {
-					fkRefTable = t
-				}
-				if fk.CustomName == "" {
-					fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
-				}
-
-				bb.Line(table.initials, ".", fk.CustomName, "= &", fkRefTable.title, "{}")
-				for i, f := range fkRefTable.Fields {
-					if f.mappingFunc != "" {
-						bb.Line(table.initials, ".", fk.CustomName, ".", f.title, " = ", f.mappingFunc, "(row[", strconv.Itoa(i+numFields), "])")
-					} else {
-						bb.Line(table.initials, ".", fk.CustomName, ".", f.title, " = row[", strconv.Itoa(i+numFields), "]")
-					}
-				}
-				numFields += len(fkRefTable.Fields)
-			}
-		}
+		bindJoin(bb, conf, table, &numFields, table.ForeignKeys)
 		bb.Line("}")
 	}
 	bb.FuncEnd()
+}
+
+func selectJoinFields(bb *GenBuffer, conf *Config, tableAlias *rune, fks []*ForeignKey) {
+	for _, fk := range fks {
+		*tableAlias++
+		if fk.IsUnique {
+			fkRefTable := strings.Title(fk.RefTable)
+			fkSchema := conf.getSchema(fk.RefSchema)
+			if t := fkSchema.getTable(fk.RefTable); t != nil {
+				fkRefTable = t.title
+			}
+			bb.Line(`sql.Fields(",","`, string(*tableAlias), `",`, strings.ToLower(fkRefTable), `QueryFields)`)
+
+			if len(fk.ForeignKeys) > 0 {
+				selectJoinFields(bb, conf, tableAlias, fk.ForeignKeys)
+			}
+		}
+	}
+}
+
+func selectJoinTable(bb *GenBuffer, conf *Config, table *Table, refAlias rune, tableAlias *rune, fks []*ForeignKey) {
+	for _, fk := range fks {
+		*tableAlias++
+		if fk.IsUnique {
+			fkSchema := conf.getSchema(fk.RefSchema)
+			// TODO Join type
+			bb.S(`sql.Append(`, table.initials, ".joinType", `," JOIN `, fkSchema.Name, ".", fk.RefTable, " ", string(*tableAlias), " ON (")
+			for i, f := range fk.Fields {
+				if i > 0 {
+					bb.S(" AND ")
+				}
+				bb.S(string(refAlias), ".", f, " = ", string(*tableAlias), ".", fk.RefFields[i])
+			}
+			bb.Line(`)")`)
+
+			if len(fk.ForeignKeys) > 0 {
+				selectJoinTable(bb, conf, table, *tableAlias, tableAlias, fk.ForeignKeys)
+			}
+		}
+	}
 }
 
 // selectSQL generates general SELECT Statement with optional JOINs based on foreign key definitions
@@ -234,34 +301,10 @@ func selectSQL(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line(`sql.Fields("","`, string(tableAlias), `", `, strings.ToLower(table.title), `QueryFields)`)
 	bb.Line("if ", table.initials, ".withJoin {")
 	{
-		for _, fk := range table.ForeignKeys {
-			tableAlias++
-			if fk.IsUnique {
-				fkRefTable := strings.Title(fk.RefTable)
-				fkSchema := conf.getSchema(fk.RefSchema)
-				if t := fkSchema.getTable(fk.RefTable); t != nil {
-					fkRefTable = t.title
-				}
-				bb.Line(`sql.Fields(",","`, string(tableAlias), `",`, strings.ToLower(fkRefTable), `QueryFields)`)
-			}
-		}
+		selectJoinFields(bb, conf, &tableAlias, table.ForeignKeys)
 		bb.Line(`sql.Append("FROM `, schema.Name, ".", table.Name, ` A")`)
 		tableAlias := 'A'
-		for _, fk := range table.ForeignKeys {
-			tableAlias++
-			if fk.IsUnique {
-				fkSchema := conf.getSchema(fk.RefSchema)
-				// TODO Join type
-				bb.S(`sql.Append(`, table.initials, ".joinType", `," JOIN `, fkSchema.Name, ".", fk.RefTable, " ", string(tableAlias), " ON (")
-				for i, f := range fk.Fields {
-					if i > 0 {
-						bb.S(" AND ")
-					}
-					bb.S("A.", f, " = ", string(tableAlias), ".", fk.RefFields[i])
-				}
-				bb.Line(`)")`)
-			}
-		}
+		selectJoinTable(bb, conf, table, 'A', &tableAlias, table.ForeignKeys)
 	}
 	bb.Line("} else {")
 	{

@@ -72,6 +72,8 @@ type ForeignKey struct {
 	RefFields  []string `toml:",omitempty"`
 	IsUnique   bool     `toml:",omitempty"`
 	CustomName string   `toml:",omitempty"`
+
+	ForeignKeys []*ForeignKey `toml:",omitempty"`
 }
 
 // Field type
