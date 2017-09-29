@@ -299,8 +299,11 @@ var commonInitialisms = []string{
 
 // Generate main call to start generation
 func Generate(conf *Config) {
+	tableNr := 0
 	for _, schema := range conf.Schemas {
 		for _, table := range schema.Tables {
+			table.id = tableNr
+			tableNr++
 
 			// generate helper variables
 			parts := strings.Split(table.Name, "_")
@@ -314,6 +317,7 @@ func Generate(conf *Config) {
 			table.title = strings.Join(parts, "")
 			table.lower = lowerFirst(table.title)
 			table.initials = Initials(table.Name)
+			table.initials += Initials(table.Name[1:])
 			table.receiver = table.initials + " *" + table.title
 			table.store = table.title + "Store"
 			table.storeReceiver = table.initials + " *" + table.store
@@ -373,11 +377,19 @@ func Generate(conf *Config) {
 				}
 				table.Fields[i].goZero = zero
 
+				jsonFunc, ok := goJSONMapping[typename]
+				if !ok {
+					panic(typename)
+				}
+				table.Fields[i].jsonFunc = jsonFunc
+
 				mappingFunc, ok := goDbMappingFunc[typename]
 				if !ok {
 					panic(typename)
 				}
 				table.Fields[i].mappingFunc = mappingFunc
+
+				table.numFields = len(table.Fields)
 			}
 		}
 	}
@@ -409,6 +421,8 @@ func Generate(conf *Config) {
 					TType(bb, conf, schema, table)
 				case "foreign":
 					TForeign(bb, conf, schema, table)
+				case "json":
+					TJSON(bb, conf, schema, table)
 				case "end":
 					TEnd(bb)
 				case "index":

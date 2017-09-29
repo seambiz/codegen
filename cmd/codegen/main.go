@@ -46,6 +46,10 @@ func main() {
 		os.Exit(1)
 	}
 
+	if conf.FieldsPerTable == 0 {
+		conf.FieldsPerTable = 50
+	}
+
 	switch flag.Args()[0] {
 	case "update":
 		err = updateCommand.Parse(os.Args[2:])

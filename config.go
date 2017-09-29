@@ -2,12 +2,13 @@ package codegen
 
 // Config base template input
 type Config struct {
-	MetaLinter  string   `toml:",omitempty"`
-	LintPackage string   `toml:",omitempty"`
-	Package     string   `toml:",omitempty"`
-	DirOut      string   `toml:",omitempty"`
-	FilePattern string   `toml:",omitempty"`
-	Templates   []string `toml:",omitempty"`
+	MetaLinter     string   `toml:",omitempty"`
+	LintPackage    string   `toml:",omitempty"`
+	Package        string   `toml:",omitempty"`
+	DirOut         string   `toml:",omitempty"`
+	FilePattern    string   `toml:",omitempty"`
+	Templates      []string `toml:",omitempty"`
+	FieldsPerTable int      `toml:",omitempty"`
 
 	Schemas  []*Schema `toml:",omitempty"`
 	Database db
@@ -61,6 +62,8 @@ type Table struct {
 	fieldMapping  map[string]int
 	pkFields      []*Field
 	otherFields   []*Field
+	id            int
+	numFields     int
 }
 
 // ForeignKey type
@@ -90,6 +93,7 @@ type Field struct {
 	goZero      string
 	paramName   string
 	mappingFunc string
+	jsonFunc    string
 }
 
 // IgnoreFields is used to ignore fields for specific statements

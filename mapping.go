@@ -76,6 +76,20 @@ var goZeroMapping = map[string]string{
 
 	"string": "sql.NullString",
 }
+var goJSONMapping = map[string]string{
+	"int":    "JD",
+	"uint":   "JDu",
+	"int64":  "JD64",
+	"uint64": "JD64u",
+	"bool":   "JB",
+	"[]byte": "JByte",
+
+	"float32":   "JF",
+	"float64":   "JF64",
+	"time.Time": "JT",
+
+	"string": "JS",
+}
 var goDbMappingFunc = map[string]string{
 	// numeric types
 	"int":    "sdb.ToInt",
