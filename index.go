@@ -89,14 +89,14 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	}
 	bb.S(`")`)
 	bb.NewLine()
-	bb.Line(`if logging.LogDB.Check(zap.DebugLevel, "") != nil {`)
-	bb.S(`logging.LogDB.Debug("`)
+	bb.Line(`if  zerolog.GlobalLevel() == zerolog.DebugLevel {`)
+	bb.S(`log.Debug().Str("fn, "`)
 	bb.S(funcName)
-	bb.S(`", zap.String("stmt", sql.String()), `)
+	bb.S(`").Str("stmt", sql.String()).Msg("sql")`)
 
 	for i, f := range index.Fields {
 		if i > 0 {
-			bb.S(", ")
+			bb.S(".")
 		}
 		bb.LogField(table.Fields[table.fieldMapping[f]], "")
 	}
@@ -112,7 +112,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	}
 	bb.S(`)
 	if err != nil {
-		logging.SQLError(err)
+		log.Error().Err(err).Msg("query")
 		return nil, err
 	}
 	
@@ -122,7 +122,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	bb.S(`err = q.Scan(`)
 	bb.Line("data.scanFields(", table.initials, ".withJoin)...)")
 	bb.S(`if err != nil {
-			logging.SQLError(err)
+			log.Error().Err(err).Msg("scanFields")
 			return nil, err
 		}
 

@@ -6,7 +6,7 @@ import (
 	"io/ioutil"
 	"os"
 
-	"bitbucket.com/codegen"
+	"bitbucket.org/seambiz/codegen"
 	"github.com/BurntSushi/toml"
 	_ "github.com/go-sql-driver/mysql"
 )

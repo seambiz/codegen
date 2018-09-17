@@ -1,7 +1,7 @@
 package codegen
 
 import (
-	"bitbucket.com/seambiz/sdb"
+	"bitbucket.org/seambiz/seambiz/sdb"
 	"github.com/BurntSushi/toml"
 	"github.com/imdario/mergo"
 	"github.com/valyala/bytebufferpool"

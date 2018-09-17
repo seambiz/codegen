@@ -3,13 +3,11 @@ package tests
 import (
 	"testing"
 
-	"bitbucket.com/seambiz/logging"
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
 	_ "github.com/ziutek/mymysql/thrsafe" // or native
 )
 
 func TestValues(t *testing.T) {
-	logging.Init(true, "")
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Errorf("An error '%s' was not expected when opening a stub database connection", err)
@@ -51,7 +49,6 @@ func TestValues(t *testing.T) {
 }
 
 func TestNull(t *testing.T) {
-	logging.Init(true, "")
 	db, mock, err := sqlmock.New()
 	if err != nil {
 		t.Errorf("An error '%s' was not expected when opening a stub database connection", err)

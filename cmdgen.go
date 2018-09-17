@@ -117,24 +117,26 @@ func (g *GenBuffer) Line(ss ...string) {
 	g.NewLine()
 }
 
-// LogField generates zap logging instruction for single field
+// LogField generates zerolog logging instruction for single field
 func (g *GenBuffer) LogField(f *Field, prefix string) {
-	g.S("zap.")
 	switch f.goType {
 	case "[]byte":
-		g.S("ByteString")
+		g.S("Bytes")
 		break
 	case "time.Time":
 		g.S("Time")
 		break
 	case "sql.NullString":
-		g.S("String")
+		g.S("Str")
 		break
 	case "sql.NullInt64":
 		g.S("Int64")
 		break
 	case "sql.NullFloat64":
 		g.S("Float64")
+		break
+	case "string":
+		g.S("Str")
 		break
 	default:
 		g.S(strings.Title(f.goType))
@@ -151,7 +153,7 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	}
 	switch f.goType {
 	case "sql.NullString":
-		g.S(".String")
+		g.S(".Str")
 		break
 	case "sql.NullInt64":
 		g.S(".Int64")
@@ -163,12 +165,12 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	g.S(")")
 }
 
-// Log generates zap logging instruction for array of fields
+// Log generates zerolog logging instruction for array of fields
 func (g *GenBuffer) Log(fields []*Field, prefix string) {
 
 	for i, f := range fields {
 		if i > 0 {
-			g.S(", ")
+			g.S(".")
 		}
 		g.LogField(f, prefix)
 	}

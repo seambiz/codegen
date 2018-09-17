@@ -4,6 +4,7 @@ import (
 	"math/big"
 	"testing"
 
+	"github.com/RoaringBitmap/roaring"
 	gbit "github.com/tmthrgd/go-bitset"
 	wbit "github.com/willf/bitset"
 	"xojoc.pw/bitset"
@@ -12,8 +13,8 @@ import (
 // every role gets own bitset
 // fct  4 stellig
 // type 1 stellig
-var startingNumber = 4000
-var numberBits = 50 + startingNumber
+var startingNumber = 40000
+var numberBits = 200 + startingNumber
 
 func BenchmarkMap(b *testing.B) {
 	for n := 0; n < b.N; n++ {
@@ -119,6 +120,33 @@ func BenchmarkWillfBitSetTest(b *testing.B) {
 	for n := 0; n < b.N; n++ {
 		for i := startingNumber; i < numberBits; i++ {
 			if !s.Test(uint(i)) {
+				b.Fail()
+			}
+		}
+	}
+}
+
+func BenchmarkRoaringBitSet(b *testing.B) {
+	for n := 0; n < b.N; n++ {
+		s := roaring.NewBitmap()
+		for i := startingNumber; i < numberBits; i++ {
+			s.Add(uint32(i))
+			if !s.Contains(uint32(i)) {
+				b.Fail()
+			}
+		}
+	}
+}
+
+func BenchmarkRoaringBitSetTest(b *testing.B) {
+	s := roaring.NewBitmap()
+	for i := startingNumber; i < numberBits; i++ {
+		s.Add(uint32(i))
+	}
+	b.ResetTimer()
+	for n := 0; n < b.N; n++ {
+		for i := startingNumber; i < numberBits; i++ {
+			if !s.Contains(uint32(i)) {
 				b.Fail()
 			}
 		}

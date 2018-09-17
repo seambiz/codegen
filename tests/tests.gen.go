@@ -5,8 +5,9 @@ import (
 	"database/sql"
 	"time"
 
-	"bitbucket.com/seambiz/logging"
 	"bitbucket.com/seambiz/sdb"
+	"github.com/apex/log"
+	"github.com/rs/zerolog"
 	"go.uber.org/zap"
 )
 
@@ -205,8 +206,8 @@ func (t *TestsStore) One(args ...interface{}) (*Tests, error) {
 	data := Tests{}
 
 	stmt := t.selectStatement()
-	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("TestsStore.One", zap.String("stmt", stmt.String()), zap.Any("args", args))
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "TestsStore.One", zap.String("stmt", stmt.String()), zap.Any("args", args))
 	}
 	rows, err := t.db.Query(stmt.Query(), args...)
 	if err != nil {
@@ -245,8 +246,8 @@ func (t *TestsStore) QueryCustom(stmt string, args ...interface{}) ([]*Tests, er
 	var err error
 	res := []*Tests{}
 
-	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("TestsStore.Query", zap.String("stmt", stmt), zap.Any("args", args))
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "TestsStore.Query", zap.String("stmt", stmt), zap.Any("args", args))
 	}
 	rows, err := t.db.Query(stmt, args...)
 	if err != nil {
@@ -282,13 +283,13 @@ func (t *TestsStore) Delete(data *Tests) error {
 	sql.Append("DELETE FROM codegen.tests WHERE")
 	sql.Append("id = ?")
 
-	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("codegen.tests.Delete", zap.String("stmt", sql.String()), zap.Int("ID", data.ID))
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "codegen.tests.Delete", zap.String("stmt", sql.String()), zap.Int("ID", data.ID))
 	}
 	_, err = t.db.Exec(sql.Query(),
 		data.ID)
 	if err != nil {
-		logging.SQLError(err)
+		log.Error().Err(err)
 	}
 
 	return err
@@ -302,18 +303,18 @@ func (t *TestsStore) Insert(data *Tests) error {
 	sql.Fields("", "", testsQueryFields)
 	sql.Append(") VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)")
 
-	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("codegen.tests.Insert", zap.String("stmt", sql.String()), zap.Int("ID", data.ID), zap.Bool("Tinybool", data.Tinybool), zap.Int("Smallint", data.Smallint), zap.Int("Mediumint", data.Mediumint), zap.Int("Int", data.Int), zap.Int("Integer", data.Integer), zap.Int64("Bigint", data.Bigint), zap.Uint("Utinyint", data.Utinyint), zap.Uint("Usmallint", data.Usmallint), zap.Uint("Umediumint", data.Umediumint), zap.Uint("UInt", data.UInt), zap.Uint("UInteger", data.UInteger), zap.Uint64("Ubigint", data.Ubigint), zap.Float32("Float", data.Float), zap.Float64("Double", data.Double), zap.Float64("Decimal", data.Decimal), zap.Float64("Numeric", data.Numeric), zap.Bool("Bit", data.Bit), zap.Int("Year", data.Year), zap.Time("Date", data.Date), zap.Time("Time", data.Time), zap.Time("Datetime", data.Datetime), zap.Time("Timestamp", data.Timestamp), zap.String("Char", data.Char), zap.String("Varchar", data.Varchar), zap.String("Tinytext", data.Tinytext), zap.String("Text", data.Text), zap.String("Mediumtext", data.Mediumtext), zap.String("Longtext", data.Longtext), zap.ByteString("Binary", data.Binary), zap.ByteString("Varbinary", data.Varbinary), zap.ByteString("Tinyblob", data.Tinyblob), zap.ByteString("Blob", data.Blob), zap.ByteString("Mediumblob", data.Mediumblob), zap.ByteString("Longblob", data.Longblob))
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "codegen.tests.Insert", zap.String("stmt", sql.String()), zap.Int("ID", data.ID), zap.Bool("Tinybool", data.Tinybool), zap.Int("Smallint", data.Smallint), zap.Int("Mediumint", data.Mediumint), zap.Int("Int", data.Int), zap.Int("Integer", data.Integer), zap.Int64("Bigint", data.Bigint), zap.Uint("Utinyint", data.Utinyint), zap.Uint("Usmallint", data.Usmallint), zap.Uint("Umediumint", data.Umediumint), zap.Uint("UInt", data.UInt), zap.Uint("UInteger", data.UInteger), zap.Uint64("Ubigint", data.Ubigint), zap.Float32("Float", data.Float), zap.Float64("Double", data.Double), zap.Float64("Decimal", data.Decimal), zap.Float64("Numeric", data.Numeric), zap.Bool("Bit", data.Bit), zap.Int("Year", data.Year), zap.Time("Date", data.Date), zap.Time("Time", data.Time), zap.Time("Datetime", data.Datetime), zap.Time("Timestamp", data.Timestamp), zap.String("Char", data.Char), zap.String("Varchar", data.Varchar), zap.String("Tinytext", data.Tinytext), zap.String("Text", data.Text), zap.String("Mediumtext", data.Mediumtext), zap.String("Longtext", data.Longtext), zap.ByteString("Binary", data.Binary), zap.ByteString("Varbinary", data.Varbinary), zap.ByteString("Tinyblob", data.Tinyblob), zap.ByteString("Blob", data.Blob), zap.ByteString("Mediumblob", data.Mediumblob), zap.ByteString("Longblob", data.Longblob))
 	}
 	res, err := t.db.Exec(sql.Query(), data.ID, data.Tinybool, data.Smallint, data.Mediumint, data.Int, data.Integer, data.Bigint, data.Utinyint, data.Usmallint, data.Umediumint, data.UInt, data.UInteger, data.Ubigint, data.Float, data.Double, data.Decimal, data.Numeric, data.Bit, data.Year, data.Date, data.Time, data.Datetime, data.Timestamp, data.Char, data.Varchar, data.Tinytext, data.Text, data.Mediumtext, data.Longtext, data.Binary, data.Varbinary, data.Tinyblob, data.Blob, data.Mediumblob, data.Longblob)
 	if err != nil {
-		logging.SQLError(err)
+		log.Error().Err(err)
 		return err
 	}
 	// retrieve id
 	id, err := res.LastInsertId()
 	if err != nil {
-		logging.SQLError(err)
+		log.Error().Err(err)
 		return err
 	}
 
@@ -327,12 +328,12 @@ func (t *TestsStore) Insert(data *Tests) error {
 func (t *TestsStore) Truncate() error {
 	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE codegen.tests")
-	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("codegen.tests.Truncate", zap.String("stmt", sql.String()))
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "codegen.tests.Truncate", zap.String("stmt", sql.String()))
 	}
 	_, err := t.db.Exec(sql.Query())
 	if err != nil {
-		logging.SQLError(err)
+		log.Error().Err(err)
 	}
 	return err
 }
@@ -344,12 +345,12 @@ func (t *TestsStore) Update(data *Tests) (int64, error) {
 	sql.Append("tinybool = ?, smallint = ?, mediumint = ?, int = ?, integer = ?, bigint = ?, utinyint = ?, usmallint = ?, umediumint = ?, uint = ?, uinteger = ?, ubigint = ?, float = ?, double = ?, decimal = ?, numeric = ?, bit = ?, year = ?, date = ?, time = ?, datetime = ?, timestamp = ?, char = ?, varchar = ?, tinytext = ?, text = ?, mediumtext = ?, longtext = ?, binary = ?, varbinary = ?, tinyblob = ?, blob = ?, mediumblob = ?, longblob = ?")
 	sql.Append("WHERE id = ?")
 
-	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("codegen.tests.Update", zap.String("stmt", sql.String()), zap.Int("ID", data.ID), zap.Bool("Tinybool", data.Tinybool), zap.Int("Smallint", data.Smallint), zap.Int("Mediumint", data.Mediumint), zap.Int("Int", data.Int), zap.Int("Integer", data.Integer), zap.Int64("Bigint", data.Bigint), zap.Uint("Utinyint", data.Utinyint), zap.Uint("Usmallint", data.Usmallint), zap.Uint("Umediumint", data.Umediumint), zap.Uint("UInt", data.UInt), zap.Uint("UInteger", data.UInteger), zap.Uint64("Ubigint", data.Ubigint), zap.Float32("Float", data.Float), zap.Float64("Double", data.Double), zap.Float64("Decimal", data.Decimal), zap.Float64("Numeric", data.Numeric), zap.Bool("Bit", data.Bit), zap.Int("Year", data.Year), zap.Time("Date", data.Date), zap.Time("Time", data.Time), zap.Time("Datetime", data.Datetime), zap.Time("Timestamp", data.Timestamp), zap.String("Char", data.Char), zap.String("Varchar", data.Varchar), zap.String("Tinytext", data.Tinytext), zap.String("Text", data.Text), zap.String("Mediumtext", data.Mediumtext), zap.String("Longtext", data.Longtext), zap.ByteString("Binary", data.Binary), zap.ByteString("Varbinary", data.Varbinary), zap.ByteString("Tinyblob", data.Tinyblob), zap.ByteString("Blob", data.Blob), zap.ByteString("Mediumblob", data.Mediumblob), zap.ByteString("Longblob", data.Longblob))
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "codegen.tests.Update", zap.String("stmt", sql.String()), zap.Int("ID", data.ID), zap.Bool("Tinybool", data.Tinybool), zap.Int("Smallint", data.Smallint), zap.Int("Mediumint", data.Mediumint), zap.Int("Int", data.Int), zap.Int("Integer", data.Integer), zap.Int64("Bigint", data.Bigint), zap.Uint("Utinyint", data.Utinyint), zap.Uint("Usmallint", data.Usmallint), zap.Uint("Umediumint", data.Umediumint), zap.Uint("UInt", data.UInt), zap.Uint("UInteger", data.UInteger), zap.Uint64("Ubigint", data.Ubigint), zap.Float32("Float", data.Float), zap.Float64("Double", data.Double), zap.Float64("Decimal", data.Decimal), zap.Float64("Numeric", data.Numeric), zap.Bool("Bit", data.Bit), zap.Int("Year", data.Year), zap.Time("Date", data.Date), zap.Time("Time", data.Time), zap.Time("Datetime", data.Datetime), zap.Time("Timestamp", data.Timestamp), zap.String("Char", data.Char), zap.String("Varchar", data.Varchar), zap.String("Tinytext", data.Tinytext), zap.String("Text", data.Text), zap.String("Mediumtext", data.Mediumtext), zap.String("Longtext", data.Longtext), zap.ByteString("Binary", data.Binary), zap.ByteString("Varbinary", data.Varbinary), zap.ByteString("Tinyblob", data.Tinyblob), zap.ByteString("Blob", data.Blob), zap.ByteString("Mediumblob", data.Mediumblob), zap.ByteString("Longblob", data.Longblob))
 	}
 	res, err := t.db.Exec(sql.Query(), data.Tinybool, data.Smallint, data.Mediumint, data.Int, data.Integer, data.Bigint, data.Utinyint, data.Usmallint, data.Umediumint, data.UInt, data.UInteger, data.Ubigint, data.Float, data.Double, data.Decimal, data.Numeric, data.Bit, data.Year, data.Date, data.Time, data.Datetime, data.Timestamp, data.Char, data.Varchar, data.Tinytext, data.Text, data.Mediumtext, data.Longtext, data.Binary, data.Varbinary, data.Tinyblob, data.Blob, data.Mediumblob, data.Longblob, data.ID)
 	if err != nil {
-		logging.SQLError(err)
+		log.Error().Err(err)
 		return 0, err
 	}
 	return res.RowsAffected()
@@ -413,12 +414,12 @@ func (t *TestsStore) Upsert(data []*Tests) error {
 		sql.Record(d)
 	}
 
-	if logging.LogDB.Check(zap.DebugLevel, "") != nil {
-		logging.LogDB.Debug("TestsUpsert", zap.String("stmt", sql.String()))
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "TestsUpsert", zap.String("stmt", sql.String()))
 	}
 	_, err := t.db.Exec(sql.Query())
 	if err != nil {
-		logging.SQLError(err)
+		log.Error().Err(err)
 		return err
 	}
 	return nil
