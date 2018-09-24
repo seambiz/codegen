@@ -1,2 +1,3 @@
 .idea
 cmd/codegen/codegen
+vendor

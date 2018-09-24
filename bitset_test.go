@@ -1,4 +1,4 @@
-package main
+package codegen_test
 
 import (
 	"math/big"
@@ -13,8 +13,8 @@ import (
 // every role gets own bitset
 // fct  4 stellig
 // type 1 stellig
-var startingNumber = 40000
-var numberBits = 200 + startingNumber
+var startingNumber = 100000
+var numberBits = 400 + startingNumber
 
 func BenchmarkMap(b *testing.B) {
 	for n := 0; n < b.N; n++ {

@@ -5,10 +5,9 @@ import (
 	"database/sql"
 	"time"
 
-	"bitbucket.com/seambiz/sdb"
-	"github.com/apex/log"
+	"bitbucket.org/seambiz/seambiz/sdb"
 	"github.com/rs/zerolog"
-	"go.uber.org/zap"
+	"github.com/rs/zerolog/log"
 )
 
 const (
@@ -207,7 +206,7 @@ func (t *TestsStore) One(args ...interface{}) (*Tests, error) {
 
 	stmt := t.selectStatement()
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "TestsStore.One", zap.String("stmt", stmt.String()), zap.Any("args", args))
+		log.Debug().Str("fn", "TestsStore.One").Str("stmt", stmt.String()).Interface("args", args).Msg("stmt")
 	}
 	rows, err := t.db.Query(stmt.Query(), args...)
 	if err != nil {
@@ -247,7 +246,7 @@ func (t *TestsStore) QueryCustom(stmt string, args ...interface{}) ([]*Tests, er
 	res := []*Tests{}
 
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "TestsStore.Query", zap.String("stmt", stmt), zap.Any("args", args))
+		log.Debug().Str("fn", "TestsStore.Query").Str("stmt", stmt).Interface("args", args)).Msg("stmt")
 	}
 	rows, err := t.db.Query(stmt, args...)
 	if err != nil {

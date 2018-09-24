@@ -4,7 +4,6 @@ import (
 	"testing"
 
 	sqlmock "github.com/DATA-DOG/go-sqlmock"
-	_ "github.com/ziutek/mymysql/thrsafe" // or native
 )
 
 func TestValues(t *testing.T) {
