@@ -1,13 +1,13 @@
 package main
 
 import (
+	"encoding/json"
 	"flag"
 	"fmt"
 	"io/ioutil"
 	"os"
 
 	"bitbucket.org/seambiz/codegen"
-	"github.com/BurntSushi/toml"
 	_ "github.com/go-sql-driver/mysql"
 )
 
@@ -23,7 +23,7 @@ func main() {
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)
 	genCommand := flag.NewFlagSet("gen", flag.ExitOnError)
 
-	configFile := flag.String("config", "", "config file (required)")
+	configFile := flag.String("config", "codegen.json", "config file (required)")
 	flag.Parse()
 
 	if *configFile == "" {
@@ -39,9 +39,15 @@ func main() {
 	}
 
 	var conf codegen.Config
-	_, err := toml.DecodeFile(*configFile, &conf)
+	jsonBytes, err := ioutil.ReadFile(*configFile)
 	if err != nil {
-		fmt.Println("config not valid toml")
+		fmt.Println("invalid file")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+	err = json.Unmarshal(jsonBytes, &conf)
+	if err != nil {
+		fmt.Println("config not valid json")
 		fmt.Println(err)
 		os.Exit(1)
 	}

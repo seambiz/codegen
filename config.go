@@ -2,15 +2,15 @@ package codegen
 
 // Config base template input
 type Config struct {
-	MetaLinter     string   `toml:",omitempty"`
-	LintPackage    string   `toml:",omitempty"`
-	Package        string   `toml:",omitempty"`
-	DirOut         string   `toml:",omitempty"`
-	FilePattern    string   `toml:",omitempty"`
-	Templates      []string `toml:",omitempty"`
-	FieldsPerTable int      `toml:",omitempty"`
+	MetaLinter     string   `json:",omitempty"`
+	LintPackage    string   `json:",omitempty"`
+	Package        string   `json:",omitempty"`
+	DirOut         string   `json:",omitempty"`
+	FilePattern    string   `json:",omitempty"`
+	Templates      []string `json:",omitempty"`
+	FieldsPerTable int      `json:",omitempty"`
 
-	Schemas  []*Schema `toml:",omitempty"`
+	Schemas  []*Schema `json:",omitempty"`
 	Database db
 }
 
@@ -21,8 +21,8 @@ type db struct {
 
 // Schema single schema type
 type Schema struct {
-	Name   string   `toml:",omitempty"`
-	Tables []*Table `toml:",omitempty"`
+	Name   string   `json:",omitempty"`
+	Tables []*Table `json:",omitempty"`
 }
 
 func (c *Config) getSchema(schema string) *Schema {
@@ -44,13 +44,13 @@ func (s *Schema) getTable(table string) *Table {
 
 // Table type
 type Table struct {
-	Name      string   `toml:",omitempty"`
-	Templates []string `toml:",omitempty"`
+	Name      string   `json:",omitempty"`
+	Templates []string `json:",omitempty"`
 
-	Fields      []*Field      `toml:",omitempty"`
-	Indices     []*Index      `toml:",omitempty"`
-	Ignores     IgnoreFields  `toml:",omitempty"`
-	ForeignKeys []*ForeignKey `toml:",omitempty"`
+	Fields      []*Field      `json:",omitempty"`
+	Indices     []*Index      `json:",omitempty"`
+	Ignores     IgnoreFields  `json:",omitempty"`
+	ForeignKeys []*ForeignKey `json:",omitempty"`
 
 	// generated Contents
 	title         string
@@ -68,24 +68,24 @@ type Table struct {
 
 // ForeignKey type
 type ForeignKey struct {
-	Name       string   `toml:",omitempty"`
-	Fields     []string `toml:",omitempty"`
-	RefSchema  string   `toml:",omitempty"`
-	RefTable   string   `toml:",omitempty"`
-	RefFields  []string `toml:",omitempty"`
-	IsUnique   bool     `toml:",omitempty"`
-	CustomName string   `toml:",omitempty"`
+	Name       string   `json:",omitempty"`
+	Fields     []string `json:",omitempty"`
+	RefSchema  string   `json:",omitempty"`
+	RefTable   string   `json:",omitempty"`
+	RefFields  []string `json:",omitempty"`
+	IsUnique   bool     `json:",omitempty"`
+	CustomName string   `json:",omitempty"`
 
-	ForeignKeys []*ForeignKey `toml:",omitempty"`
+	ForeignKeys []*ForeignKey `json:",omitempty"`
 }
 
 // Field type
 type Field struct {
-	Name            string `toml:",omitempty"`
-	DBType          string `toml:",omitempty"`
-	IsNullable      bool   `toml:",omitempty"`
-	IsAutoincrement bool   `toml:",omitempty"`
-	IsPrimaryKey    bool   `toml:",omitempty"`
+	Name            string `json:",omitempty"`
+	DBType          string `json:",omitempty"`
+	IsNullable      bool   `json:",omitempty"`
+	IsAutoincrement bool   `json:",omitempty"`
+	IsPrimaryKey    bool   `json:",omitempty"`
 
 	// generated Contents
 	title       string
@@ -98,14 +98,14 @@ type Field struct {
 
 // IgnoreFields is used to ignore fields for specific statements
 type IgnoreFields struct {
-	Upsert []string `toml:",omitempty"`
+	Upsert []string `json:",omitempty"`
 }
 
 // Index type
 type Index struct {
-	Name     string   `toml:",omitempty"`
-	Fields   []string `toml:",omitempty"`
-	IsUnique bool     `toml:",omitempty"`
+	Name     string   `json:",omitempty"`
+	Fields   []string `json:",omitempty"`
+	IsUnique bool     `json:",omitempty"`
 }
 
 type indexField struct {

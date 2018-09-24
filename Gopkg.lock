@@ -13,14 +13,6 @@
   revision = "5dff413a49665aae2d2007d6f97101823fadf35c"
 
 [[projects]]
-  digest = "1:b16fbfbcc20645cb419f78325bb2e85ec729b338e996a228124d68931a6f2a37"
-  name = "github.com/BurntSushi/toml"
-  packages = ["."]
-  pruneopts = "UT"
-  revision = "b26d9c308763d68093482582cea63d69be07a0f0"
-  version = "v0.3.0"
-
-[[projects]]
   digest = "1:04aea75705cb453e24bf8c1506a24a5a9036537dbc61ddf71d20900d6c7c3ab9"
   name = "github.com/DATA-DOG/go-sqlmock"
   packages = ["."]
@@ -252,7 +244,6 @@
   analyzer-version = 1
   input-imports = [
     "bitbucket.org/seambiz/seambiz/sdb",
-    "github.com/BurntSushi/toml",
     "github.com/DATA-DOG/go-sqlmock",
     "github.com/RoaringBitmap/roaring",
     "github.com/go-sql-driver/mysql",

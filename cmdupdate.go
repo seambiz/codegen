@@ -1,10 +1,11 @@
 package codegen
 
 import (
+	"encoding/json"
+	"strings"
+
 	"bitbucket.org/seambiz/seambiz/sdb"
-	"github.com/BurntSushi/toml"
 	"github.com/imdario/mergo"
-	"github.com/valyala/bytebufferpool"
 )
 
 func getSchema(conf *Config, name string) *Schema {
@@ -62,8 +63,10 @@ func getField(table *Table, fieldName string) *Field {
 func getIndex(table *Table, indexName string) *Index {
 	var ind *Index
 
+	indexName = strings.ToLower(indexName)
+
 	for i := range table.Indices {
-		if table.Indices[i].Name == indexName {
+		if strings.ToLower(table.Indices[i].Name) == indexName {
 			ind = table.Indices[i]
 			break
 		}
@@ -166,13 +169,10 @@ func Update(conf *Config) ([]byte, error) {
 		}
 	}
 
-	bb := bytebufferpool.Get()
-	defer bytebufferpool.Put(bb)
-	enc := toml.NewEncoder(bb)
-	err := enc.Encode(conf)
+	jsonBytes, err := json.MarshalIndent(conf, "", "\t")
 	if err != nil {
 		return []byte(""), err
 	}
 
-	return bb.Bytes(), nil
+	return jsonBytes, nil
 }
