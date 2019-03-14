@@ -8,7 +8,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncReturn("error")
 	bb.S(`var err error
 
-	sql := sdb.NewSQLStatement()
+	sql := NewSQLStatement()
 	sql.Append("DELETE FROM `)
 	bb.S(schema.Name)
 	bb.S(".")
@@ -60,7 +60,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		bb.FuncReturn("error")
 		bb.S(`var err error
 
-	sql := sdb.NewSQLStatement()
+	sql := NewSQLStatement()
 	sql.Append("DELETE FROM `)
 		bb.S(schema.Name)
 		bb.S(".")
@@ -101,7 +101,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncParams("args ...interface{}")
 	bb.FuncReturn("error")
 	bb.Line(`var err error`)
-	bb.Line(`sql := sdb.NewSQLStatement()`)
+	bb.Line(`sql := NewSQLStatement()`)
 	bb.Line(`sql.Append("DELETE FROM `, schema.Name, ".", table.Name, `")`)
 	bb.Line(`if `, table.initials, `.where == "" {`)
 	bb.Line(`return errors.New("no where condition set")`)

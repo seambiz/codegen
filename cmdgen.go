@@ -392,6 +392,12 @@ func Generate(conf *Config) {
 				table.Fields[i].mappingFunc = mappingFunc
 
 				table.numFields = len(table.Fields)
+
+				for _, fk := range table.ForeignKeys {
+					if fk.IsUnique {
+						table.numUniqueFKs += 1
+					}
+				}
 			}
 		}
 	}
@@ -408,7 +414,7 @@ func Generate(conf *Config) {
 			for _, templateFile := range templateFiles {
 				switch templateFile {
 				case "header":
-					THeader(bb, conf, schema, table)
+					THeader(bb, conf, schema)
 				case "delete":
 					TDelete(bb, conf, schema, table)
 				case "insert":
@@ -432,6 +438,12 @@ func Generate(conf *Config) {
 					indexSet := set{}
 
 					for i := range table.Indices {
+						if len(table.Indices[i].Fields) == 1 {
+							indexSet[table.Indices[i].Fields[0]] = struct{}{}
+						}
+					}
+
+					for i := range table.Indices {
 						if len(table.Indices[i].Fields) > 1 {
 							if _, ok := indexSet[table.Indices[i].Fields[0]]; ok {
 								continue
@@ -450,69 +462,77 @@ func Generate(conf *Config) {
 					}
 				}
 			}
-
-			fileName := filepath.Join(conf.DirOut, fmt.Sprintf(conf.FilePattern, strings.ToLower(strings.Replace(table.Name, "_", "", -1))))
-			fmt.Println("Writing to", fileName)
-
-			// check if file exists and if it already has codegen comments
-			// if not, just write everything to the file
-			if _, err := os.Stat(fileName); os.IsNotExist(err) {
-				err := ioutil.WriteFile(fileName, bb.Bytes(), os.ModePerm)
-				bb.Free()
-				if err != nil {
-					panic(err)
-				}
-			} else {
-				fileContents, err := ioutil.ReadFile(fileName)
-				if err != nil {
-					panic(err)
-				}
-
-				if bytes.Contains(fileContents, codegenStart) && bytes.Contains(fileContents, codegenEnd) {
-					start := bytes.Index(fileContents, codegenStart)
-					if start == -1 {
-						panic("start == -1")
-					}
-					end := bytes.LastIndex(fileContents, codegenEnd)
-					if end == -1 {
-						panic("end == -1")
-					}
-
-					newStart := bytes.Index(bb.Bytes(), codegenStart)
-					if newStart == -1 {
-						panic("newStart == -1")
-					}
-					newEnd := bytes.LastIndex(bb.Bytes(), codegenEnd)
-					if newEnd == -1 {
-						panic("newEnd == -1")
-					}
-
-					var newContent []byte
-					newContent = append(newContent, fileContents[:start]...)
-					newContent = append(newContent, bb.Bytes()[newStart:newEnd]...)
-					newContent = append(newContent, fileContents[end:]...)
-
-					err := ioutil.WriteFile(fileName, newContent, os.ModePerm)
-					bb.Free()
-					if err != nil {
-						panic(err)
-					}
-
-				} else {
-					fmt.Println("ERR: existing file (" + fileName + ") does not contain codegen comment.")
-					fmt.Println("ERR: exiting now, so content does not get overwritten.")
-					os.Exit(1)
-				}
-			}
-
+			writeBufferToCodgenFile(bb, conf, table.Name)
 		}
 	}
 
+	// global files
+	s := &Schema{Name: "constants"}
+	bb := NewGenBuffer(bytebufferpool.Get())
+	THeader(bb, conf, s)
+	TGlobalType(bb, conf)
+	writeBufferToCodgenFile(bb, conf, "constants")
+
 	execCommand("goimports -w " + conf.DirOut)
 	if conf.LintPackage != "" {
-		execCommand("go vet -v " + conf.LintPackage)
+		execCommand("go vet " + conf.LintPackage)
 	}
 	if conf.MetaLinter != "" {
 		execCommand(conf.MetaLinter)
+	}
+}
+func writeBufferToCodgenFile(bb *GenBuffer, conf *Config, filename string) {
+	fileName := filepath.Join(conf.DirOut, fmt.Sprintf(conf.FilePattern, strings.ToLower(strings.Replace(filename, "_", "", -1))))
+	fmt.Println("Writing to", fileName)
+
+	// check if file exists and if it already has codegen comments
+	// if not, just write everything to the file
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		err := ioutil.WriteFile(fileName, bb.Bytes(), os.ModePerm)
+		bb.Free()
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		fileContents, err := ioutil.ReadFile(fileName)
+		if err != nil {
+			panic(err)
+		}
+
+		if bytes.Contains(fileContents, codegenStart) && bytes.Contains(fileContents, codegenEnd) {
+			start := bytes.Index(fileContents, codegenStart)
+			if start == -1 {
+				panic("start == -1")
+			}
+			end := bytes.LastIndex(fileContents, codegenEnd)
+			if end == -1 {
+				panic("end == -1")
+			}
+
+			newStart := bytes.Index(bb.Bytes(), codegenStart)
+			if newStart == -1 {
+				panic("newStart == -1")
+			}
+			newEnd := bytes.LastIndex(bb.Bytes(), codegenEnd)
+			if newEnd == -1 {
+				panic("newEnd == -1")
+			}
+
+			var newContent []byte
+			newContent = append(newContent, fileContents[:start]...)
+			newContent = append(newContent, bb.Bytes()[newStart:newEnd]...)
+			newContent = append(newContent, fileContents[end:]...)
+
+			err := ioutil.WriteFile(fileName, newContent, os.ModePerm)
+			bb.Free()
+			if err != nil {
+				panic(err)
+			}
+
+		} else {
+			fmt.Println("ERR: existing file (" + fileName + ") does not contain codegen comment.")
+			fmt.Println("ERR: exiting now, so content does not get overwritten.")
+			os.Exit(1)
+		}
 	}
 }

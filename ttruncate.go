@@ -7,7 +7,7 @@ func TTruncate(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncParams()
 	bb.FuncReturn("error")
 
-	bb.Line("sql := sdb.NewSQLStatement()")
+	bb.Line("sql := NewSQLStatement()")
 	bb.Line(`sql.Append("TRUNCATE `, schema.Name, ".", table.Name, `")`)
 	bb.Line(`if  zerolog.GlobalLevel() ==  zerolog.DebugLevel {`)
 	bb.Line(`log.Debug().Str("fn", "`, schema.Name, ".", table.Name, `.Truncate").Str("stmt", sql.String()).Msg("sql")`)

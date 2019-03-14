@@ -6,14 +6,18 @@ import "strings"
 func TJSON(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	bb.Line("// ToJSON writes a single object to the buffer.")
+	bb.Line("// nolint[gocylco]")
 	bb.Func(table.storeReceiver, "ToJSON")
 	bb.FuncParams("t *buffer.TemplateBuffer", "data *"+table.title)
 	bb.FuncReturn("")
 	bb.Line(`prepend := "{"`)
-	for _, f := range table.Fields {
-		bb.Line("if ", table.initials, ".colSet == nil || ", table.initials, ".colSet.Test(", table.title+f.title, ") {")
+	lenFields := len(table.Fields) - 1
+	for i, f := range table.Fields {
+		bb.Line("if ", table.initials, ".colSet == nil || ", table.initials, ".colSet.Bit(", table.title+f.title, ") == 1 {")
 		bb.Line("t.", f.jsonFunc, `(prepend, "`, strings.ToLower(f.Name), `", data.`, f.title, ")")
-		bb.Line(`prepend = ","`)
+		if i != lenFields {
+			bb.Line(`prepend = ","`)
+		}
 		bb.Line("}")
 	}
 	bb.Line("t.S(`}`)")

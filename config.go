@@ -64,6 +64,7 @@ type Table struct {
 	otherFields   []*Field
 	id            int
 	numFields     int
+	numUniqueFKs  int
 }
 
 // ForeignKey type

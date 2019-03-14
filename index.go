@@ -15,6 +15,7 @@ func indexUnique(bb *GenBuffer, conf *Config, schema *Schema, table *Table, inde
 	bb.Line("// ", funcName, " retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.title, ".")
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
+	bb.Line("// nolint[goconst]")
 	bb.Func(table.storeReceiver, funcName)
 	bb.S("(")
 	for i, f := range index.Fields {
@@ -75,7 +76,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	bb.Line("res := []*", table.title, "{}")
 	bb.NewLine()
 
-	bb.Line("sql := sdb.NewSQLStatement()")
+	bb.Line("sql := NewSQLStatement()")
 	bb.Line(`sql.Append("SELECT")`)
 	bb.Line(`sql.Fields("","", `, strings.ToLower(table.title), `QueryFields)`)
 	bb.Line(`sql.Append("FROM `, schema.Name, ".", table.Name, `")`)
@@ -161,6 +162,7 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 	}
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
+	bb.Line("// nolint[goconst]")
 	bb.Func(table.storeReceiver, funcName)
 	bb.S("(")
 	for i, f := range index.Fields {

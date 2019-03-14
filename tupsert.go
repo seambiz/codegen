@@ -16,6 +16,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	// generate upsert statement
 	bb.Line("// ", table.lower, "UpsertStmt helper for generating Upserts general statement")
+	bb.Line("// nolint[gocyclo]")
 	bb.Func(table.storeReceiver, table.lower+"UpsertStmt")
 	bb.FuncParams()
 	bb.FuncReturn("*sdb.UpsertStatement")
@@ -24,7 +25,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	{
 		for _, f := range table.otherFields {
 			if !contains(table.Ignores.Upsert, f.Name) {
-				bb.Line(`if `, table.initials, `.colSet == nil || `, table.initials, `.colSet.Test(`, table.title+f.title, `) {`)
+				bb.Line(`if `, table.initials, `.colSet == nil || `, table.initials, `.colSet.Bit(`, table.title+f.title, `) == 1 {`)
 				bb.Line(`upsert = append(upsert, "`, f.Name, " = VALUES(", f.Name, `)")`)
 				bb.Line("}")
 			}

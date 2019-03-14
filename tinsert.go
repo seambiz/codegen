@@ -1,7 +1,5 @@
 package codegen
 
-import "strings"
-
 // TInsert template
 func TInsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// Insert inserts the ", table.title, ` to the database.`)
@@ -10,9 +8,9 @@ func TInsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncReturn("error")
 	bb.Line("var err error")
 
-	bb.Line("sql := sdb.NewSQLStatement()")
+	bb.Line("sql := NewSQLStatement()")
 	bb.Line(`sql.Append("INSERT INTO `, schema.Name, ".", table.Name, ` (")`)
-	bb.Line("fields := ", strings.ToLower(table.title), `QueryFields(`, table.initials, `.colSet)`)
+	bb.Line("fields := ", table.title, `QueryFields(`, table.initials, `.colSet)`)
 	bb.Line(`sql.Fields("","", fields)`)
 	bb.Line(`sql.Append(") VALUES (")`)
 	bb.Line("for i := range fields {")

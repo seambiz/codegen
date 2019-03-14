@@ -1,7 +1,7 @@
 package codegen
 
 // THeader template
-func THeader(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
+func THeader(bb *GenBuffer, conf *Config, schema *Schema) {
 	bb.S("// Package ")
 	bb.S(conf.Package)
 	bb.S(" contains the types for schema '")
@@ -16,13 +16,12 @@ func THeader(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	"database/sql"
 	"errors"
 	"io"
+	"math/big"
 
 	"fmt"
 
-	"bitbucket.com/seambiz/seambiz/buffer"
-	"bitbucket.com/seambiz/seambiz/sdb"
-	"github.com/jmoiron/sqlx"
-	"github.com/willf/bitset"
+	"bitbucket.org/seambiz/seambiz/buffer"
+	"bitbucket.org/seambiz/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

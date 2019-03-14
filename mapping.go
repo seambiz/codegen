@@ -92,18 +92,18 @@ var goJSONMapping = map[string]string{
 }
 var goDbMappingFunc = map[string]string{
 	// numeric types
-	"int":    "sdb.ToInt",
-	"uint":   "sdb.ToUInt",
-	"int64":  "sdb.ToInt64",
-	"uint64": "sdb.ToUInt64",
-	"bool":   "sdb.ToBool",
+	"int":    "convert.ToInt",
+	"uint":   "convert.ToUInt",
+	"int64":  "convert.ToInt64",
+	"uint64": "convert.ToUInt64",
+	"bool":   "convert.ToBool",
 	"[]byte": "", //nothing to be done
 
-	"float32":   "sdb.ToFloat32",
-	"float64":   "sdb.ToFloat64",
-	"time.Time": "sdb.ToTime",
+	"float32":   "convert.ToFloat32",
+	"float64":   "convert.ToFloat64",
+	"time.Time": "convert.ToTime",
 
-	"string": "string",
+	"string": "convert.ToString",
 }
 
 var goSliceScanMapping = map[string]string{
