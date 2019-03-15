@@ -2,7 +2,7 @@ package codegen
 
 // TTruncate template
 func TTruncate(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
-	bb.Line("// Truncate deletes all rows from ", table.title, `.`)
+	bb.Line("// Truncate deletes all rows from ", table.Title, `.`)
 	bb.Func(table.storeReceiver, "Truncate")
 	bb.FuncParams()
 	bb.FuncReturn("error")

@@ -2,9 +2,9 @@ package codegen
 
 // TDelete template
 func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
-	bb.Line("// Delete deletes the ", table.title, ` from the database.`)
+	bb.Line("// Delete deletes the ", table.Title, ` from the database.`)
 	bb.Func(table.storeReceiver, "Delete")
-	bb.FuncParams("data *" + table.title)
+	bb.FuncParams("data *" + table.Title)
 	bb.FuncReturn("error")
 	bb.S(`var err error
 
@@ -41,7 +41,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 			bb.S(".")
 		}
 		bb.S("data.")
-		bb.S(f.title)
+		bb.S(f.Title)
 	}
 	bb.S(`)
 	if err != nil {
@@ -53,10 +53,10 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 `)
 
 	// DeleteSlice only with single int primary keys
-	if len(table.pkFields) == 1 && table.pkFields[0].goType == "int" {
+	if len(table.pkFields) == 1 && table.pkFields[0].GoType == "int" {
 		bb.Line("// DeleteSlice delets all slice element from the database.")
 		bb.Func(table.storeReceiver, "DeleteSlice")
-		bb.FuncParams("data []*" + table.title)
+		bb.FuncParams("data []*" + table.Title)
 		bb.FuncReturn("error")
 		bb.S(`var err error
 
@@ -73,7 +73,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		bb.Line(`if i > 0 {`)
 		bb.Line(`sql.AppendRaw(",")`)
 		bb.Line(`}`)
-		bb.Line(`sql.AppendInt(data[i].`, table.pkFields[0].title, ")")
+		bb.Line(`sql.AppendInt(data[i].`, table.pkFields[0].Title, ")")
 		bb.Line(`}`)
 		bb.Line(`sql.Append(")")`)
 

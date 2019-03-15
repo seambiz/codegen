@@ -8,9 +8,11 @@ import (
 	"os/exec"
 	"path/filepath"
 	"strings"
+	"text/template"
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/Masterminds/sprig"
 	"github.com/valyala/bytebufferpool"
 )
 
@@ -119,7 +121,7 @@ func (g *GenBuffer) Line(ss ...string) {
 
 // LogField generates zerolog logging instruction for single field
 func (g *GenBuffer) LogField(f *Field, prefix string) {
-	switch f.goType {
+	switch f.GoType {
 	case "[]byte":
 		g.S("Bytes")
 		break
@@ -139,19 +141,19 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 		g.S("Str")
 		break
 	default:
-		g.S(strings.Title(f.goType))
+		g.S(strings.Title(f.GoType))
 	}
 	g.S(`("`)
-	g.S(f.title)
+	g.S(f.Title)
 	g.S(`", `)
 	if prefix != "" {
 		g.S(prefix)
 		g.S(".")
-		g.S(f.title)
+		g.S(f.Title)
 	} else {
-		g.S(f.paramName)
+		g.S(f.ParamName)
 	}
-	switch f.goType {
+	switch f.GoType {
 	case "sql.NullString":
 		g.S(".Str")
 		break
@@ -304,6 +306,9 @@ func Generate(conf *Config) {
 	tableNr := 0
 	for _, schema := range conf.Schemas {
 		for _, table := range schema.Tables {
+			if !table.Generate {
+				continue
+			}
 			table.id = tableNr
 			tableNr++
 
@@ -316,19 +321,19 @@ func Generate(conf *Config) {
 					parts[i] = strings.Title(parts[i])
 				}
 			}
-			table.title = strings.Join(parts, "")
-			table.lower = lowerFirst(table.title)
+			table.Title = strings.Join(parts, "")
+			table.lower = lowerFirst(table.Title)
 			table.initials = Initials(table.Name)
 			table.initials += Initials(table.Name[1:])
-			table.receiver = table.initials + " *" + table.title
-			table.store = table.title + "Store"
+			table.receiver = table.initials + " *" + table.Title
+			table.store = table.Title + "Store"
 			table.storeReceiver = table.initials + " *" + table.store
 
 			// fill mapping for easy access to field properties
-			table.fieldMapping = make(map[string]int)
+			table.FieldMapping = make(map[string]int)
 			for i := range table.Fields {
 				if table.Fields[i].Name == "id" {
-					table.Fields[i].title = "ID"
+					table.Fields[i].Title = "ID"
 				} else {
 					parts := strings.Split(table.Fields[i].Name, "_")
 					for i := range parts {
@@ -338,33 +343,33 @@ func Generate(conf *Config) {
 							parts[i] = strings.Title(parts[i])
 						}
 					}
-					table.Fields[i].title = strings.Join(parts, "")
+					table.Fields[i].Title = strings.Join(parts, "")
 				}
 				// uppercase abbreviations
 				for _, substring := range commonInitialisms {
-					if strings.HasSuffix(strings.ToUpper(table.Fields[i].title), substring) ||
-						strings.HasPrefix(strings.ToUpper(table.Fields[i].title), substring) {
-						index := strings.Index(strings.ToUpper(table.Fields[i].title), substring)
-						stemp := table.Fields[i].title[index : index+len(substring)]
-						table.Fields[i].title = strings.Replace(table.Fields[i].title, stemp, substring, 1)
+					if strings.HasSuffix(strings.ToUpper(table.Fields[i].Title), substring) ||
+						strings.HasPrefix(strings.ToUpper(table.Fields[i].Title), substring) {
+						index := strings.Index(strings.ToUpper(table.Fields[i].Title), substring)
+						stemp := table.Fields[i].Title[index : index+len(substring)]
+						table.Fields[i].Title = strings.Replace(table.Fields[i].Title, stemp, substring, 1)
 						break
 					}
 				}
 
-				table.Fields[i].paramName = strings.ToLower(table.Fields[i].title)
-				table.fieldMapping[table.Fields[i].Name] = i
+				table.Fields[i].ParamName = strings.ToLower(table.Fields[i].Title)
+				table.FieldMapping[table.Fields[i].Name] = i
 				if table.Fields[i].IsPrimaryKey {
 					table.pkFields = append(table.pkFields, table.Fields[i])
 				} else {
 					table.otherFields = append(table.otherFields, table.Fields[i])
 				}
-				typename, ok := goTypeMapping[table.Fields[i].DBType]
+				typename, ok := GoTypeMapping[table.Fields[i].DBType]
 				if !ok {
 					panic(table.Fields[i].Name)
 				}
 				/*
 					if table.Fields[i].IsNullable {
-						//fmt.Println("NullType", table.Name, table.Fields[i].title)
+						//fmt.Println("NullType", table.Name, table.Fields[i].Title)
 						nulltype, ok := goIsNullMapping[typename]
 						if !ok {
 							panic(table.Fields[i].Name)
@@ -372,7 +377,7 @@ func Generate(conf *Config) {
 						typename = nulltype
 					}
 				*/
-				table.Fields[i].goType = typename
+				table.Fields[i].GoType = typename
 				zero, ok := goZeroMapping[typename]
 				if !ok {
 					panic(typename)
@@ -402,76 +407,163 @@ func Generate(conf *Config) {
 		}
 	}
 
-	for _, schema := range conf.Schemas {
-		for _, table := range schema.Tables {
-			bb := NewGenBuffer(bytebufferpool.Get())
+	if conf.TemplateFolder != "" {
+		files, err := ioutil.ReadDir(conf.TemplateFolder)
+		if err != nil {
+			panic(err)
+		}
 
-			var templateFiles = table.Templates
-			if len(templateFiles) == 0 {
-				templateFiles = conf.Templates
+		for _, f := range files {
+			segments := strings.Split(f.Name(), ".")
+			if len(segments) != 4 {
+				panic("filename segment length != 4")
 			}
 
-			for _, templateFile := range templateFiles {
-				switch templateFile {
-				case "header":
-					THeader(bb, conf, schema)
-				case "delete":
-					TDelete(bb, conf, schema, table)
-				case "insert":
-					TInsert(bb, conf, schema, table)
-				case "truncate":
-					TTruncate(bb, conf, schema, table)
-				case "update":
-					TUpdate(bb, conf, schema, table)
-				case "upsert":
-					TUpsert(bb, conf, schema, table)
-				case "type":
-					TType(bb, conf, schema, table)
-				case "foreign":
-					TForeign(bb, conf, schema, table)
-				case "json":
-					TJSON(bb, conf, schema, table)
-				case "end":
-					TEnd(bb)
-				case "index":
-					type set map[string]struct{}
-					indexSet := set{}
+			switch segments[0] {
+			case "once":
+				var buf bytes.Buffer
 
-					for i := range table.Indices {
-						if len(table.Indices[i].Fields) == 1 {
-							indexSet[table.Indices[i].Fields[0]] = struct{}{}
+				contents, err := ioutil.ReadFile(conf.TemplateFolder + f.Name())
+				if err != nil {
+					panic(err)
+				}
+
+				tmpl, err := template.New(f.Name()).Funcs(sprig.TxtFuncMap()).Parse(string(contents))
+				if err != nil {
+					panic(err)
+				}
+
+				err = tmpl.Execute(&buf, conf)
+				if err != nil {
+					panic(err)
+				}
+
+				switch segments[1] {
+				case "package":
+					writeToCodgenFile(buf, conf, segments[2], conf.Package)
+				case "root":
+					writeToCodgenFile(buf, conf, segments[2], "")
+				}
+
+			case "table":
+				contents, err := ioutil.ReadFile(conf.TemplateFolder + f.Name())
+				if err != nil {
+					panic(err)
+				}
+
+				tmpl, err := template.New(f.Name()).Funcs(sprig.TxtFuncMap()).Parse(string(contents))
+				if err != nil {
+					panic(err)
+				}
+
+				type GenData struct {
+					Conf  Config
+					Table Table
+				}
+
+				for _, s := range conf.Schemas {
+					for _, t := range s.Tables {
+						if !t.Generate {
+							continue
 						}
-					}
+						var buf bytes.Buffer
 
-					for i := range table.Indices {
-						if len(table.Indices[i].Fields) > 1 {
-							if _, ok := indexSet[table.Indices[i].Fields[0]]; ok {
-								continue
-							}
-							index := *table.Indices[i]
-							index.IsUnique = false
-							index.Fields = []string{table.Indices[i].Fields[0]}
-							table.Indices = append(table.Indices, &index)
+						d := GenData{}
+						d.Conf = *conf
+						d.Table = *t
+
+						err = tmpl.Execute(&buf, d)
+						if err != nil {
+							panic(err)
 						}
-						indexSet[table.Indices[i].Fields[0]] = struct{}{}
 
-					}
-
-					for _, index := range table.Indices {
-						TIndex(bb, conf, schema, table, index)
+						switch segments[1] {
+						case "package":
+							writeToCodgenFile(buf, conf, segments[2], conf.Package)
+						case "root":
+							writeToCodgenFile(buf, conf, t.Name+strings.Title(segments[2]), "")
+						}
 					}
 				}
 			}
-			writeBufferToCodgenFile(bb, conf, table.Name)
-		}
-	}
 
-	// global files
-	s := &Schema{Name: "constants"}
-	bb := NewGenBuffer(bytebufferpool.Get())
-	THeader(bb, conf, s)
-	TGlobalType(bb, conf)
-	writeBufferToCodgenFile(bb, conf, "constants")
+		}
+	} else {
+
+		for _, schema := range conf.Schemas {
+			for _, table := range schema.Tables {
+				if !table.Generate {
+					continue
+				}
+				bb := NewGenBuffer(bytebufferpool.Get())
+
+				var templateFiles = table.Templates
+				if len(templateFiles) == 0 {
+					templateFiles = conf.Templates
+				}
+
+				for _, templateFile := range templateFiles {
+					switch templateFile {
+					case "header":
+						THeader(bb, conf, schema)
+					case "delete":
+						TDelete(bb, conf, schema, table)
+					case "insert":
+						TInsert(bb, conf, schema, table)
+					case "truncate":
+						TTruncate(bb, conf, schema, table)
+					case "update":
+						TUpdate(bb, conf, schema, table)
+					case "upsert":
+						TUpsert(bb, conf, schema, table)
+					case "type":
+						TType(bb, conf, schema, table)
+					case "foreign":
+						TForeign(bb, conf, schema, table)
+					case "json":
+						TJSON(bb, conf, schema, table)
+					case "end":
+						TEnd(bb)
+					case "index":
+						type set map[string]struct{}
+						indexSet := set{}
+
+						for i := range table.Indices {
+							if len(table.Indices[i].Fields) == 1 {
+								indexSet[table.Indices[i].Fields[0]] = struct{}{}
+							}
+						}
+
+						for i := range table.Indices {
+							if len(table.Indices[i].Fields) > 1 {
+								if _, ok := indexSet[table.Indices[i].Fields[0]]; ok {
+									continue
+								}
+								index := *table.Indices[i]
+								index.IsUnique = false
+								index.Fields = []string{table.Indices[i].Fields[0]}
+								table.Indices = append(table.Indices, &index)
+							}
+							indexSet[table.Indices[i].Fields[0]] = struct{}{}
+
+						}
+
+						for _, index := range table.Indices {
+							TIndex(bb, conf, schema, table, index)
+						}
+					}
+				}
+				writeBufferToCodgenFile(bb, conf, table.Name)
+			}
+		}
+
+		// global files
+		s := &Schema{Name: "constants"}
+		bb := NewGenBuffer(bytebufferpool.Get())
+		THeader(bb, conf, s)
+		TGlobalType(bb, conf)
+		writeBufferToCodgenFile(bb, conf, "constants")
+	}
 
 	execCommand("goimports -w " + conf.DirOut)
 	if conf.LintPackage != "" {
@@ -525,6 +617,60 @@ func writeBufferToCodgenFile(bb *GenBuffer, conf *Config, filename string) {
 
 			err := ioutil.WriteFile(fileName, newContent, os.ModePerm)
 			bb.Free()
+			if err != nil {
+				panic(err)
+			}
+
+		} else {
+			fmt.Println("ERR: existing file (" + fileName + ") does not contain codegen comment.")
+			fmt.Println("ERR: exiting now, so content does not get overwritten.")
+			os.Exit(1)
+		}
+	}
+}
+
+func writeToCodgenFile(buf bytes.Buffer, conf *Config, filename string, subfolder string) {
+	fileName := filepath.Join(conf.DirOut, subfolder, fmt.Sprintf(conf.FilePattern, strings.ToLower(strings.Replace(filename, "_", "", -1))))
+	fmt.Println("Writing to", fileName)
+
+	// check if file exists and if it already has codegen comments
+	// if not, just write everything to the file
+	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		err := ioutil.WriteFile(fileName, buf.Bytes(), os.ModePerm)
+		if err != nil {
+			panic(err)
+		}
+	} else {
+		fileContents, err := ioutil.ReadFile(fileName)
+		if err != nil {
+			panic(err)
+		}
+
+		if bytes.Contains(fileContents, codegenStart) && bytes.Contains(fileContents, codegenEnd) {
+			start := bytes.Index(fileContents, codegenStart)
+			if start == -1 {
+				panic("start == -1")
+			}
+			end := bytes.LastIndex(fileContents, codegenEnd)
+			if end == -1 {
+				panic("end == -1")
+			}
+
+			newStart := bytes.Index(buf.Bytes(), codegenStart)
+			if newStart == -1 {
+				panic("newStart == -1")
+			}
+			newEnd := bytes.LastIndex(buf.Bytes(), codegenEnd)
+			if newEnd == -1 {
+				panic("newEnd == -1")
+			}
+
+			var newContent []byte
+			newContent = append(newContent, fileContents[:start]...)
+			newContent = append(newContent, buf.Bytes()[newStart:newEnd]...)
+			newContent = append(newContent, fileContents[end:]...)
+
+			err := ioutil.WriteFile(fileName, newContent, os.ModePerm)
 			if err != nil {
 				panic(err)
 			}

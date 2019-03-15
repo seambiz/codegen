@@ -15,11 +15,11 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		fkTable := table
 		fkSchema := conf.getSchema(fk.RefSchema)
 		if t := fkSchema.getTable(fk.RefTable); t != nil {
-			fkRefTable = t.title
+			fkRefTable = t.Title
 			fkTable = t
 		}
 		if fk.CustomName == "" {
-			fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+			fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 		}
 
 		bb.Line("// Get", fk.CustomName, " fetches a record from referenced table '", fk.RefTable, "'.")
@@ -39,14 +39,14 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 			if i > 0 {
 				funcName += "And"
 			}
-			funcName += fkTable.Fields[fkTable.fieldMapping[fk.RefFields[i]]].title
+			funcName += fkTable.Fields[fkTable.FieldMapping[fk.RefFields[i]]].Title
 		}
 		bb.S(funcName, "(")
 		for i := range fk.Fields {
 			if i > 0 {
 				bb.S(",")
 			}
-			bb.S(table.initials, ".", table.Fields[table.fieldMapping[fk.Fields[i]]].title)
+			bb.S(table.initials, ".", table.Fields[table.FieldMapping[fk.Fields[i]]].Title)
 		}
 		bb.Line(")")
 
@@ -62,16 +62,16 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 			fkTable := table
 			fkSchema := conf.getSchema(fk.RefSchema)
 			if t := fkSchema.getTable(fk.RefTable); t != nil {
-				fkRefTable = t.title
+				fkRefTable = t.Title
 				fkTable = t
 			}
 			if fk.CustomName == "" {
-				fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+				fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 			}
 
 			bb.Line("// EagerFetch", fk.CustomName, " eagerly fetches N records from referenced table '", fk.RefTable, "'.")
 			bb.Func(table.storeReceiver, "EagerFetch"+fk.CustomName)
-			bb.FuncParams("data []*" + table.title)
+			bb.FuncParams("data []*" + table.Title)
 			bb.FuncReturn("error")
 
 			if len(fk.RefFields) > 1 {
@@ -85,7 +85,7 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 			bb.Line(`if i > 0 {`)
 			bb.Line(`stmt.Append(",")`)
 			bb.Line(`}`)
-			bb.Line(`stmt.AppendInt(d.`, table.Fields[table.fieldMapping[fk.Fields[0]]].title, `)`)
+			bb.Line(`stmt.AppendInt(d.`, table.Fields[table.FieldMapping[fk.Fields[0]]].Title, `)`)
 			bb.Line(`}`)
 			bb.Line(`stmt.Append(")")`)
 
@@ -97,7 +97,7 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 			bb.Line(`for i := range data {`)
 			bb.Line(`for j := len(details) - 1; j >= 0; j-- {`)
-			bb.Line(`if details[j].`, fkTable.Fields[fkTable.fieldMapping[fk.RefFields[0]]].title, ` == data[i].`, table.Fields[table.fieldMapping[fk.Fields[0]]].title, ` {`)
+			bb.Line(`if details[j].`, fkTable.Fields[fkTable.FieldMapping[fk.RefFields[0]]].Title, ` == data[i].`, table.Fields[table.FieldMapping[fk.Fields[0]]].Title, ` {`)
 			bb.Line(`data[i].`, fk.CustomName, ` = append(data[i].`, fk.CustomName, `, details[j])`)
 			bb.Line(`details = append(details[:j], details[j+1:]...)`)
 			bb.Line(`}`)

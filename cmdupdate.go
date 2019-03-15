@@ -35,6 +35,7 @@ func getTable(schema *Schema, tableName string) *Table {
 	}
 	if t == nil {
 		t = &Table{}
+		t.Generate = true
 		schema.Tables = append(schema.Tables, t)
 	}
 	t.Name = tableName
@@ -73,11 +74,33 @@ func getIndex(table *Table, indexName string) *Index {
 	}
 	if ind == nil {
 		ind = &Index{}
+		ind.Generate = true
 		table.Indices = append(table.Indices, ind)
 		ind.Name = indexName
 	}
 
 	return ind
+}
+
+func getForeignKey(table *Table, fkName string) *ForeignKey {
+	var fk *ForeignKey
+
+	fkName = strings.ToLower(fkName)
+
+	for i := range table.ForeignKeys {
+		if strings.ToLower(table.ForeignKeys[i].Name) == fkName {
+			fk = table.ForeignKeys[i]
+			break
+		}
+	}
+	if fk == nil {
+		fk = &ForeignKey{}
+		fk.IsUnique = true
+		table.ForeignKeys = append(table.ForeignKeys, fk)
+		fk.Name = fkName
+	}
+
+	return fk
 }
 
 // Update command
@@ -91,7 +114,7 @@ func Update(conf *Config) ([]byte, error) {
 		sql.Append("SELECT table_name AS tables")
 		sql.Append("FROM information_schema.tables")
 		sql.Append("WHERE table_schema = ?")
-		sql.Append(" AND table_type = 'base table'")
+		sql.Append(" AND table_type IN ('base table', 'system view')")
 
 		var tables []string
 		db.Select(&tables, sql.Query(), schema.Name)
@@ -126,6 +149,24 @@ func Update(conf *Config) ([]byte, error) {
 				f.IsNullable = false
 				f.IsPrimaryKey = false
 				mergo.MergeWithOverwrite(f, fields[i])
+			}
+
+			sql = sdb.NewSQLStatement()
+			sql.Append("SELECT")
+			sql.Append(" CONSTRAINT_NAME AS name, REFERENCED_TABLE_SCHEMA AS refschema, REFERENCED_TABLE_NAME AS reftable")
+			sql.Append("FROM")
+			sql.Append("INFORMATION_SCHEMA.KEY_COLUMN_USAGE")
+			sql.Append("WHERE")
+			sql.Append("TABLE_SCHEMA = ? and REFERENCED_TABLE_SCHEMA = ? AND TABLE_NAME = ?")
+			sql.Append("ORDER BY CONSTRAINT_NAME, ORDINAL_POSITION")
+			var fks []ForeignKey
+			err = db.Select(&fks, sql.Query(), schema.Name, schema.Name, table.Name)
+			if err != nil {
+				panic(err)
+			}
+			for i := range fks {
+				fk := getForeignKey(table, fks[i].Name)
+				mergo.MergeWithOverwrite(fk, fks[i])
 			}
 
 			var indices []string

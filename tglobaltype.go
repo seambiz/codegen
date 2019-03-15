@@ -10,12 +10,12 @@ func TGlobalType(bb *GenBuffer, conf *Config) {
 	bb.Line("const (")
 	for i, s := range conf.Schemas {
 		for j, t := range s.Tables {
-			bb.Line(`// Columns for table `, s.Name, ".", t.title)
+			bb.Line(`// Columns for table `, s.Name, ".", t.Title)
 			for k, f := range t.Fields {
 				if i == 0 && j == 0 && k == 0 {
-					bb.Line(t.title + f.title + " = iota")
+					bb.Line(t.Title + f.Title + " = iota")
 				} else {
-					bb.Line(t.title + f.title)
+					bb.Line(t.Title + f.Title)
 				}
 			}
 		}

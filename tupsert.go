@@ -25,7 +25,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	{
 		for _, f := range table.otherFields {
 			if !contains(table.Ignores.Upsert, f.Name) {
-				bb.Line(`if `, table.initials, `.colSet == nil || `, table.initials, `.colSet.Bit(`, table.title+f.title, `) == 1 {`)
+				bb.Line(`if `, table.initials, `.colSet == nil || `, table.initials, `.colSet.Bit(`, table.Title+f.Title, `) == 1 {`)
 				bb.Line(`upsert = append(upsert, "`, f.Name, " = VALUES(", f.Name, `)")`)
 				bb.Line("}")
 			}
@@ -48,17 +48,17 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line(`}`)
 
 	// Upsert for a single record
-	bb.Line("// UpsertOne inserts the ", table.title, " to the database.")
+	bb.Line("// UpsertOne inserts the ", table.Title, " to the database.")
 	bb.Func(table.storeReceiver, "UpsertOne")
-	bb.FuncParams("data *" + table.title)
+	bb.FuncParams("data *" + table.Title)
 	bb.FuncReturn("int64", "error")
-	bb.Line("return ", table.initials, ".Upsert([]*", table.title, "{data})")
+	bb.Line("return ", table.initials, ".Upsert([]*", table.Title, "{data})")
 	bb.Line("}")
 
 	// upsert for data array
-	bb.Line("// Upsert executes upsert for array of ", table.title)
+	bb.Line("// Upsert executes upsert for array of ", table.Title)
 	bb.Func(table.storeReceiver, "Upsert")
-	bb.FuncParams("data []*" + table.title)
+	bb.FuncParams("data []*" + table.Title)
 	bb.FuncReturn("int64", "error")
 
 	bb.Line(`sql := `, table.initials, ".", table.lower, `UpsertStmt()
@@ -68,7 +68,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	}
 
 	if  zerolog.GlobalLevel() ==  zerolog.DebugLevel {
-		log.Debug().Str("fn", "`, table.title, `Upsert").Str("stmt", sql.String()).Msg("sql")
+		log.Debug().Str("fn", "`, table.Title, `Upsert").Str("stmt", sql.String()).Msg("sql")
 	}
 	res, err := `, table.initials, `.db.Exec(sql.Query())
 	if err != nil {

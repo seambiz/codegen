@@ -1,0 +1,3075 @@
+{
+  "MetaLinter": "golangci-lint run /home/sl/gocode/src/gitea.kanbannow.de/know-api/db --enable-all --disable lll,gocyclo,goconst",
+  "LintPackage": "bitbucket.org/seambiz/codegen/db",
+  "Package": "db",
+  "RootPackage": "codegen",
+  "DirOut": "/home/sl/gocode/src/bitbucket.org/seambiz/codegen/db",
+  "FilePattern": "%s.go",
+  "Templates": [
+    "header",
+    "type",
+    "foreign",
+    "upsert",
+    "insert",
+    "update",
+    "delete",
+    "truncate",
+    "index",
+    "json",
+    "end"
+  ],
+  "Schemas": [
+    {
+      "Name": "information_schema",
+      "Tables": [
+        {
+          "Name": "CHARACTER_SETS",
+          "Fields": [
+            {
+              "Name": "CHARACTER_SET_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DEFAULT_COLLATE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DESCRIPTION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "MAXLEN",
+              "DBType": "bigint"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "COLLATIONS",
+          "Fields": [
+            {
+              "Name": "COLLATION_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_SET_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ID",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "IS_DEFAULT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "IS_COMPILED",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SORTLEN",
+              "DBType": "bigint"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "COLLATION_CHARACTER_SET_APPLICABILITY",
+          "Fields": [
+            {
+              "Name": "COLLATION_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_SET_NAME",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "COLUMNS",
+          "Fields": [
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLUMN_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ORDINAL_POSITION",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "COLUMN_DEFAULT",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "IS_NULLABLE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DATA_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_MAXIMUM_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHARACTER_OCTET_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMERIC_PRECISION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMERIC_SCALE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATETIME_PRECISION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHARACTER_SET_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "COLLATION_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "COLUMN_TYPE",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "COLUMN_KEY",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EXTRA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PRIVILEGES",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLUMN_COMMENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "GENERATION_EXPRESSION",
+              "DBType": "longtext"
+            }
+          ],
+          "Ignores": {},
+          "Generate": true
+        },
+        {
+          "Name": "COLUMN_PRIVILEGES",
+          "Fields": [
+            {
+              "Name": "GRANTEE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLUMN_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PRIVILEGE_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "IS_GRANTABLE",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "ENGINES",
+          "Fields": [
+            {
+              "Name": "ENGINE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SUPPORT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COMMENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TRANSACTIONS",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "XA",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "SAVEPOINTS",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "EVENTS",
+          "Fields": [
+            {
+              "Name": "EVENT_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DEFINER",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TIME_ZONE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_BODY",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_DEFINITION",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "EVENT_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EXECUTE_AT",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "INTERVAL_VALUE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "INTERVAL_FIELD",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "SQL_MODE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "STARTS",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "ENDS",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "STATUS",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ON_COMPLETION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CREATED",
+              "DBType": "datetime"
+            },
+            {
+              "Name": "LAST_ALTERED",
+              "DBType": "datetime"
+            },
+            {
+              "Name": "LAST_EXECUTED",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "EVENT_COMMENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ORIGINATOR",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "CHARACTER_SET_CLIENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLLATION_CONNECTION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DATABASE_COLLATION",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "FILES",
+          "Fields": [
+            {
+              "Name": "FILE_ID",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "FILE_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "FILE_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLESPACE_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "LOGFILE_GROUP_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "LOGFILE_GROUP_NUMBER",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "ENGINE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "FULLTEXT_KEYS",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "DELETED_ROWS",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "UPDATE_COUNT",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "FREE_EXTENTS",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "TOTAL_EXTENTS",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "EXTENT_SIZE",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "INITIAL_SIZE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "MAXIMUM_SIZE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "AUTOEXTEND_SIZE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CREATION_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "LAST_UPDATE_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "LAST_ACCESS_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "RECOVER_TIME",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "TRANSACTION_COUNTER",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "VERSION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "ROW_FORMAT",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLE_ROWS",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "AVG_ROW_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATA_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "MAX_DATA_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "INDEX_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATA_FREE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CREATE_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "UPDATE_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHECK_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHECKSUM",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "STATUS",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EXTRA",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "GLOBAL_STATUS",
+          "Fields": [
+            {
+              "Name": "VARIABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "VARIABLE_VALUE",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "GLOBAL_VARIABLES",
+          "Fields": [
+            {
+              "Name": "VARIABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "VARIABLE_VALUE",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "KEY_COLUMN_USAGE",
+          "Fields": [
+            {
+              "Name": "CONSTRAINT_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CONSTRAINT_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CONSTRAINT_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLUMN_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ORDINAL_POSITION",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "POSITION_IN_UNIQUE_CONSTRAINT",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "REFERENCED_TABLE_SCHEMA",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "REFERENCED_TABLE_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "REFERENCED_COLUMN_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": true
+        },
+        {
+          "Name": "OPTIMIZER_TRACE",
+          "Fields": [
+            {
+              "Name": "QUERY",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "TRACE",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "MISSING_BYTES_BEYOND_MAX_MEM_SIZE",
+              "DBType": "int"
+            },
+            {
+              "Name": "INSUFFICIENT_PRIVILEGES",
+              "DBType": "tinyint(1)"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "PARAMETERS",
+          "Fields": [
+            {
+              "Name": "SPECIFIC_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SPECIFIC_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SPECIFIC_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ORDINAL_POSITION",
+              "DBType": "int"
+            },
+            {
+              "Name": "PARAMETER_MODE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PARAMETER_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATA_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_MAXIMUM_LENGTH",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHARACTER_OCTET_LENGTH",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMERIC_PRECISION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMERIC_SCALE",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATETIME_PRECISION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHARACTER_SET_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "COLLATION_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "DTD_IDENTIFIER",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "ROUTINE_TYPE",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "PARTITIONS",
+          "Fields": [
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PARTITION_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "SUBPARTITION_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PARTITION_ORDINAL_POSITION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "SUBPARTITION_ORDINAL_POSITION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "PARTITION_METHOD",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "SUBPARTITION_METHOD",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PARTITION_EXPRESSION",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "SUBPARTITION_EXPRESSION",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "PARTITION_DESCRIPTION",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLE_ROWS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "AVG_ROW_LENGTH",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DATA_LENGTH",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "MAX_DATA_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "INDEX_LENGTH",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DATA_FREE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "CREATE_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "UPDATE_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHECK_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHECKSUM",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "PARTITION_COMMENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "NODEGROUP",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLESPACE_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "PLUGINS",
+          "Fields": [
+            {
+              "Name": "PLUGIN_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PLUGIN_VERSION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PLUGIN_STATUS",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PLUGIN_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PLUGIN_TYPE_VERSION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PLUGIN_LIBRARY",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PLUGIN_LIBRARY_VERSION",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PLUGIN_AUTHOR",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PLUGIN_DESCRIPTION",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "PLUGIN_LICENSE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "LOAD_OPTION",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "PROCESSLIST",
+          "Fields": [
+            {
+              "Name": "ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "USER",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "HOST",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DB",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "COMMAND",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TIME",
+              "DBType": "int"
+            },
+            {
+              "Name": "STATE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "INFO",
+              "DBType": "longtext",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "PROFILING",
+          "Fields": [
+            {
+              "Name": "QUERY_ID",
+              "DBType": "int"
+            },
+            {
+              "Name": "SEQ",
+              "DBType": "int"
+            },
+            {
+              "Name": "STATE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DURATION",
+              "DBType": "decimal"
+            },
+            {
+              "Name": "CPU_USER",
+              "DBType": "decimal",
+              "IsNullable": true
+            },
+            {
+              "Name": "CPU_SYSTEM",
+              "DBType": "decimal",
+              "IsNullable": true
+            },
+            {
+              "Name": "CONTEXT_VOLUNTARY",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "CONTEXT_INVOLUNTARY",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "BLOCK_OPS_IN",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "BLOCK_OPS_OUT",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "MESSAGES_SENT",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "MESSAGES_RECEIVED",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "PAGE_FAULTS_MAJOR",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "PAGE_FAULTS_MINOR",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "SWAPS",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "SOURCE_FUNCTION",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "SOURCE_FILE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "SOURCE_LINE",
+              "DBType": "int",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "REFERENTIAL_CONSTRAINTS",
+          "Fields": [
+            {
+              "Name": "CONSTRAINT_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CONSTRAINT_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CONSTRAINT_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "UNIQUE_CONSTRAINT_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "UNIQUE_CONSTRAINT_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "UNIQUE_CONSTRAINT_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "MATCH_OPTION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "UPDATE_RULE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DELETE_RULE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "REFERENCED_TABLE_NAME",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "ROUTINES",
+          "Fields": [
+            {
+              "Name": "SPECIFIC_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ROUTINE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ROUTINE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ROUTINE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ROUTINE_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DATA_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_MAXIMUM_LENGTH",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHARACTER_OCTET_LENGTH",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMERIC_PRECISION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMERIC_SCALE",
+              "DBType": "int",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATETIME_PRECISION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHARACTER_SET_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "COLLATION_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "DTD_IDENTIFIER",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "ROUTINE_BODY",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ROUTINE_DEFINITION",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "EXTERNAL_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "EXTERNAL_LANGUAGE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PARAMETER_STYLE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "IS_DETERMINISTIC",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SQL_DATA_ACCESS",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SQL_PATH",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "SECURITY_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CREATED",
+              "DBType": "datetime"
+            },
+            {
+              "Name": "LAST_ALTERED",
+              "DBType": "datetime"
+            },
+            {
+              "Name": "SQL_MODE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ROUTINE_COMMENT",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "DEFINER",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_SET_CLIENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLLATION_CONNECTION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DATABASE_COLLATION",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "SCHEMATA",
+          "Fields": [
+            {
+              "Name": "CATALOG_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SCHEMA_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DEFAULT_CHARACTER_SET_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DEFAULT_COLLATION_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SQL_PATH",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "SCHEMA_PRIVILEGES",
+          "Fields": [
+            {
+              "Name": "GRANTEE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PRIVILEGE_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "IS_GRANTABLE",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "SESSION_STATUS",
+          "Fields": [
+            {
+              "Name": "VARIABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "VARIABLE_VALUE",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "SESSION_VARIABLES",
+          "Fields": [
+            {
+              "Name": "VARIABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "VARIABLE_VALUE",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "STATISTICS",
+          "Fields": [
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "NON_UNIQUE",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "INDEX_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "INDEX_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SEQ_IN_INDEX",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "COLUMN_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLLATION",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "CARDINALITY",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "SUB_PART",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "PACKED",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "NULLABLE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "INDEX_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COMMENT",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "INDEX_COMMENT",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": true
+        },
+        {
+          "Name": "TABLES",
+          "Fields": [
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ENGINE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "VERSION",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "ROW_FORMAT",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLE_ROWS",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "AVG_ROW_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATA_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "MAX_DATA_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "INDEX_LENGTH",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "DATA_FREE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "AUTO_INCREMENT",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CREATE_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "UPDATE_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHECK_TIME",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLE_COLLATION",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "CHECKSUM",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "CREATE_OPTIONS",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLE_COMMENT",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": true
+        },
+        {
+          "Name": "TABLESPACES",
+          "Fields": [
+            {
+              "Name": "TABLESPACE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ENGINE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLESPACE_TYPE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "LOGFILE_GROUP_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "EXTENT_SIZE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "AUTOEXTEND_SIZE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "MAXIMUM_SIZE",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "NODEGROUP_ID",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "TABLESPACE_COMMENT",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "TABLE_CONSTRAINTS",
+          "Fields": [
+            {
+              "Name": "CONSTRAINT_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CONSTRAINT_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CONSTRAINT_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CONSTRAINT_TYPE",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "TABLE_PRIVILEGES",
+          "Fields": [
+            {
+              "Name": "GRANTEE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PRIVILEGE_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "IS_GRANTABLE",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "TRIGGERS",
+          "Fields": [
+            {
+              "Name": "TRIGGER_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TRIGGER_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TRIGGER_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_MANIPULATION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_OBJECT_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_OBJECT_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "EVENT_OBJECT_TABLE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ACTION_ORDER",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "ACTION_CONDITION",
+              "DBType": "longtext",
+              "IsNullable": true
+            },
+            {
+              "Name": "ACTION_STATEMENT",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "ACTION_ORIENTATION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ACTION_TIMING",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ACTION_REFERENCE_OLD_TABLE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "ACTION_REFERENCE_NEW_TABLE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "ACTION_REFERENCE_OLD_ROW",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "ACTION_REFERENCE_NEW_ROW",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CREATED",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "SQL_MODE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DEFINER",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_SET_CLIENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLLATION_CONNECTION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DATABASE_COLLATION",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "USER_PRIVILEGES",
+          "Fields": [
+            {
+              "Name": "GRANTEE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "PRIVILEGE_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "IS_GRANTABLE",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "VIEWS",
+          "Fields": [
+            {
+              "Name": "TABLE_CATALOG",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_SCHEMA",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "VIEW_DEFINITION",
+              "DBType": "longtext"
+            },
+            {
+              "Name": "CHECK_OPTION",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "IS_UPDATABLE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "DEFINER",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SECURITY_TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "CHARACTER_SET_CLIENT",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COLLATION_CONNECTION",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_LOCKS",
+          "Fields": [
+            {
+              "Name": "lock_id",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "lock_trx_id",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "lock_mode",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "lock_type",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "lock_table",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "lock_index",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "lock_space",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "lock_page",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "lock_rec",
+              "DBType": "bigint unsigned",
+              "IsNullable": true
+            },
+            {
+              "Name": "lock_data",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_TRX",
+          "Fields": [
+            {
+              "Name": "trx_id",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "trx_state",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "trx_started",
+              "DBType": "datetime"
+            },
+            {
+              "Name": "trx_requested_lock_id",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "trx_wait_started",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "trx_weight",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_mysql_thread_id",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_query",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "trx_operation_state",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "trx_tables_in_use",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_tables_locked",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_lock_structs",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_lock_memory_bytes",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_rows_locked",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_rows_modified",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_concurrency_tickets",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_isolation_level",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "trx_unique_checks",
+              "DBType": "int"
+            },
+            {
+              "Name": "trx_foreign_key_checks",
+              "DBType": "int"
+            },
+            {
+              "Name": "trx_last_foreign_key_error",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "trx_adaptive_hash_latched",
+              "DBType": "int"
+            },
+            {
+              "Name": "trx_adaptive_hash_timeout",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "trx_is_read_only",
+              "DBType": "int"
+            },
+            {
+              "Name": "trx_autocommit_non_locking",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_DATAFILES",
+          "Fields": [
+            {
+              "Name": "SPACE",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "PATH",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_FT_CONFIG",
+          "Fields": [
+            {
+              "Name": "KEY",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "VALUE",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_VIRTUAL",
+          "Fields": [
+            {
+              "Name": "TABLE_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "POS",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "BASE_POS",
+              "DBType": "int unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_CMP",
+          "Fields": [
+            {
+              "Name": "page_size",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_ops_ok",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_time",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_time",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_FT_BEING_DELETED",
+          "Fields": [
+            {
+              "Name": "DOC_ID",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_CMP_RESET",
+          "Fields": [
+            {
+              "Name": "page_size",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_ops_ok",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_time",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_time",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_CMP_PER_INDEX",
+          "Fields": [
+            {
+              "Name": "database_name",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "table_name",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "index_name",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "compress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_ops_ok",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_time",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_time",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_CMPMEM_RESET",
+          "Fields": [
+            {
+              "Name": "page_size",
+              "DBType": "int"
+            },
+            {
+              "Name": "buffer_pool_instance",
+              "DBType": "int"
+            },
+            {
+              "Name": "pages_used",
+              "DBType": "int"
+            },
+            {
+              "Name": "pages_free",
+              "DBType": "int"
+            },
+            {
+              "Name": "relocation_ops",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "relocation_time",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_FT_DELETED",
+          "Fields": [
+            {
+              "Name": "DOC_ID",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_BUFFER_PAGE_LRU",
+          "Fields": [
+            {
+              "Name": "POOL_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "LRU_POSITION",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "SPACE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGE_NUMBER",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGE_TYPE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "FLUSH_TYPE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "FIX_COUNT",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "IS_HASHED",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "NEWEST_MODIFICATION",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "OLDEST_MODIFICATION",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "ACCESS_TIME",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "INDEX_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMBER_RECORDS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DATA_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "COMPRESSED_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "COMPRESSED",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "IO_FIX",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "IS_OLD",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "FREE_PAGE_CLOCK",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_LOCK_WAITS",
+          "Fields": [
+            {
+              "Name": "requesting_trx_id",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "requested_lock_id",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "blocking_trx_id",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "blocking_lock_id",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_TEMP_TABLE_INFO",
+          "Fields": [
+            {
+              "Name": "TABLE_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "N_COLS",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "SPACE",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "PER_TABLE_TABLESPACE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "IS_COMPRESSED",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_INDEXES",
+          "Fields": [
+            {
+              "Name": "INDEX_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TABLE_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "TYPE",
+              "DBType": "int"
+            },
+            {
+              "Name": "N_FIELDS",
+              "DBType": "int"
+            },
+            {
+              "Name": "PAGE_NO",
+              "DBType": "int"
+            },
+            {
+              "Name": "SPACE",
+              "DBType": "int"
+            },
+            {
+              "Name": "MERGE_THRESHOLD",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_TABLES",
+          "Fields": [
+            {
+              "Name": "TABLE_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "FLAG",
+              "DBType": "int"
+            },
+            {
+              "Name": "N_COLS",
+              "DBType": "int"
+            },
+            {
+              "Name": "SPACE",
+              "DBType": "int"
+            },
+            {
+              "Name": "FILE_FORMAT",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "ROW_FORMAT",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "ZIP_PAGE_SIZE",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "SPACE_TYPE",
+              "DBType": "varchar",
+              "IsNullable": true
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_FIELDS",
+          "Fields": [
+            {
+              "Name": "INDEX_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "POS",
+              "DBType": "int unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_CMP_PER_INDEX_RESET",
+          "Fields": [
+            {
+              "Name": "database_name",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "table_name",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "index_name",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "compress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_ops_ok",
+              "DBType": "int"
+            },
+            {
+              "Name": "compress_time",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_ops",
+              "DBType": "int"
+            },
+            {
+              "Name": "uncompress_time",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_BUFFER_PAGE",
+          "Fields": [
+            {
+              "Name": "POOL_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "BLOCK_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "SPACE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGE_NUMBER",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGE_TYPE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "FLUSH_TYPE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "FIX_COUNT",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "IS_HASHED",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "NEWEST_MODIFICATION",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "OLDEST_MODIFICATION",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "ACCESS_TIME",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "TABLE_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "INDEX_NAME",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "NUMBER_RECORDS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DATA_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "COMPRESSED_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGE_STATE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "IO_FIX",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "IS_OLD",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "FREE_PAGE_CLOCK",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_FT_DEFAULT_STOPWORD",
+          "Fields": [
+            {
+              "Name": "value",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_FT_INDEX_TABLE",
+          "Fields": [
+            {
+              "Name": "WORD",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "FIRST_DOC_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "LAST_DOC_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DOC_COUNT",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DOC_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "POSITION",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_FT_INDEX_CACHE",
+          "Fields": [
+            {
+              "Name": "WORD",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "FIRST_DOC_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "LAST_DOC_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DOC_COUNT",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DOC_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "POSITION",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_TABLESPACES",
+          "Fields": [
+            {
+              "Name": "SPACE",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "FLAG",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "FILE_FORMAT",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "ROW_FORMAT",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "PAGE_SIZE",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "ZIP_PAGE_SIZE",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "SPACE_TYPE",
+              "DBType": "varchar",
+              "IsNullable": true
+            },
+            {
+              "Name": "FS_BLOCK_SIZE",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "FILE_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "ALLOCATED_SIZE",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_METRICS",
+          "Fields": [
+            {
+              "Name": "NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "SUBSYSTEM",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COUNT",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "MAX_COUNT",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "MIN_COUNT",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "AVG_COUNT",
+              "DBType": "double",
+              "IsNullable": true
+            },
+            {
+              "Name": "COUNT_RESET",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "MAX_COUNT_RESET",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "MIN_COUNT_RESET",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "AVG_COUNT_RESET",
+              "DBType": "double",
+              "IsNullable": true
+            },
+            {
+              "Name": "TIME_ENABLED",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "TIME_DISABLED",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "TIME_ELAPSED",
+              "DBType": "bigint",
+              "IsNullable": true
+            },
+            {
+              "Name": "TIME_RESET",
+              "DBType": "datetime",
+              "IsNullable": true
+            },
+            {
+              "Name": "STATUS",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "TYPE",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "COMMENT",
+              "DBType": "varchar"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_FOREIGN_COLS",
+          "Fields": [
+            {
+              "Name": "ID",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "FOR_COL_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "REF_COL_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "POS",
+              "DBType": "int unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_CMPMEM",
+          "Fields": [
+            {
+              "Name": "page_size",
+              "DBType": "int"
+            },
+            {
+              "Name": "buffer_pool_instance",
+              "DBType": "int"
+            },
+            {
+              "Name": "pages_used",
+              "DBType": "int"
+            },
+            {
+              "Name": "pages_free",
+              "DBType": "int"
+            },
+            {
+              "Name": "relocation_ops",
+              "DBType": "bigint"
+            },
+            {
+              "Name": "relocation_time",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_BUFFER_POOL_STATS",
+          "Fields": [
+            {
+              "Name": "POOL_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "POOL_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "FREE_BUFFERS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "DATABASE_PAGES",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "OLD_DATABASE_PAGES",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "MODIFIED_DATABASE_PAGES",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PENDING_DECOMPRESS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PENDING_READS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PENDING_FLUSH_LRU",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PENDING_FLUSH_LIST",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGES_MADE_YOUNG",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGES_NOT_MADE_YOUNG",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGES_MADE_YOUNG_RATE",
+              "DBType": "double"
+            },
+            {
+              "Name": "PAGES_MADE_NOT_YOUNG_RATE",
+              "DBType": "double"
+            },
+            {
+              "Name": "NUMBER_PAGES_READ",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NUMBER_PAGES_CREATED",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NUMBER_PAGES_WRITTEN",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "PAGES_READ_RATE",
+              "DBType": "double"
+            },
+            {
+              "Name": "PAGES_CREATE_RATE",
+              "DBType": "double"
+            },
+            {
+              "Name": "PAGES_WRITTEN_RATE",
+              "DBType": "double"
+            },
+            {
+              "Name": "NUMBER_PAGES_GET",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "HIT_RATE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "YOUNG_MAKE_PER_THOUSAND_GETS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NOT_YOUNG_MAKE_PER_THOUSAND_GETS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NUMBER_PAGES_READ_AHEAD",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NUMBER_READ_AHEAD_EVICTED",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "READ_AHEAD_RATE",
+              "DBType": "double"
+            },
+            {
+              "Name": "READ_AHEAD_EVICTED_RATE",
+              "DBType": "double"
+            },
+            {
+              "Name": "LRU_IO_TOTAL",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "LRU_IO_CURRENT",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "UNCOMPRESS_TOTAL",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "UNCOMPRESS_CURRENT",
+              "DBType": "bigint unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_COLUMNS",
+          "Fields": [
+            {
+              "Name": "TABLE_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "POS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "MTYPE",
+              "DBType": "int"
+            },
+            {
+              "Name": "PRTYPE",
+              "DBType": "int"
+            },
+            {
+              "Name": "LEN",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_FOREIGN",
+          "Fields": [
+            {
+              "Name": "ID",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "FOR_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "REF_NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "N_COLS",
+              "DBType": "int unsigned"
+            },
+            {
+              "Name": "TYPE",
+              "DBType": "int unsigned"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        },
+        {
+          "Name": "INNODB_SYS_TABLESTATS",
+          "Fields": [
+            {
+              "Name": "TABLE_ID",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "NAME",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "STATS_INITIALIZED",
+              "DBType": "varchar"
+            },
+            {
+              "Name": "NUM_ROWS",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "CLUST_INDEX_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "OTHER_INDEX_SIZE",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "MODIFIED_COUNTER",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "AUTOINC",
+              "DBType": "bigint unsigned"
+            },
+            {
+              "Name": "REF_COUNT",
+              "DBType": "int"
+            }
+          ],
+          "Ignores": {},
+          "Generate": false
+        }
+      ]
+    }
+  ],
+  "Database": {
+    "DSN": "ab@/?parseTime=true",
+    "Schemas": ["information_schema"]
+  }
+}

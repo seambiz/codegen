@@ -1,6 +1,6 @@
 package codegen
 
-var goTypeMapping = map[string]string{
+var GoTypeMapping = map[string]string{
 	// numeric types
 	"tinyint":    "int",
 	"tinyint(1)": "bool", // special case

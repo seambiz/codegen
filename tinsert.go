@@ -2,15 +2,15 @@ package codegen
 
 // TInsert template
 func TInsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
-	bb.Line("// Insert inserts the ", table.title, ` to the database.`)
+	bb.Line("// Insert inserts the ", table.Title, ` to the database.`)
 	bb.Func(table.storeReceiver, "Insert")
-	bb.FuncParams("data *" + table.title)
+	bb.FuncParams("data *" + table.Title)
 	bb.FuncReturn("error")
 	bb.Line("var err error")
 
 	bb.Line("sql := NewSQLStatement()")
 	bb.Line(`sql.Append("INSERT INTO `, schema.Name, ".", table.Name, ` (")`)
-	bb.Line("fields := ", table.title, `QueryFields(`, table.initials, `.colSet)`)
+	bb.Line("fields := ", table.Title, `QueryFields(`, table.initials, `.colSet)`)
 	bb.Line(`sql.Fields("","", fields)`)
 	bb.Line(`sql.Append(") VALUES (")`)
 	bb.Line("for i := range fields {")
@@ -27,7 +27,7 @@ func TInsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Log(table.Fields, "data")
 	bb.Line(".Msg(\"sql\") }")
 
-	if table.Fields[table.fieldMapping["id"]].IsPrimaryKey && table.Fields[table.fieldMapping["id"]].IsAutoincrement {
+	if table.Fields[table.FieldMapping["id"]].IsPrimaryKey && table.Fields[table.FieldMapping["id"]].IsAutoincrement {
 		bb.S("res, err :=")
 	} else {
 		bb.S("_, err =")
@@ -37,7 +37,7 @@ func TInsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		if i > 0 {
 			bb.S(", ")
 		}
-		bb.S("data.", f.title)
+		bb.S("data.", f.Title)
 	}
 	bb.S(`)	
 	if err != nil {
@@ -46,7 +46,7 @@ func TInsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	}`)
 
 	// only do this on AutoIncrement fields
-	if table.Fields[table.fieldMapping["id"]].IsPrimaryKey && table.Fields[table.fieldMapping["id"]].IsAutoincrement {
+	if table.Fields[table.FieldMapping["id"]].IsPrimaryKey && table.Fields[table.FieldMapping["id"]].IsAutoincrement {
 		bb.S(`
 	// retrieve id
 	id, err := res.LastInsertId()
@@ -58,7 +58,7 @@ func TInsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	// set primary key and existence
 	`)
 		bb.S("data.ID = ")
-		if table.Fields[table.fieldMapping["id"]].goType == "int64" {
+		if table.Fields[table.FieldMapping["id"]].GoType == "int64" {
 			bb.S("id")
 		} else {
 			bb.S("int(id)")

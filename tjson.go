@@ -8,13 +8,13 @@ func TJSON(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// ToJSON writes a single object to the buffer.")
 	bb.Line("// nolint[gocylco]")
 	bb.Func(table.storeReceiver, "ToJSON")
-	bb.FuncParams("t *buffer.TemplateBuffer", "data *"+table.title)
+	bb.FuncParams("t *buffer.TemplateBuffer", "data *"+table.Title)
 	bb.FuncReturn("")
 	bb.Line(`prepend := "{"`)
 	lenFields := len(table.Fields) - 1
 	for i, f := range table.Fields {
-		bb.Line("if ", table.initials, ".colSet == nil || ", table.initials, ".colSet.Bit(", table.title+f.title, ") == 1 {")
-		bb.Line("t.", f.jsonFunc, `(prepend, "`, strings.ToLower(f.Name), `", data.`, f.title, ")")
+		bb.Line("if ", table.initials, ".colSet == nil || ", table.initials, ".colSet.Bit(", table.Title+f.Title, ") == 1 {")
+		bb.Line("t.", f.jsonFunc, `(prepend, "`, strings.ToLower(f.Name), `", data.`, f.Title, ")")
 		if i != lenFields {
 			bb.Line(`prepend = ","`)
 		}
@@ -25,7 +25,7 @@ func TJSON(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	bb.Line("// ToJSONArray writes a slice to the named array.")
 	bb.Func(table.storeReceiver, "ToJSONArray")
-	bb.FuncParams("w io.Writer", "data []*"+table.title, "name string")
+	bb.FuncParams("w io.Writer", "data []*"+table.Title, "name string")
 	bb.FuncReturn("")
 	bb.Line(`t := buffer.NewTemplateBuffer()`)
 	bb.Line("t.SS(`{\"`, name, `\":[`)")

@@ -5,10 +5,11 @@ type Config struct {
 	MetaLinter     string   `json:",omitempty"`
 	LintPackage    string   `json:",omitempty"`
 	Package        string   `json:",omitempty"`
+	RootPackage    string   `json:",omitempty"`
 	DirOut         string   `json:",omitempty"`
 	FilePattern    string   `json:",omitempty"`
 	Templates      []string `json:",omitempty"`
-	FieldsPerTable int      `json:",omitempty"`
+	TemplateFolder string   `json:",omitempty"`
 
 	Schemas  []*Schema `json:",omitempty"`
 	Database db
@@ -51,20 +52,21 @@ type Table struct {
 	Indices     []*Index      `json:",omitempty"`
 	Ignores     IgnoreFields  `json:",omitempty"`
 	ForeignKeys []*ForeignKey `json:",omitempty"`
+	Generate    bool
 
 	// generated Contents
-	title         string
-	lower         string
-	receiver      string
-	initials      string
-	store         string
-	storeReceiver string
-	fieldMapping  map[string]int
-	pkFields      []*Field
-	otherFields   []*Field
-	id            int
-	numFields     int
-	numUniqueFKs  int
+	Title         string         `json:"-"`
+	lower         string         `json:"-"`
+	receiver      string         `json:"-"`
+	initials      string         `json:"-"`
+	store         string         `json:"-"`
+	storeReceiver string         `json:"-"`
+	FieldMapping  map[string]int `json:"-"`
+	pkFields      []*Field       `json:"-"`
+	otherFields   []*Field       `json:"-"`
+	id            int            `json:"-"`
+	numFields     int            `json:"-"`
+	numUniqueFKs  int            `json:"-"`
 }
 
 // ForeignKey type
@@ -89,12 +91,12 @@ type Field struct {
 	IsPrimaryKey    bool   `json:",omitempty"`
 
 	// generated Contents
-	title       string
-	goType      string
-	goZero      string
-	paramName   string
-	mappingFunc string
-	jsonFunc    string
+	Title       string `json:"-"`
+	GoType      string `json:"-"`
+	goZero      string `json:"-"`
+	ParamName   string `json:"-"`
+	mappingFunc string `json:"-"`
+	jsonFunc    string `json:"-"`
 }
 
 // IgnoreFields is used to ignore fields for specific statements
@@ -107,6 +109,7 @@ type Index struct {
 	Name     string   `json:",omitempty"`
 	Fields   []string `json:",omitempty"`
 	IsUnique bool     `json:",omitempty"`
+	Generate bool
 }
 
 type indexField struct {

@@ -9,10 +9,10 @@ func fkVariable(bb *GenBuffer, conf *Config, table *Table, fks []*ForeignKey) {
 		fkRefTable := strings.Title(fk.RefTable)
 		fkSchema := conf.getSchema(fk.RefSchema)
 		if t := fkSchema.getTable(fk.RefTable); t != nil {
-			fkRefTable = t.title
+			fkRefTable = t.Title
 		}
 		if fk.CustomName == "" {
-			fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+			fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 		}
 
 		bb.S(fk.CustomName)
@@ -33,7 +33,7 @@ func checkJoinFields(bb *GenBuffer, table *Table, fks []*ForeignKey) {
 	for _, fk := range fks {
 		if fk.IsUnique {
 			if fk.CustomName == "" {
-				fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+				fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 			}
 
 			bb.Line("if ", table.initials, ".", fk.CustomName, ".IsEmpty() {")
@@ -55,7 +55,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	bb.Line("// constant slice for all fields of the table.")
 	bb.Line("// nolint[gochecknoglobals]")
-	bb.S("var ", strings.ToLower(table.title), "QueryFieldsAll = []string{")
+	bb.S("var ", strings.ToLower(table.Title), "QueryFieldsAll = []string{")
 	for i, f := range table.Fields {
 		if i > 0 {
 			bb.S(",")
@@ -67,17 +67,17 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	bb.Line("// returns fields, that should be used.")
 	bb.Line("// nolint[gocyclo]")
-	bb.Func("", table.title+"QueryFields")
+	bb.Func("", table.Title+"QueryFields")
 	bb.FuncParams("colSet *big.Int")
 	bb.FuncReturn("[]string")
 	bb.Line("if colSet == nil {")
-	bb.S("return ", strings.ToLower(table.title), "QueryFieldsAll")
+	bb.S("return ", strings.ToLower(table.Title), "QueryFieldsAll")
 
 	bb.Line("}")
 	bb.NewLine()
 	bb.Line("fields := []string{}")
 	for _, f := range table.Fields {
-		bb.Line("if colSet.Bit(" + table.title + f.title + ") == 1 {")
+		bb.Line("if colSet.Bit(" + table.Title + f.Title + ") == 1 {")
 		bb.Line(`fields = append(fields, "` + strings.ToLower(f.Name) + `")`)
 		bb.Line("}")
 	}
@@ -85,11 +85,11 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncEnd()
 	bb.NewLine()
 
-	bb.Line("// ", table.title, " represents a row from '", schema.Name, ".", table.Name, "'.")
+	bb.Line("// ", table.Title, " represents a row from '", schema.Name, ".", table.Name, "'.")
 
-	bb.Struct(table.title)
+	bb.Struct(table.Title)
 	for _, f := range table.Fields {
-		bb.Line(f.title, " ", f.goType, " `json:\"", f.Name, `" db:"`, strings.ToLower(f.Name), "\"`")
+		bb.Line(f.Title, " ", f.GoType, " `json:\"", f.Name, `" db:"`, strings.ToLower(f.Name), "\"`")
 	}
 	if len(table.ForeignKeys) > 0 {
 		bb.NewLine()
@@ -101,19 +101,19 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Func(table.receiver, "new")
 	bb.FuncParams()
 	bb.FuncReturn("DTO")
-	bb.Line("return &", table.title, "{}")
+	bb.Line("return &", table.Title, "{}")
 	bb.FuncEnd()
 
 	bb.Line("// helper struct for common query operations.")
-	bb.Struct(table.title + "Slice")
-	bb.Line("data []*", table.title)
+	bb.Struct(table.Title + "Slice")
+	bb.Line("data []*", table.Title)
 	bb.StructEnd()
 
 	bb.Line("// append implements DTOSlice.append")
 	bb.Func(table.receiver+"Slice", "append")
 	bb.FuncParams("d DTO")
 	bb.FuncReturn("")
-	bb.Line(table.initials, ".data = append(", table.initials, ".data, d.(*", table.title, "))")
+	bb.Line(table.initials, ".data = append(", table.initials, ".data, d.(*", table.Title, "))")
 	bb.FuncEnd()
 
 	bb.Line("// Columns to be used for various statements.")
@@ -132,10 +132,10 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncParams()
 	bb.FuncReturn("bool")
 	if len(table.pkFields) == 1 {
-		bb.Line("return ", table.initials, ".", table.pkFields[0].title, " == ", table.pkFields[0].goZero)
+		bb.Line("return ", table.initials, ".", table.pkFields[0].Title, " == ", table.pkFields[0].goZero)
 	} else {
 		for _, f := range table.pkFields {
-			bb.Line("if ", table.initials, ".", f.title, " != ", f.goZero, " {")
+			bb.Line("if ", table.initials, ".", f.Title, " != ", f.goZero, " {")
 			bb.Line("return false")
 			bb.Line("}")
 		}
@@ -154,13 +154,13 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		bb.FuncEnd()
 	}
 
-	bb.Line("// ", table.store, " is used to query for '", table.title, "' records.")
+	bb.Line("// ", table.store, " is used to query for '", table.Title, "' records.")
 	bb.Struct(table.store)
 	bb.Line("Store")
 	bb.StructEnd()
 
-	bb.Line("// New", table.title, "Store return DAO Store for ", table.title)
-	bb.Func("", "New"+table.title+"Store")
+	bb.Line("// New", table.Title, "Store return DAO Store for ", table.Title)
+	bb.Func("", "New"+table.Title+"Store")
 	bb.FuncParams("conn *sql.DB")
 	bb.FuncReturn("*" + table.store)
 	bb.Line(table.initials, " := &", table.store, "{}")
@@ -236,7 +236,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	   	bb.Line("f := []interface{}{}")
 	   	for _, f := range table.Fields {
-	   		bb.Line("f = append(f, &", table.initials, ".", f.title, ")")
+	   		bb.Line("f = append(f, &", table.initials, ".", f.Title, ")")
 	   	}
 	   	if len(table.ForeignKeys) > 0 {
 	   		bb.Line("if withJoin {")
@@ -248,11 +248,11 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	   					fkRefTable = t
 	   				}
 	   				if fk.CustomName == "" {
-	   					fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+	   					fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 	   				}
 
 	   				for _, f := range fkRefTable.Fields {
-	   					bb.Line("f = append(f, &", table.initials, ".", fk.CustomName, ".", f.title, ")")
+	   					bb.Line("f = append(f, &", table.initials, ".", fk.CustomName, ".", f.Title, ")")
 	   				}
 
 	   			}
@@ -279,10 +279,10 @@ func bindJoin(bb *GenBuffer, conf *Config, table *Table, fks []*ForeignKey) {
 				fkRefTable = t
 			}
 			if fk.CustomName == "" {
-				fk.CustomName = table.title + strings.Replace(fk.Name, "fk", "", 1)
+				fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 			}
 
-			bb.Line(table.initials, ".", fk.CustomName, "= &", fkRefTable.title, "{}")
+			bb.Line(table.initials, ".", fk.CustomName, "= &", fkRefTable.Title, "{}")
 			bb.Line(table.initials, ".", fk.CustomName, ".bind(row, false, colSet, col)")
 
 			if len(fk.ForeignKeys) > 0 {
@@ -301,11 +301,11 @@ func bind(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncReturn()
 
 	for i, f := range table.Fields {
-		bb.Line("if colSet == nil || colSet.Bit(", table.title+f.title, ") == 1 {")
+		bb.Line("if colSet == nil || colSet.Bit(", table.Title+f.Title, ") == 1 {")
 		if f.mappingFunc != "" {
-			bb.Line(table.initials, ".", f.title, " = ", f.mappingFunc, "(row[*col])")
+			bb.Line(table.initials, ".", f.Title, " = ", f.mappingFunc, "(row[*col])")
 		} else {
-			bb.Line(table.initials, ".", f.title, " = row[*col]")
+			bb.Line(table.initials, ".", f.Title, " = row[*col]")
 		}
 		if i < table.numFields || len(table.ForeignKeys) > 0 {
 			bb.Line("*col++")
@@ -327,7 +327,7 @@ func selectJoinFields(bb *GenBuffer, conf *Config, table *Table, tableAlias *run
 			fkRefTable := strings.Title(fk.RefTable)
 			fkSchema := conf.getSchema(fk.RefSchema)
 			if t := fkSchema.getTable(fk.RefTable); t != nil {
-				fkRefTable = t.title
+				fkRefTable = t.Title
 			}
 			bb.Line(`sql.Fields(",","`, string(*tableAlias), `",`, fkRefTable, `QueryFields(`, table.initials, `.colSet))`)
 
@@ -369,7 +369,7 @@ func selectSQL(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	tableAlias := 'A'
 	bb.Line("sql := NewSQLStatement()")
 	bb.Line(`sql.Append("SELECT")`)
-	bb.Line(`sql.Fields("","`, string(tableAlias), `", `, table.title, `QueryFields(`, table.initials, `.colSet))`)
+	bb.Line(`sql.Fields("","`, string(tableAlias), `", `, table.Title, `QueryFields(`, table.initials, `.colSet))`)
 	if table.numUniqueFKs > 1 {
 		bb.Line("if ", table.initials, ".withJoin {")
 		{
@@ -407,12 +407,12 @@ func selectSQL(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 }
 
 func oneSelect(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
-	bb.Line("// One retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.title, " with possible joined data.")
+	bb.Line("// One retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.Title, " with possible joined data.")
 	bb.Func(table.storeReceiver, "One")
 	bb.FuncParams("args ...interface{}")
-	bb.FuncReturn("*"+table.title, "error")
+	bb.FuncReturn("*"+table.Title, "error")
 
-	bb.Line("data := &", table.title, "{}")
+	bb.Line("data := &", table.Title, "{}")
 	bb.NewLine()
 
 	bb.Line("err := ", table.initials, ".one(data, ", table.initials, ".selectStatement(), args...)")
@@ -425,10 +425,10 @@ func oneSelect(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 }
 
 func querySelect(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
-	bb.Line("// Query retrieves many rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.title, " with possible joined data.")
+	bb.Line("// Query retrieves many rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.Title, " with possible joined data.")
 	bb.Func(table.storeReceiver, "Query")
 	bb.FuncParams("args ...interface{}")
-	bb.FuncReturn("[]*"+table.title, "error")
+	bb.FuncReturn("[]*"+table.Title, "error")
 
 	bb.Line("stmt := ", table.initials, ".selectStatement()")
 	bb.Line("return ", table.initials, ".QueryCustom(stmt.Query(), args...)")
@@ -436,13 +436,13 @@ func querySelect(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 }
 
 func queryCustom(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
-	bb.Line("// QueryCustom retrieves many rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.title, " with possible joined data.")
+	bb.Line("// QueryCustom retrieves many rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.Title, " with possible joined data.")
 	bb.Func(table.storeReceiver, "QueryCustom")
 	bb.FuncParams("stmt string", "args ...interface{}")
-	bb.FuncReturn("[]*"+table.title, "error")
+	bb.FuncReturn("[]*"+table.Title, "error")
 
-	bb.Line("dto := &", table.title, "{}")
-	bb.Line("data := &", table.title, "Slice{}")
+	bb.Line("dto := &", table.Title, "{}")
+	bb.Line("data := &", table.Title, "Slice{}")
 
 	bb.Line("err := ", table.initials, ".queryCustom(data, dto, stmt, args...)")
 	bb.Line("if err != nil {")

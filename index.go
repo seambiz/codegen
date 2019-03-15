@@ -10,9 +10,9 @@ func indexUnique(bb *GenBuffer, conf *Config, schema *Schema, table *Table, inde
 		if i > 0 {
 			funcName += "And"
 		}
-		funcName += table.Fields[table.fieldMapping[f]].title
+		funcName += table.Fields[table.FieldMapping[f]].Title
 	}
-	bb.Line("// ", funcName, " retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.title, ".")
+	bb.Line("// ", funcName, " retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.Title, ".")
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
 	bb.Line("// nolint[goconst]")
@@ -22,18 +22,18 @@ func indexUnique(bb *GenBuffer, conf *Config, schema *Schema, table *Table, inde
 		if i > 0 {
 			bb.S(", ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].paramName)
+		bb.S(table.Fields[table.FieldMapping[f]].ParamName)
 		bb.S(" ")
-		bb.S(table.Fields[table.fieldMapping[f]].goType)
+		bb.S(table.Fields[table.FieldMapping[f]].GoType)
 	}
 	bb.S(") ")
-	bb.FuncReturn("*"+table.title, "error")
+	bb.FuncReturn("*"+table.Title, "error")
 	bb.S(table.initials, `.where = "`)
 	for i, f := range index.Fields {
 		if i > 0 {
 			bb.S(" AND ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].Name)
+		bb.S(table.Fields[table.FieldMapping[f]].Name)
 		bb.S(" = ?")
 	}
 	bb.Line(`"`)
@@ -42,7 +42,7 @@ func indexUnique(bb *GenBuffer, conf *Config, schema *Schema, table *Table, inde
 		if i > 0 {
 			bb.S(", ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].paramName)
+		bb.S(table.Fields[table.FieldMapping[f]].ParamName)
 	}
 	bb.Line(")")
 
@@ -55,9 +55,9 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 		if i > 0 {
 			funcName += "And"
 		}
-		funcName += table.Fields[table.fieldMapping[f]].title
+		funcName += table.Fields[table.FieldMapping[f]].Title
 	}
-	bb.Line("// ", funcName, " retrieves multiple rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.title, `.`)
+	bb.Line("// ", funcName, " retrieves multiple rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.Title, `.`)
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
 	bb.Func(table.storeReceiver, funcName)
@@ -66,26 +66,26 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 		if i > 0 {
 			bb.S(", ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].paramName)
+		bb.S(table.Fields[table.FieldMapping[f]].ParamName)
 		bb.S(" ")
-		bb.S(table.Fields[table.fieldMapping[f]].goType)
+		bb.S(table.Fields[table.FieldMapping[f]].GoType)
 	}
 	bb.S(`)`)
-	bb.FuncReturn("[]*"+table.title, "error")
+	bb.FuncReturn("[]*"+table.Title, "error")
 	bb.Line("var err error")
-	bb.Line("res := []*", table.title, "{}")
+	bb.Line("res := []*", table.Title, "{}")
 	bb.NewLine()
 
 	bb.Line("sql := NewSQLStatement()")
 	bb.Line(`sql.Append("SELECT")`)
-	bb.Line(`sql.Fields("","", `, strings.ToLower(table.title), `QueryFields)`)
+	bb.Line(`sql.Fields("","", `, strings.ToLower(table.Title), `QueryFields)`)
 	bb.Line(`sql.Append("FROM `, schema.Name, ".", table.Name, `")`)
 	bb.S(`sql.Append("WHERE `)
 	for i, f := range index.Fields {
 		if i > 0 {
 			bb.S(" AND ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].Name)
+		bb.S(table.Fields[table.FieldMapping[f]].Name)
 		bb.S(" = ?")
 	}
 	bb.S(`")`)
@@ -99,7 +99,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 		if i > 0 {
 			bb.S(".")
 		}
-		bb.LogField(table.Fields[table.fieldMapping[f]], "")
+		bb.LogField(table.Fields[table.FieldMapping[f]], "")
 	}
 	bb.S(`)
 	}
@@ -109,7 +109,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 		if i > 0 {
 			bb.S(", ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].paramName)
+		bb.S(table.Fields[table.FieldMapping[f]].ParamName)
 	}
 	bb.S(`)
 	if err != nil {
@@ -118,7 +118,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	}
 	
 	for q.Next() {`)
-	bb.Line("data := ", table.title, "{}")
+	bb.Line("data := ", table.Title, "{}")
 
 	bb.S(`err = q.Scan(`)
 	bb.Line("data.scanFields(", table.initials, ".withJoin)...)")
@@ -145,9 +145,9 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 			if i > 0 {
 				funcName += "And"
 			}
-			funcName += table.Fields[table.fieldMapping[f]].title
+			funcName += table.Fields[table.FieldMapping[f]].Title
 		}
-		bb.Line("// ", funcName, " retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.title, ".")
+		bb.Line("// ", funcName, " retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.Title, ".")
 	} else {
 		// Query for slice
 		arrayType = "[]"
@@ -156,9 +156,9 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 			if i > 0 {
 				funcName += "And"
 			}
-			funcName += table.Fields[table.fieldMapping[f]].title
+			funcName += table.Fields[table.FieldMapping[f]].Title
 		}
-		bb.Line("// ", funcName, " retrieves multiple rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.title, `.`)
+		bb.Line("// ", funcName, " retrieves multiple rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.Title, `.`)
 	}
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
@@ -169,18 +169,18 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 		if i > 0 {
 			bb.S(", ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].paramName)
+		bb.S(table.Fields[table.FieldMapping[f]].ParamName)
 		bb.S(" ")
-		bb.S(table.Fields[table.fieldMapping[f]].goType)
+		bb.S(table.Fields[table.FieldMapping[f]].GoType)
 	}
 	bb.S(") ")
-	bb.FuncReturn(arrayType+"*"+table.title, "error")
+	bb.FuncReturn(arrayType+"*"+table.Title, "error")
 	bb.S(table.initials, `.where = "`)
 	for i, f := range index.Fields {
 		if i > 0 {
 			bb.S(" AND ")
 		}
-		bb.S("A.", table.Fields[table.fieldMapping[f]].Name)
+		bb.S("A.", table.Fields[table.FieldMapping[f]].Name)
 		bb.S(" = ?")
 	}
 	bb.Line(`"`)
@@ -193,7 +193,7 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 		if i > 0 {
 			bb.S(", ")
 		}
-		bb.S(table.Fields[table.fieldMapping[f]].paramName)
+		bb.S(table.Fields[table.FieldMapping[f]].ParamName)
 	}
 	bb.Line(")")
 
