@@ -1,9 +1,9 @@
 {
-  "MetaLinter": "golangci-lint run /home/sl/gocode/src/gitea.kanbannow.de/know-api/db --enable-all --disable lll,gocyclo,goconst",
-  "LintPackage": "bitbucket.org/seambiz/codegen/db",
-  "Package": "db",
+  "MetaLinter": "golangci-lint run /home/sl/gocode/src/bitbucket.org/seambiz/codegen/models --enable-all --disable lll,gocyclo,goconst",
+  "LintPackage": "bitbucket.org/seambiz/codegen/models",
+  "Package": "models",
   "RootPackage": "codegen",
-  "DirOut": "/home/sl/gocode/src/bitbucket.org/seambiz/codegen/db",
+  "DirOut": "/home/sl/gocode/src/bitbucket.org/seambiz/codegen/models",
   "FilePattern": "%s.go",
   "Templates": [
     "header",
@@ -12,7 +12,6 @@
     "upsert",
     "insert",
     "update",
-    "delete",
     "truncate",
     "index",
     "json",

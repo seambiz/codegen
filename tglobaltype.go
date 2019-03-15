@@ -8,12 +8,17 @@ func TGlobalType(bb *GenBuffer, conf *Config) {
 	bb.NewLine()
 	bb.Line("// Constants for table columns.")
 	bb.Line("const (")
-	for i, s := range conf.Schemas {
-		for j, t := range s.Tables {
+	iotaSet := false
+	for _, s := range conf.Schemas {
+		for _, t := range s.Tables {
+			if !t.Generate {
+				continue
+			}
 			bb.Line(`// Columns for table `, s.Name, ".", t.Title)
-			for k, f := range t.Fields {
-				if i == 0 && j == 0 && k == 0 {
+			for _, f := range t.Fields {
+				if !iotaSet {
 					bb.Line(t.Title + f.Title + " = iota")
+					iotaSet = true
 				} else {
 					bb.Line(t.Title + f.Title)
 				}

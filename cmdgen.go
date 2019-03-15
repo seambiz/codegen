@@ -13,6 +13,7 @@ import (
 	"unicode/utf8"
 
 	"github.com/Masterminds/sprig"
+	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/valyala/bytebufferpool"
 )
 
@@ -305,6 +306,16 @@ var commonInitialisms = []string{
 func Generate(conf *Config) {
 	tableNr := 0
 	for _, schema := range conf.Schemas {
+
+		tableNames := make([]string, len(schema.Tables))
+		for i := range schema.Tables {
+			tableNames[i] = schema.Tables[i].Name
+		}
+		tablesCase, err := varcaser.Detect(tableNames)
+		if err != nil {
+			panic(err)
+		}
+
 		for _, table := range schema.Tables {
 			if !table.Generate {
 				continue
@@ -313,38 +324,51 @@ func Generate(conf *Config) {
 			tableNr++
 
 			// generate helper variables
-			parts := strings.Split(table.Name, "_")
-			for i := range parts {
-				if strings.ToLower(parts[i]) == "id" {
-					parts[i] = "ID"
-				} else {
-					parts[i] = strings.Title(parts[i])
-				}
-			}
-			table.Title = strings.Join(parts, "")
+			// parts := strings.Split(table.Name, "_")
+			// for i := range parts {
+			// 	if strings.ToLower(parts[i]) == "id" {
+			// 		parts[i] = "ID"
+			// 	} else {
+			// 		parts[i] = strings.Title(parts[i])
+			// 	}
+			// }
+			table.Title = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(table.Name)
 			table.lower = lowerFirst(table.Title)
 			table.initials = Initials(table.Name)
 			table.initials += Initials(table.Name[1:])
+			table.initials = strings.ToLower(table.initials)
 			table.receiver = table.initials + " *" + table.Title
 			table.store = table.Title + "Store"
 			table.storeReceiver = table.initials + " *" + table.store
 
+			fieldNames := make([]string, len(table.Fields))
+			for i := range table.Fields {
+				fieldNames[i] = table.Fields[i].Name
+			}
+			fieldsCase, err := varcaser.Detect(fieldNames)
+			if err != nil {
+				panic(err)
+			}
+
 			// fill mapping for easy access to field properties
 			table.FieldMapping = make(map[string]int)
 			for i := range table.Fields {
-				if table.Fields[i].Name == "id" {
-					table.Fields[i].Title = "ID"
-				} else {
-					parts := strings.Split(table.Fields[i].Name, "_")
-					for i := range parts {
-						if strings.ToLower(parts[i]) == "id" {
-							parts[i] = "ID"
-						} else {
-							parts[i] = strings.Title(parts[i])
-						}
-					}
-					table.Fields[i].Title = strings.Join(parts, "")
-				}
+				// if table.Fields[i].Name == "id" {
+				// 	table.Fields[i].Title = "ID"
+				// } else {
+				// 	parts := strings.Split(table.Fields[i].Name, "_")
+				// 	for i := range parts {
+				// 		if strings.ToLower(parts[i]) == "id" {
+				// 			parts[i] = "ID"
+				// 		} else {
+				// 			parts[i] = strings.Title(parts[i])
+				// 		}
+				// 	}
+				// 	table.Fields[i].Title = strings.Join(parts, "")
+				// }
+
+				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
+
 				// uppercase abbreviations
 				for _, substring := range commonInitialisms {
 					if strings.HasSuffix(strings.ToUpper(table.Fields[i].Title), substring) ||

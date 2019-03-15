@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"strings"
 
+	"bitbucket.org/seambiz/codegen/models"
 	"bitbucket.org/seambiz/seambiz/sdb"
 	"github.com/imdario/mergo"
 )
@@ -105,24 +106,20 @@ func getForeignKey(table *Table, fkName string) *ForeignKey {
 
 // Update command
 func Update(conf *Config) ([]byte, error) {
-	db := sdb.OpenDatabaseDSN(conf.Database.DSN)
+	conn := sdb.OpenDatabaseDSN(conf.Database.DSN)
 
 	for _, schemaName := range conf.Database.Schemas {
 		schema := getSchema(conf, schemaName)
 
-		sql := sdb.NewSQLStatement()
-		sql.Append("SELECT table_name AS tables")
-		sql.Append("FROM information_schema.tables")
-		sql.Append("WHERE table_schema = ?")
-		sql.Append(" AND table_type IN ('base table', 'system view')")
+		tables, err := models.NewTablesStore(conn.DB).Where("table_schema = ? AND table_type IN ('base table', 'system view')").Query(schema.Name)
+		if err != nil {
+			panic(err)
+		}
 
-		var tables []string
-		db.Select(&tables, sql.Query(), schema.Name)
+		for _, table := range tables {
+			table := getTable(schema, table.TableName)
 
-		for _, tableName := range tables {
-			table := getTable(schema, tableName)
-
-			sql = sdb.NewSQLStatement()
+			sql := sdb.NewSQLStatement()
 			sql.Append("SELECT")
 			sql.Append("column_name AS name,")
 			sql.Append("IF(column_type = 'tinyint(1)',column_type, IF(INSTR(data_type, 'int'), IF(RIGHT(column_type, 8) = 'unsigned', CONCAT(data_type, ' unsigned'), data_type), data_type)) AS dbtype,")
@@ -138,7 +135,7 @@ func Update(conf *Config) ([]byte, error) {
 			sql.Append("ORDER BY ordinal_position")
 
 			var fields []Field
-			err := db.Select(&fields, sql.Query(), schema.Name, table.Name)
+			err := conn.Select(&fields, sql.Query(), schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
@@ -151,33 +148,23 @@ func Update(conf *Config) ([]byte, error) {
 				mergo.MergeWithOverwrite(f, fields[i])
 			}
 
-			sql = sdb.NewSQLStatement()
-			sql.Append("SELECT")
-			sql.Append(" CONSTRAINT_NAME AS name, REFERENCED_TABLE_SCHEMA AS refschema, REFERENCED_TABLE_NAME AS reftable")
-			sql.Append("FROM")
-			sql.Append("INFORMATION_SCHEMA.KEY_COLUMN_USAGE")
-			sql.Append("WHERE")
-			sql.Append("TABLE_SCHEMA = ? and REFERENCED_TABLE_SCHEMA = ? AND TABLE_NAME = ?")
-			sql.Append("ORDER BY CONSTRAINT_NAME, ORDINAL_POSITION")
-			var fks []ForeignKey
-			err = db.Select(&fks, sql.Query(), schema.Name, schema.Name, table.Name)
+			foreignKeys, err := models.NewKeyColumnUsageStore(conn.DB).Where("table_schema = ? AND referenced_table_schema = ? AND table_name = ?").
+				OrderBy("constraint_name, ordinal_position").
+				Query(schema.Name, schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
-			for i := range fks {
-				fk := getForeignKey(table, fks[i].Name)
-				mergo.MergeWithOverwrite(fk, fks[i])
+
+			for i := range foreignKeys {
+				fk := getForeignKey(table, foreignKeys[i].ConstraintName)
+				mergo.MergeWithOverwrite(fk, foreignKeys[i])
 			}
 
-			var indices []string
-			sql = sdb.NewSQLStatement()
-			sql.Append("SELECT")
-			sql.Append("  DISTINCT(index_name) AS indexname")
-			sql.Append("FROM information_schema.statistics")
-			sql.Append("WHERE table_schema = ?")
-			sql.Append("  AND table_name = ?")
-			sql.Append("ORDER BY  index_name")
-			err = db.Select(&indices, sql.Query(), schema.Name, table.Name)
+			indices, err := models.NewStatisticsStore(conn.DB).
+				Columns(models.StatisticsIndexName).
+				Where("table_schema = ? AND table_name = ?").
+				GroupBy("index_name").
+				Query(schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
@@ -195,12 +182,12 @@ func Update(conf *Config) ([]byte, error) {
 				sql.Append("ORDER BY seq_in_index")
 
 				var index []indexField
-				err = db.Select(&index, sql.Query(), schema.Name, table.Name, indexName)
+				err = conn.Select(&index, sql.Query(), schema.Name, table.Name, indexName.IndexName)
 				if err != nil {
 					panic(err)
 				}
 
-				tableIndex := getIndex(table, indexName)
+				tableIndex := getIndex(table, indexName.IndexName)
 				tableIndex.IsUnique = index[0].IsUnique
 				tableIndex.Fields = make([]string, 0)
 				for _, field := range index {
