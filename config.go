@@ -48,36 +48,41 @@ type Table struct {
 	Name      string   `json:",omitempty"`
 	Templates []string `json:",omitempty"`
 
-	Fields      []*Field      `json:",omitempty"`
-	Indices     []*Index      `json:",omitempty"`
-	Ignores     IgnoreFields  `json:",omitempty"`
-	ForeignKeys []*ForeignKey `json:",omitempty"`
-	Generate    bool
+	Fields        []*Field      `json:",omitempty"`
+	Indices       []*Index      `json:",omitempty"`
+	Ignores       IgnoreFields  `json:",omitempty"`
+	ForeignKeys   []*ForeignKey `json:",omitempty"`
+	Generate      bool
+	NoCreate      bool     `json:",omitempty"`
+	NoUpdate      bool     `json:",omitempty"`
+	NoDelete      bool     `json:",omitempty"`
+	TemplateFiles []string `json:",omitempty"`
 
 	// generated Contents
 	Title         string         `json:"-"`
 	lower         string         `json:"-"`
 	receiver      string         `json:"-"`
-	initials      string         `json:"-"`
+	Initials      string         `json:"-"`
 	store         string         `json:"-"`
-	storeReceiver string         `json:"-"`
+	StoreReceiver string         `json:"-"`
 	FieldMapping  map[string]int `json:"-"`
 	pkFields      []*Field       `json:"-"`
 	otherFields   []*Field       `json:"-"`
 	id            int            `json:"-"`
 	numFields     int            `json:"-"`
-	numUniqueFKs  int            `json:"-"`
+	NumUniqueFKs  int            `json:"-"`
 }
 
 // ForeignKey type
 type ForeignKey struct {
-	Name       string   `json:",omitempty"`
-	Fields     []string `json:",omitempty"`
-	RefSchema  string   `json:",omitempty"`
-	RefTable   string   `json:",omitempty"`
-	RefFields  []string `json:",omitempty"`
-	IsUnique   bool     `json:",omitempty"`
-	CustomName string   `json:",omitempty"`
+	Name          string   `json:",omitempty"`
+	Fields        []string `json:",omitempty"`
+	RefSchema     string   `json:",omitempty"`
+	RefTable      string   `json:",omitempty"`
+	RefTableTitle string   `json:",omitempty"`
+	RefFields     []string `json:",omitempty"`
+	IsUnique      bool     `json:",omitempty"`
+	CustomName    string   `json:",omitempty"`
 
 	ForeignKeys []*ForeignKey `json:",omitempty"`
 }
@@ -95,7 +100,7 @@ type Field struct {
 	GoType      string `json:"-"`
 	goZero      string `json:"-"`
 	ParamName   string `json:"-"`
-	mappingFunc string `json:"-"`
+	MappingFunc string `json:"-"`
 	jsonFunc    string `json:"-"`
 }
 

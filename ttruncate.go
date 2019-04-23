@@ -3,7 +3,7 @@ package codegen
 // TTruncate template
 func TTruncate(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// Truncate deletes all rows from ", table.Title, `.`)
-	bb.Func(table.storeReceiver, "Truncate")
+	bb.Func(table.StoreReceiver, "Truncate")
 	bb.FuncParams()
 	bb.FuncReturn("error")
 
@@ -12,7 +12,7 @@ func TTruncate(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line(`if  zerolog.GlobalLevel() ==  zerolog.DebugLevel {`)
 	bb.Line(`log.Debug().Str("fn", "`, schema.Name, ".", table.Name, `.Truncate").Str("stmt", sql.String()).Msg("sql")`)
 	bb.Line("}")
-	bb.Line("_, err := ", table.initials, ".db.Exec(sql.Query())")
+	bb.Line("_, err := ", table.Initials, ".db.Exec(sql.Query())")
 	bb.Line("if err != nil {")
 	bb.Line("log.Error().Err(err).Msg(\"exec\")")
 	bb.Line("}")

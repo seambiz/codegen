@@ -17,7 +17,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	// generate upsert statement
 	bb.Line("// ", table.lower, "UpsertStmt helper for generating Upserts general statement")
 	bb.Line("// nolint[gocyclo]")
-	bb.Func(table.storeReceiver, table.lower+"UpsertStmt")
+	bb.Func(table.StoreReceiver, table.lower+"UpsertStmt")
 	bb.FuncParams()
 	bb.FuncReturn("*sdb.UpsertStatement")
 
@@ -25,7 +25,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	{
 		for _, f := range table.otherFields {
 			if !contains(table.Ignores.Upsert, f.Name) {
-				bb.Line(`if `, table.initials, `.colSet == nil || `, table.initials, `.colSet.Bit(`, table.Title+f.Title, `) == 1 {`)
+				bb.Line(`if `, table.Initials, `.colSet == nil || `, table.Initials, `.colSet.Bit(`, table.Title+f.Title, `) == 1 {`)
 				bb.Line(`upsert = append(upsert, "`, f.Name, " = VALUES(", f.Name, `)")`)
 				bb.Line("}")
 			}
@@ -49,19 +49,19 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	// Upsert for a single record
 	bb.Line("// UpsertOne inserts the ", table.Title, " to the database.")
-	bb.Func(table.storeReceiver, "UpsertOne")
+	bb.Func(table.StoreReceiver, "UpsertOne")
 	bb.FuncParams("data *" + table.Title)
 	bb.FuncReturn("int64", "error")
-	bb.Line("return ", table.initials, ".Upsert([]*", table.Title, "{data})")
+	bb.Line("return ", table.Initials, ".Upsert([]*", table.Title, "{data})")
 	bb.Line("}")
 
 	// upsert for data array
 	bb.Line("// Upsert executes upsert for array of ", table.Title)
-	bb.Func(table.storeReceiver, "Upsert")
+	bb.Func(table.StoreReceiver, "Upsert")
 	bb.FuncParams("data []*" + table.Title)
 	bb.FuncReturn("int64", "error")
 
-	bb.Line(`sql := `, table.initials, ".", table.lower, `UpsertStmt()
+	bb.Line(`sql := `, table.Initials, ".", table.lower, `UpsertStmt()
 	
 	for _, d := range data {
 		sql.Record(d)
@@ -70,7 +70,7 @@ func TUpsert(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	if  zerolog.GlobalLevel() ==  zerolog.DebugLevel {
 		log.Debug().Str("fn", "`, table.Title, `Upsert").Str("stmt", sql.String()).Msg("sql")
 	}
-	res, err := `, table.initials, `.db.Exec(sql.Query())
+	res, err := `, table.Initials, `.db.Exec(sql.Query())
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
 		return -1, err

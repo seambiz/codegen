@@ -3,7 +3,7 @@ package codegen
 // TDelete template
 func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// Delete deletes the ", table.Title, ` from the database.`)
-	bb.Func(table.storeReceiver, "Delete")
+	bb.Func(table.StoreReceiver, "Delete")
 	bb.FuncParams("data *" + table.Title)
 	bb.FuncReturn("error")
 	bb.S(`var err error
@@ -35,7 +35,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 }`)
 	bb.NewLine()
 
-	bb.Line("_, err = ", table.initials, `.db.Exec(sql.Query(), `)
+	bb.Line("_, err = ", table.Initials, `.db.Exec(sql.Query(), `)
 	for i, f := range table.pkFields {
 		if i > 0 {
 			bb.S(".")
@@ -55,7 +55,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	// DeleteSlice only with single int primary keys
 	if len(table.pkFields) == 1 && table.pkFields[0].GoType == "int" {
 		bb.Line("// DeleteSlice delets all slice element from the database.")
-		bb.Func(table.storeReceiver, "DeleteSlice")
+		bb.Func(table.StoreReceiver, "DeleteSlice")
 		bb.FuncParams("data []*" + table.Title)
 		bb.FuncReturn("error")
 		bb.S(`var err error
@@ -86,7 +86,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	}`)
 		bb.NewLine()
 
-		bb.Line("_, err = ", table.initials, `.db.Exec(sql.Query())
+		bb.Line("_, err = ", table.Initials, `.db.Exec(sql.Query())
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
 	}
@@ -97,17 +97,17 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	}
 
 	bb.Line("// DeleteByQuery uses a where condition to delete entries.")
-	bb.Func(table.storeReceiver, "DeleteByQuery")
+	bb.Func(table.StoreReceiver, "DeleteByQuery")
 	bb.FuncParams("args ...interface{}")
 	bb.FuncReturn("error")
 	bb.Line(`var err error`)
 	bb.Line(`sql := NewSQLStatement()`)
 	bb.Line(`sql.Append("DELETE FROM `, schema.Name, ".", table.Name, `")`)
-	bb.Line(`if `, table.initials, `.where == "" {`)
+	bb.Line(`if `, table.Initials, `.where == "" {`)
 	bb.Line(`return errors.New("no where condition set")`)
 	bb.Line(`}`)
 
-	bb.Line(`sql.Append("WHERE", `, table.initials, `.where)`)
+	bb.Line(`sql.Append("WHERE", `, table.Initials, `.where)`)
 	bb.S(`if  zerolog.GlobalLevel() ==  zerolog.DebugLevel {
 		log.Debug().Str("fn", "`)
 	bb.S(schema.Name)
@@ -117,7 +117,7 @@ func TDelete(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line(`}`)
 	bb.NewLine()
 
-	bb.Line("_, err = ", table.initials, `.db.Exec(sql.Query(), args...)
+	bb.Line("_, err = ", table.Initials, `.db.Exec(sql.Query(), args...)
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
 	}

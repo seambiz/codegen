@@ -36,8 +36,8 @@ func checkJoinFields(bb *GenBuffer, table *Table, fks []*ForeignKey) {
 				fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 			}
 
-			bb.Line("if ", table.initials, ".", fk.CustomName, ".IsEmpty() {")
-			bb.Line(table.initials, ".", fk.CustomName, " = nil")
+			bb.Line("if ", table.Initials, ".", fk.CustomName, ".IsEmpty() {")
+			bb.Line(table.Initials, ".", fk.CustomName, " = nil")
 			bb.Line("}")
 
 			if len(fk.ForeignKeys) > 0 {
@@ -113,18 +113,18 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Func(table.receiver+"Slice", "append")
 	bb.FuncParams("d DTO")
 	bb.FuncReturn("")
-	bb.Line(table.initials, ".data = append(", table.initials, ".data, d.(*", table.Title, "))")
+	bb.Line(table.Initials, ".data = append(", table.Initials, ".data, d.(*", table.Title, "))")
 	bb.FuncEnd()
 
 	bb.Line("// Columns to be used for various statements.")
-	bb.Func(table.storeReceiver, "Columns")
+	bb.Func(table.StoreReceiver, "Columns")
 	bb.FuncParams("cols ...int")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, `.colSet = big.NewInt(0)
+	bb.Line(table.Initials, `.colSet = big.NewInt(0)
 	for _, col := range cols {
-		`, table.initials, `.colSet.SetBit(`, table.initials, `.colSet, col, 1)
+		`, table.Initials, `.colSet.SetBit(`, table.Initials, `.colSet, col, 1)
 	}
-	return `, table.initials)
+	return `, table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// IsEmpty checks if primary key fields are zero.")
@@ -132,10 +132,10 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncParams()
 	bb.FuncReturn("bool")
 	if len(table.pkFields) == 1 {
-		bb.Line("return ", table.initials, ".", table.pkFields[0].Title, " == ", table.pkFields[0].goZero)
+		bb.Line("return ", table.Initials, ".", table.pkFields[0].Title, " == ", table.pkFields[0].goZero)
 	} else {
 		for _, f := range table.pkFields {
-			bb.Line("if ", table.initials, ".", f.Title, " != ", f.goZero, " {")
+			bb.Line("if ", table.Initials, ".", f.Title, " != ", f.goZero, " {")
 			bb.Line("return false")
 			bb.Line("}")
 		}
@@ -163,68 +163,68 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Func("", "New"+table.Title+"Store")
 	bb.FuncParams("conn *sql.DB")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, " := &", table.store, "{}")
-	bb.Line(table.initials, ".db = conn")
-	bb.Line(table.initials, ".withJoin = true")
-	bb.Line(table.initials, `.joinType = sdb.LEFT`)
-	bb.Line(table.initials, `.batch = 1000`)
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, " := &", table.store, "{}")
+	bb.Line(table.Initials, ".db = conn")
+	bb.Line(table.Initials, ".withJoin = true")
+	bb.Line(table.Initials, `.joinType = sdb.LEFT`)
+	bb.Line(table.Initials, `.batch = 1000`)
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// WithoutJoins won't execute JOIN when querying for records.")
-	bb.Func(table.storeReceiver, "WithoutJoins")
+	bb.Func(table.StoreReceiver, "WithoutJoins")
 	bb.FuncParams()
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, ".withJoin = false")
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, ".withJoin = false")
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// Where sets local sql, that will be appended to SELECT.")
-	bb.Func(table.storeReceiver, "Where")
+	bb.Func(table.StoreReceiver, "Where")
 	bb.FuncParams("sql string")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, ".where = sql")
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, ".where = sql")
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// OrderBy sets local sql, that will be appended to SELECT.")
-	bb.Func(table.storeReceiver, "OrderBy")
+	bb.Func(table.StoreReceiver, "OrderBy")
 	bb.FuncParams("sql string")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, ".orderBy = sql")
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, ".orderBy = sql")
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// GroupBy sets local sql, that will be appended to SELECT.")
-	bb.Func(table.storeReceiver, "GroupBy")
+	bb.Func(table.StoreReceiver, "GroupBy")
 	bb.FuncParams("sql string")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, ".groupBy = sql")
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, ".groupBy = sql")
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// Limit result set size")
-	bb.Func(table.storeReceiver, "Limit")
+	bb.Func(table.StoreReceiver, "Limit")
 	bb.FuncParams("n int")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, ".limit = n")
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, ".limit = n")
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// Offset used, if a limit is provided")
-	bb.Func(table.storeReceiver, "Offset")
+	bb.Func(table.StoreReceiver, "Offset")
 	bb.FuncParams("n int")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, ".offset = n")
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, ".offset = n")
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	bb.Line("// JoinType sets join statement type (Default: INNER | LEFT | RIGHT | OUTER).")
-	bb.Func(table.storeReceiver, "JoinType")
+	bb.Func(table.StoreReceiver, "JoinType")
 	bb.FuncParams("jt string")
 	bb.FuncReturn("*" + table.store)
-	bb.Line(table.initials, ".joinType = jt")
-	bb.Line("return ", table.initials)
+	bb.Line(table.Initials, ".joinType = jt")
+	bb.Line("return ", table.Initials)
 	bb.FuncEnd()
 
 	/*
@@ -236,7 +236,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	   	bb.Line("f := []interface{}{}")
 	   	for _, f := range table.Fields {
-	   		bb.Line("f = append(f, &", table.initials, ".", f.Title, ")")
+	   		bb.Line("f = append(f, &", table.Initials, ".", f.Title, ")")
 	   	}
 	   	if len(table.ForeignKeys) > 0 {
 	   		bb.Line("if withJoin {")
@@ -252,7 +252,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	   				}
 
 	   				for _, f := range fkRefTable.Fields {
-	   					bb.Line("f = append(f, &", table.initials, ".", fk.CustomName, ".", f.Title, ")")
+	   					bb.Line("f = append(f, &", table.Initials, ".", fk.CustomName, ".", f.Title, ")")
 	   				}
 
 	   			}
@@ -282,8 +282,8 @@ func bindJoin(bb *GenBuffer, conf *Config, table *Table, fks []*ForeignKey) {
 				fk.CustomName = table.Title + strings.Replace(fk.Name, "fk", "", 1)
 			}
 
-			bb.Line(table.initials, ".", fk.CustomName, "= &", fkRefTable.Title, "{}")
-			bb.Line(table.initials, ".", fk.CustomName, ".bind(row, false, colSet, col)")
+			bb.Line(table.Initials, ".", fk.CustomName, "= &", fkRefTable.Title, "{}")
+			bb.Line(table.Initials, ".", fk.CustomName, ".bind(row, false, colSet, col)")
 
 			if len(fk.ForeignKeys) > 0 {
 				bindJoin(bb, conf, table, fk.ForeignKeys)
@@ -302,10 +302,10 @@ func bind(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	for i, f := range table.Fields {
 		bb.Line("if colSet == nil || colSet.Bit(", table.Title+f.Title, ") == 1 {")
-		if f.mappingFunc != "" {
-			bb.Line(table.initials, ".", f.Title, " = ", f.mappingFunc, "(row[*col])")
+		if f.MappingFunc != "" {
+			bb.Line(table.Initials, ".", f.Title, " = ", f.MappingFunc, "(row[*col])")
 		} else {
-			bb.Line(table.initials, ".", f.Title, " = row[*col]")
+			bb.Line(table.Initials, ".", f.Title, " = row[*col]")
 		}
 		if i < table.numFields || len(table.ForeignKeys) > 0 {
 			bb.Line("*col++")
@@ -329,7 +329,7 @@ func selectJoinFields(bb *GenBuffer, conf *Config, table *Table, tableAlias *run
 			if t := fkSchema.getTable(fk.RefTable); t != nil {
 				fkRefTable = t.Title
 			}
-			bb.Line(`sql.Fields(",","`, string(*tableAlias), `",`, fkRefTable, `QueryFields(`, table.initials, `.colSet))`)
+			bb.Line(`sql.Fields(",","`, string(*tableAlias), `",`, fkRefTable, `QueryFields(`, table.Initials, `.colSet))`)
 
 			if len(fk.ForeignKeys) > 0 {
 				selectJoinFields(bb, conf, table, tableAlias, fk.ForeignKeys)
@@ -343,8 +343,7 @@ func selectJoinTable(bb *GenBuffer, conf *Config, table *Table, refAlias rune, t
 		*tableAlias++
 		if fk.IsUnique {
 			fkSchema := conf.getSchema(fk.RefSchema)
-			// TODO Join type
-			bb.S(`sql.Append(`, table.initials, ".joinType", `," JOIN `, fkSchema.Name, ".", fk.RefTable, " ", string(*tableAlias), " ON (")
+			bb.S(`sql.Append(`, table.Initials, ".joinType", `," JOIN `, fkSchema.Name, ".", fk.RefTable, " ", string(*tableAlias), " ON (")
 			for i, f := range fk.Fields {
 				if i > 0 {
 					bb.S(" AND ")
@@ -362,16 +361,16 @@ func selectJoinTable(bb *GenBuffer, conf *Config, table *Table, refAlias rune, t
 
 // selectSQL generates general SELECT Statement with optional JOINs based on foreign key definitions
 func selectSQL(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
-	bb.Func(table.storeReceiver, "selectStatement")
+	bb.Func(table.StoreReceiver, "selectStatement")
 	bb.FuncParams()
 	bb.FuncReturn("*SQLStatement")
 
 	tableAlias := 'A'
 	bb.Line("sql := NewSQLStatement()")
 	bb.Line(`sql.Append("SELECT")`)
-	bb.Line(`sql.Fields("","`, string(tableAlias), `", `, table.Title, `QueryFields(`, table.initials, `.colSet))`)
-	if table.numUniqueFKs > 1 {
-		bb.Line("if ", table.initials, ".withJoin {")
+	bb.Line(`sql.Fields("","`, string(tableAlias), `", `, table.Title, `QueryFields(`, table.Initials, `.colSet))`)
+	if table.NumUniqueFKs > 1 {
+		bb.Line("if ", table.Initials, ".withJoin {")
 		{
 			selectJoinFields(bb, conf, table, &tableAlias, table.ForeignKeys)
 			bb.Line(`sql.Append("FROM `, schema.Name, ".", table.Name, ` A")`)
@@ -383,23 +382,23 @@ func selectSQL(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	{
 		bb.Line(`sql.Append("FROM `, schema.Name, ".", table.Name, ` A")`)
 	}
-	if table.numUniqueFKs > 1 {
+	if table.NumUniqueFKs > 1 {
 		bb.Line("}")
 	}
 
-	bb.Line("if ", table.initials, `.where != "" {`)
-	bb.Line(`sql.Append("WHERE", `, table.initials, ".where)")
+	bb.Line("if ", table.Initials, `.where != "" {`)
+	bb.Line(`sql.Append("WHERE", `, table.Initials, ".where)")
 	bb.Line("}")
-	bb.Line("if ", table.initials, `.groupBy != "" {`)
-	bb.Line(`sql.Append("GROUP BY", `, table.initials, ".groupBy)")
+	bb.Line("if ", table.Initials, `.groupBy != "" {`)
+	bb.Line(`sql.Append("GROUP BY", `, table.Initials, ".groupBy)")
 	bb.Line("}")
-	bb.Line("if ", table.initials, `.orderBy != "" {`)
-	bb.Line(`sql.Append("ORDER BY", `, table.initials, ".orderBy)")
+	bb.Line("if ", table.Initials, `.orderBy != "" {`)
+	bb.Line(`sql.Append("ORDER BY", `, table.Initials, ".orderBy)")
 	bb.Line("}")
-	bb.Line("if ", table.initials, `.limit > 0 {`)
-	bb.Line(`sql.AppendRaw("LIMIT ", `, table.initials, ".limit)")
-	bb.Line("if ", table.initials, `.offset > 0 {`)
-	bb.Line(`sql.AppendRaw(",", `, table.initials, ".offset)")
+	bb.Line("if ", table.Initials, `.limit > 0 {`)
+	bb.Line(`sql.AppendRaw("LIMIT ", `, table.Initials, ".limit)")
+	bb.Line("if ", table.Initials, `.offset > 0 {`)
+	bb.Line(`sql.AppendRaw(",", `, table.Initials, ".offset)")
 	bb.Line("}")
 	bb.Line("}")
 	bb.Line("return sql")
@@ -408,14 +407,14 @@ func selectSQL(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 func oneSelect(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// One retrieves a row from '", schema.Name, ".", table.Name, "' as a ", table.Title, " with possible joined data.")
-	bb.Func(table.storeReceiver, "One")
+	bb.Func(table.StoreReceiver, "One")
 	bb.FuncParams("args ...interface{}")
 	bb.FuncReturn("*"+table.Title, "error")
 
 	bb.Line("data := &", table.Title, "{}")
 	bb.NewLine()
 
-	bb.Line("err := ", table.initials, ".one(data, ", table.initials, ".selectStatement(), args...)")
+	bb.Line("err := ", table.Initials, ".one(data, ", table.Initials, ".selectStatement(), args...)")
 	bb.Line("if err != nil {")
 	bb.Line("log.Error().Err(err).Msg(\"query one\")")
 	bb.Line("return nil, err")
@@ -426,25 +425,25 @@ func oneSelect(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 func querySelect(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// Query retrieves many rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.Title, " with possible joined data.")
-	bb.Func(table.storeReceiver, "Query")
+	bb.Func(table.StoreReceiver, "Query")
 	bb.FuncParams("args ...interface{}")
 	bb.FuncReturn("[]*"+table.Title, "error")
 
-	bb.Line("stmt := ", table.initials, ".selectStatement()")
-	bb.Line("return ", table.initials, ".QueryCustom(stmt.Query(), args...)")
+	bb.Line("stmt := ", table.Initials, ".selectStatement()")
+	bb.Line("return ", table.Initials, ".QueryCustom(stmt.Query(), args...)")
 	bb.FuncEnd()
 }
 
 func queryCustom(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.Line("// QueryCustom retrieves many rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.Title, " with possible joined data.")
-	bb.Func(table.storeReceiver, "QueryCustom")
+	bb.Func(table.StoreReceiver, "QueryCustom")
 	bb.FuncParams("stmt string", "args ...interface{}")
 	bb.FuncReturn("[]*"+table.Title, "error")
 
 	bb.Line("dto := &", table.Title, "{}")
 	bb.Line("data := &", table.Title, "Slice{}")
 
-	bb.Line("err := ", table.initials, ".queryCustom(data, dto, stmt, args...)")
+	bb.Line("err := ", table.Initials, ".queryCustom(data, dto, stmt, args...)")
 	bb.Line("if err != nil {")
 	bb.Line(`log.Error().Err(err).Msg("querycustom")`)
 	bb.Line("return nil, err")

@@ -16,7 +16,7 @@ func indexUnique(bb *GenBuffer, conf *Config, schema *Schema, table *Table, inde
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
 	bb.Line("// nolint[goconst]")
-	bb.Func(table.storeReceiver, funcName)
+	bb.Func(table.StoreReceiver, funcName)
 	bb.S("(")
 	for i, f := range index.Fields {
 		if i > 0 {
@@ -28,7 +28,7 @@ func indexUnique(bb *GenBuffer, conf *Config, schema *Schema, table *Table, inde
 	}
 	bb.S(") ")
 	bb.FuncReturn("*"+table.Title, "error")
-	bb.S(table.initials, `.where = "`)
+	bb.S(table.Initials, `.where = "`)
 	for i, f := range index.Fields {
 		if i > 0 {
 			bb.S(" AND ")
@@ -37,7 +37,7 @@ func indexUnique(bb *GenBuffer, conf *Config, schema *Schema, table *Table, inde
 		bb.S(" = ?")
 	}
 	bb.Line(`"`)
-	bb.S("return ", table.initials, ".One(")
+	bb.S("return ", table.Initials, ".One(")
 	for i, f := range index.Fields {
 		if i > 0 {
 			bb.S(", ")
@@ -60,7 +60,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	bb.Line("// ", funcName, " retrieves multiple rows from '", schema.Name, ".", table.Name, "' as a slice of ", table.Title, `.`)
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
-	bb.Func(table.storeReceiver, funcName)
+	bb.Func(table.StoreReceiver, funcName)
 	bb.S("(")
 	for i, f := range index.Fields {
 		if i > 0 {
@@ -104,7 +104,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	bb.S(`)
 	}
 	`)
-	bb.Line("q, err := ", table.initials, `.db.Query(sql.Query(), `)
+	bb.Line("q, err := ", table.Initials, `.db.Query(sql.Query(), `)
 	for i, f := range index.Fields {
 		if i > 0 {
 			bb.S(", ")
@@ -121,7 +121,7 @@ func indexSlice(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index
 	bb.Line("data := ", table.Title, "{}")
 
 	bb.S(`err = q.Scan(`)
-	bb.Line("data.scanFields(", table.initials, ".withJoin)...)")
+	bb.Line("data.scanFields(", table.Initials, ".withJoin)...)")
 	bb.S(`if err != nil {
 			log.Error().Err(err).Msg("scanFields")
 			return nil, err
@@ -163,7 +163,7 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 	bb.Line("//")
 	bb.Line("// Generated from index '", index.Name, "'.")
 	bb.Line("// nolint[goconst]")
-	bb.Func(table.storeReceiver, funcName)
+	bb.Func(table.StoreReceiver, funcName)
 	bb.S("(")
 	for i, f := range index.Fields {
 		if i > 0 {
@@ -175,7 +175,7 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 	}
 	bb.S(") ")
 	bb.FuncReturn(arrayType+"*"+table.Title, "error")
-	bb.S(table.initials, `.where = "`)
+	bb.S(table.Initials, `.where = "`)
 	for i, f := range index.Fields {
 		if i > 0 {
 			bb.S(" AND ")
@@ -185,9 +185,9 @@ func TIndex(bb *GenBuffer, conf *Config, schema *Schema, table *Table, index *In
 	}
 	bb.Line(`"`)
 	if index.IsUnique {
-		bb.S("return ", table.initials, ".One(")
+		bb.S("return ", table.Initials, ".One(")
 	} else {
-		bb.S("return ", table.initials, ".Query(")
+		bb.S("return ", table.Initials, ".Query(")
 	}
 	for i, f := range index.Fields {
 		if i > 0 {

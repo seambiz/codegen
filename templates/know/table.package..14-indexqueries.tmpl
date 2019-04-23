@@ -1,0 +1,6 @@
+{{ $conf := .Conf }}
+{{ $schema := .Schema }}
+{{ $table := .Table }}
+{{ range $index := .Table.Indices }}
+{{ genIndex $conf $schema $table $index }}
+{{ end }}

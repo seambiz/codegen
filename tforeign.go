@@ -26,9 +26,9 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		bb.Func(table.receiver, "Get"+fk.CustomName)
 		bb.FuncParams("db *sql.DB")
 		bb.FuncReturn("error")
-		bb.Line("if ", table.initials, ".", fk.CustomName, " == nil {")
+		bb.Line("if ", table.Initials, ".", fk.CustomName, " == nil {")
 		bb.Line("var err error")
-		bb.S(table.initials, ".", fk.CustomName, ",err = New", fkRefTable, "Store(db).")
+		bb.S(table.Initials, ".", fk.CustomName, ",err = New", fkRefTable, "Store(db).")
 		var funcName string
 		if fk.IsUnique {
 			funcName = "OneBy"
@@ -46,7 +46,7 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 			if i > 0 {
 				bb.S(",")
 			}
-			bb.S(table.initials, ".", table.Fields[table.FieldMapping[fk.Fields[i]]].Title)
+			bb.S(table.Initials, ".", table.Fields[table.FieldMapping[fk.Fields[i]]].Title)
 		}
 		bb.Line(")")
 
@@ -70,7 +70,7 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 			}
 
 			bb.Line("// EagerFetch", fk.CustomName, " eagerly fetches N records from referenced table '", fk.RefTable, "'.")
-			bb.Func(table.storeReceiver, "EagerFetch"+fk.CustomName)
+			bb.Func(table.StoreReceiver, "EagerFetch"+fk.CustomName)
 			bb.FuncParams("data []*" + table.Title)
 			bb.FuncReturn("error")
 
@@ -89,7 +89,7 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 			bb.Line(`}`)
 			bb.Line(`stmt.Append(")")`)
 
-			bb.Line(`details, err := New`, fkRefTable, `Store(`, table.initials, `.db).Where(stmt.Query()).OrderBy("A.`, fk.RefFields[0], " DESC, A.", fk.Fields[0], ` DESC").Query()`)
+			bb.Line(`details, err := New`, fkRefTable, `Store(`, table.Initials, `.db).Where(stmt.Query()).OrderBy("A.`, fk.RefFields[0], " DESC, A.", fk.Fields[0], ` DESC").Query()`)
 			bb.Line(`if err != nil {`)
 			bb.Line(`log.Error().Err(err).Msg("fetch details")`)
 			bb.Line(`return err`)

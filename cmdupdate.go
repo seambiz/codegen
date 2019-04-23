@@ -157,7 +157,14 @@ func Update(conf *Config) ([]byte, error) {
 
 			for i := range foreignKeys {
 				fk := getForeignKey(table, foreignKeys[i].ConstraintName)
-				mergo.MergeWithOverwrite(fk, foreignKeys[i])
+				fk.Fields = fk.Fields[:0]
+				fk.Fields = append(fk.Fields, foreignKeys[i].ColumnName)
+				fk.RefFields = fk.RefFields[:0]
+				fk.RefFields = append(fk.RefFields, foreignKeys[i].ReferencedColumnName)
+				fk.RefTable = foreignKeys[i].ReferencedTableName
+				fk.RefSchema = foreignKeys[i].ReferencedTableSchema
+				fk.IsUnique = true // TODO is always true?
+				fk.Name = foreignKeys[i].ConstraintName
 			}
 
 			indices, err := models.NewStatisticsStore(conn.DB).
