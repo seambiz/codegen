@@ -3,11 +3,21 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:00b1f5d68fbb618707b8ba884804545460ce4534c2e5119aef57d3d820f88058"
+  digest = "1:ed57bba3e46914566a5975a39155b8c95c704412e1185a4f0e17fba2a267a34c"
+  name = "bitbucket.org/seambiz/kanban"
+  packages = ["convert"]
+  pruneopts = "UT"
+  revision = "d5c4c71439e5ecec29670e0da1a89b8a66ca9ce3"
+
+[[projects]]
+  branch = "master"
+  digest = "1:aaef8451dbe50923fc5117322a6ac261eb6c591df29ca1d01c7534b452a1f215"
   name = "bitbucket.org/seambiz/seambiz"
   packages = [
+    "buffer",
     "logging",
     "sdb",
+    "stime",
   ]
   pruneopts = "UT"
   revision = "5dff413a49665aae2d2007d6f97101823fadf35c"
@@ -21,12 +31,44 @@
   version = "v1.3.0"
 
 [[projects]]
+  digest = "1:3b10c6fd33854dc41de2cf78b7bae105da94c2789b6fa5b9ac9e593ea43484ac"
+  name = "github.com/Masterminds/goutils"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "41ac8693c5c10a92ea1ff5ac3a7f95646f6123b0"
+  version = "v1.1.0"
+
+[[projects]]
+  digest = "1:55388fd080150b9a072912f97b1f5891eb0b50df43401f8b75fb4273d3fec9fc"
+  name = "github.com/Masterminds/semver"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "c7af12943936e8c39859482e61f0574c2fd7fc75"
+  version = "v1.4.2"
+
+[[projects]]
+  digest = "1:693e7ef1b6178cd312132c156fc6d6065c77a0d1f02cc73beecae8b080ec13d7"
+  name = "github.com/Masterminds/sprig"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "9f8fceff796fb9f4e992cd2bece016be0121ab74"
+  version = "2.19.0"
+
+[[projects]]
   digest = "1:72fff13e105db55c6d4b1acb69216b88d9d3009433f43d7df3488f842b0b6929"
   name = "github.com/RoaringBitmap/roaring"
   packages = ["."]
   pruneopts = "UT"
   revision = "3d677d3262197ee558b85029301eb69b8239f91a"
   version = "v0.4.16"
+
+[[projects]]
+  branch = "master"
+  digest = "1:b8b47d9dab7297370eb2e0b4686e8182945a40816f16fcd2fe63fe0960b71398"
+  name = "github.com/danverbraganza/varcaser"
+  packages = ["varcaser"]
+  pruneopts = "UT"
+  revision = "e3fb03ee5b4caed169bc1e32b81c912e960917c3"
 
 [[projects]]
   digest = "1:ca82a3b99694824c627573c2a76d0e49719b4a9c02d1d85a2ac91f1c1f52ab9b"
@@ -61,12 +103,36 @@
   revision = "2e65f85255dbc3072edf28d6b5b8efc472979f5a"
 
 [[projects]]
+  digest = "1:582b704bebaa06b48c29b0cec224a6058a09c86883aaddabde889cd1a5f73e1b"
+  name = "github.com/google/uuid"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "0cd6bf5da1e1c83f8b45653022c74f71af0538a4"
+  version = "v1.1.1"
+
+[[projects]]
+  digest = "1:f9a5e090336881be43cfc1cf468330c1bdd60abdc9dd194e0b1ab69f4b94dd7c"
+  name = "github.com/huandu/xstrings"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "f02667b379e2fb5916c3cda2cf31e0eb885d79f8"
+  version = "v1.2.0"
+
+[[projects]]
   digest = "1:8eb1de8112c9924d59bf1d3e5c26f5eaa2bfc2a5fcbb92dc1c2e4546d695f277"
   name = "github.com/imdario/mergo"
   packages = ["."]
   pruneopts = "UT"
   revision = "9f23e2d6bd2a77f959b2bf6acdbefd708a83a4a4"
   version = "v0.3.6"
+
+[[projects]]
+  digest = "1:20bfc9287db8b7fb8f12d31468dab57187fd7e320e76d73d1865b7d1327e8424"
+  name = "github.com/jinzhu/now"
+  packages = ["."]
+  pruneopts = "UT"
+  revision = "8ec929ed50c3ac25ce77ba4486e1f277c552c591"
+  version = "v1.0.0"
 
 [[projects]]
   branch = "master"
@@ -216,12 +282,46 @@
   version = "v1.1.0"
 
 [[projects]]
+  digest = "1:676160e6a4722b08e0e26b11521d575c2cb2b6f0c679e1ee6178c5d8dee51e5e"
+  name = "go.uber.org/zap"
+  packages = [
+    ".",
+    "buffer",
+    "internal/bufferpool",
+    "internal/color",
+    "internal/exit",
+    "zapcore",
+  ]
+  pruneopts = "UT"
+  revision = "27376062155ad36be76b0f12cf1572a221d3a48c"
+  version = "v1.10.0"
+
+[[projects]]
+  branch = "master"
+  digest = "1:39628c44b67004cdd7ff753f6490588b87defe2569413378719d7e4f92df352d"
+  name = "golang.org/x/crypto"
+  packages = [
+    "pbkdf2",
+    "scrypt",
+  ]
+  pruneopts = "UT"
+  revision = "e1dfcc566284e143ba8f9afbb3fa563f2a0d212b"
+
+[[projects]]
   branch = "master"
   digest = "1:8392490b249a3602a13813be12324d3b16eca044ae185ff32cdd9e267706e208"
   name = "golang.org/x/sys"
   packages = ["cpu"]
   pruneopts = "UT"
   revision = "d0be0721c37eeb5299f245a996a483160fc36940"
+
+[[projects]]
+  digest = "1:8f0018d9ecb4c23a8d5e76948be4a2957f84ed2d96b71837289b49dc00b72113"
+  name = "golang.org/x/text"
+  packages = ["transform"]
+  pruneopts = "UT"
+  revision = "342b2e1fbaa52c93f31447ad2c6abc048c63e475"
+  version = "v0.3.2"
 
 [[projects]]
   digest = "1:c25289f43ac4a68d88b02245742347c94f1e108c534dda442188015ff80669b3"
@@ -243,9 +343,13 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
+    "bitbucket.org/seambiz/kanban/convert",
+    "bitbucket.org/seambiz/seambiz/buffer",
     "bitbucket.org/seambiz/seambiz/sdb",
     "github.com/DATA-DOG/go-sqlmock",
+    "github.com/Masterminds/sprig",
     "github.com/RoaringBitmap/roaring",
+    "github.com/danverbraganza/varcaser/varcaser",
     "github.com/go-sql-driver/mysql",
     "github.com/imdario/mergo",
     "github.com/rs/zerolog",
