@@ -12,6 +12,7 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+
 	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/valyala/bytebufferpool"
 )
@@ -301,164 +302,200 @@ var commonInitialisms = []string{
 	"XSS",
 }
 
-// Generate main call to start generation
-func Generate(conf *Config) {
-	tableNr := 0
+/*
+ Parse the config and add all filtered templates that should be processed to each schema and table.
+ This way the generation code will be much simpler.
+ And this function will be easier to test.
+*/
+func generateTemplatesConfig(conf *Config) {
+
+	// not the most performant approach, as templates will be rebuilt for each table, but much more readable than the old code
 	for _, schema := range conf.Schemas {
 
-		tableNames := make([]string, len(schema.Tables))
-		for i := range schema.Tables {
-			tableNames[i] = schema.Tables[i].Name
+		schema.preparedTemplatefiles = make(map[string][]string)
+		for _, t := range schema.Tables {
+			t.preparedTemplatefiles = make(map[string][]string)
 		}
-		tablesCase, err := varcaser.Detect(tableNames)
+
+		files, err := ioutil.ReadDir(schema.TemplateFolder)
 		if err != nil {
-			tablesCase = varcaser.LowerSnakeCase
+			panic(err)
 		}
 
-		for _, table := range schema.Tables {
-			if !table.Generate {
-				continue
-			}
-			table.id = tableNr
-			tableNr++
-
-			// generate helper variables
-			// parts := strings.Split(table.Name, "_")
-			// for i := range parts {
-			// 	if strings.ToLower(parts[i]) == "id" {
-			// 		parts[i] = "ID"
-			// 	} else {
-			// 		parts[i] = strings.Title(parts[i])
-			// 	}
-			// }
-			table.Title = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(table.Name)
-			table.lower = lowerFirst(table.Title)
-			table.Initials = Initials(table.Name)
-			table.Initials += Initials(table.Name[1:])
-			table.Initials = strings.ToLower(table.Initials)
-			table.receiver = table.Initials + " *" + table.Title
-			table.store = table.Title + "Store"
-			table.StoreReceiver = table.Initials + " *" + table.store
-
-			fieldNames := make([]string, len(table.Fields))
-			for i := range table.Fields {
-				fieldNames[i] = table.Fields[i].Name
-			}
-			fieldsCase, err := varcaser.Detect(fieldNames)
-			if err != nil {
-				fieldsCase = varcaser.LowerSnakeCase
+		// first check all templates, that do not need to be concatenated
+		for _, f := range files {
+			segments := strings.Split(f.Name(), ".")
+			if len(segments) != 4 && len(segments) != 5 {
+				panic("filename segment length != 4,5")
 			}
 
-			// fill mapping for easy access to field properties
-			table.FieldMapping = make(map[string]int)
-			for i := range table.Fields {
-				// if table.Fields[i].Name == "id" {
-				// 	table.Fields[i].Title = "ID"
-				// } else {
-				// 	parts := strings.Split(table.Fields[i].Name, "_")
-				// 	for i := range parts {
-				// 		if strings.ToLower(parts[i]) == "id" {
-				// 			parts[i] = "ID"
-				// 		} else {
-				// 			parts[i] = strings.Title(parts[i])
-				// 		}
-				// 	}
-				// 	table.Fields[i].Title = strings.Join(parts, "")
-				// }
+			if len(segments) == 4 {
 
-				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
+				switch segments[0] {
+				case "once":
+					// 1. add all simple "once" templates to the schema
+					mapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
+					schema.preparedTemplatefiles[mapKey] = append(schema.preparedTemplatefiles[mapKey], f.Name())
 
-				// uppercase abbreviations
-				for _, substring := range commonInitialisms {
-					if strings.HasSuffix(strings.ToUpper(table.Fields[i].Title), substring) ||
-						strings.HasPrefix(strings.ToUpper(table.Fields[i].Title), substring) {
-						index := strings.Index(strings.ToUpper(table.Fields[i].Title), substring)
-						stemp := table.Fields[i].Title[index : index+len(substring)]
-						table.Fields[i].Title = strings.Replace(table.Fields[i].Title, stemp, substring, 1)
-						break
-					}
-				}
-
-				table.Fields[i].ParamName = strings.ToLower(table.Fields[i].Title)
-				table.FieldMapping[table.Fields[i].Name] = i
-				if table.Fields[i].IsPrimaryKey {
-					table.pkFields = append(table.pkFields, table.Fields[i])
-				} else {
-					table.otherFields = append(table.otherFields, table.Fields[i])
-				}
-				typename, ok := GoTypeMapping[table.Fields[i].DBType]
-				if !ok {
-					panic(table.Fields[i].Name)
-				}
-				/*
-					if table.Fields[i].IsNullable {
-						//fmt.Println("NullType", table.Name, table.Fields[i].Title)
-						nulltype, ok := goIsNullMapping[typename]
-						if !ok {
-							panic(table.Fields[i].Name)
+				case "table":
+					// 2. add all simple "table" templates to the tables
+					for _, t := range schema.Tables {
+						if !t.Generate {
+							continue
 						}
-						typename = nulltype
+						mapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
+						t.preparedTemplatefiles[mapKey] = append(t.preparedTemplatefiles[mapKey], f.Name())
 					}
-				*/
-				table.Fields[i].GoType = typename
-				zero, ok := goZeroMapping[typename]
-				if !ok {
-					panic(typename)
 				}
-				table.Fields[i].goZero = zero
-
-				jsonFunc, ok := goJSONMapping[typename]
-				if !ok {
-					panic(typename)
-				}
-				table.Fields[i].jsonFunc = jsonFunc
-
-				MappingFunc, ok := goDbMappingFunc[typename]
-				if !ok {
-					panic(typename)
-				}
-				table.Fields[i].MappingFunc = MappingFunc
-
-				table.numFields = len(table.Fields)
-
 			}
 		}
 
-		for _, table := range schema.Tables {
-			if !table.Generate {
+		// remove all templates, that were processed above
+		for i := 0; i < len(files); i++ {
+			segments := strings.Split(files[i].Name(), ".")
+			if len(segments) != 5 {
+				files = append(files[:i], files[i+1:]...)
+				i--
+			}
+		}
+
+		// add all "once" files to be concatenated
+		for _, f := range files {
+			segments := strings.Split(f.Name(), ".")
+			if len(segments) != 5 {
+				panic("wrong []segement length")
+			}
+
+			currentMapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
+			if segments[0] == "once" {
+				schema.preparedTemplatefiles[currentMapKey] = append(schema.preparedTemplatefiles[currentMapKey], f.Name())
+			}
+		}
+
+		// generate general template files list for table
+		templateFiles := []string{}
+		for _, f := range files {
+			segments := strings.Split(f.Name(), ".")
+			if len(segments) != 5 {
+				panic("wrong []segement length")
+			}
+
+			if segments[0] == "table" {
+				templateFiles = append(templateFiles, f.Name())
+			}
+		}
+
+		// add specific or global templates to each table
+		for _, t := range schema.Tables {
+			if !t.Generate {
 				continue
 			}
 
-			fieldNames := make([]string, len(table.Fields))
-			for i := range table.Fields {
-				fieldNames[i] = table.Fields[i].Name
-			}
-			fieldsCase, err := varcaser.Detect(fieldNames)
-			if err != nil {
-				fieldsCase = varcaser.LowerSnakeCase
+			// choose files to process
+			tempFiles := templateFiles
+			if len(t.TemplateFiles) > 0 {
+				tempFiles = t.TemplateFiles
 			}
 
-			for k, fk := range table.ForeignKeys {
-				if fk.IsUnique {
-					table.NumUniqueFKs += 1
+			for _, tFile := range tempFiles {
+				segments := strings.Split(tFile, ".")
+				if len(segments) != 5 {
+					panic("wrong []segement length")
 				}
 
-				fkRefTable := strings.Title(fk.RefTable)
-				fkSchema := conf.getSchema(fk.RefSchema)
-				if t := fkSchema.getTable(fk.RefTable); t != nil {
-					fkRefTable = t.Title
-				}
-				// table.ForeignKeys[k].RefTable = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(fkRefTable)
-				table.ForeignKeys[k].RefTableTitle = fkRefTable
-				if fk.CustomName == "" {
-					table.ForeignKeys[k].CustomName = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
-				}
-
+				currentMapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
+				t.preparedTemplatefiles[currentMapKey] = append(t.preparedTemplatefiles[currentMapKey], tFile)
 			}
 		}
 	}
+/*
+DEBUG
+	for _,s := range conf.Schemas {
+		fmt.Println(s.Name, s.preparedTemplatefiles)
 
-	if conf.TemplateFolder != "" {
+		for _,t := range s.Tables {
+			fmt.Println(t.Name, t.preparedTemplatefiles)
+		}
+
+	}
+	*/
+}
+
+func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string, templateFiles map[string][]string) {
+	for key, fileNames := range templateFiles {
+		var buf bytes.Buffer
+		templateContents := []byte("")
+
+		for _, tFile := range fileNames {
+			contents, err := ioutil.ReadFile(schema.TemplateFolder + tFile)
+			if err != nil {
+				panic(err)
+			}
+			templateContents = append(templateContents, contents...)
+		}
+
+		tmpl, err := template.New(key).Funcs(getFuncMap()).Parse(string(templateContents))
+		if err != nil {
+			panic(err)
+		}
+
+		type GenData struct {
+			Conf   *Config
+			Schema *Schema
+			Table  *Table
+		}
+
+		d := GenData{}
+		d.Conf = conf
+		d.Schema = schema
+		d.Table = table
+
+		err = tmpl.Execute(&buf, d)
+		if err != nil {
+			panic(err)
+		}
+
+		segments := strings.Split(key, ".")
+		switch segments[1] {
+		case "package":
+			writeToCodgenFile(buf, conf,fileprefix + strings.Title(segments[2]), conf.Package)
+		case "root":
+			writeToCodgenFile(buf, conf, fileprefix + strings.Title(segments[2]), "")
+		}
+
+	}
+
+}
+
+func generateCode(conf *Config) {
+
+	for _, schema := range conf.Schemas {
+
+		generateFile(conf, schema, nil, schema.Prefix, schema.preparedTemplatefiles)
+
+
+		for _, table := range schema.Tables {
+			generateFile(conf, schema, table, schema.Prefix + table.Name, table.preparedTemplatefiles)
+		}
+
+	}
+
+	execCommand("goimports -w " + conf.DirOut)
+	if conf.LintPackage != "" {
+		execCommand("go vet " + conf.LintPackage)
+	}
+	if conf.MetaLinter != "" {
+		execCommand(conf.MetaLinter)
+	}
+}
+
+// Generate main call to start generation
+func Generate(conf *Config) {
+	prepareSchemaConfig(conf)
+	generateTemplatesConfig(conf)
+	generateCode(conf)
+
+/*	if conf.TemplateFolder != "" {
 		files, err := ioutil.ReadDir(conf.TemplateFolder)
 		if err != nil {
 			panic(err)
@@ -738,7 +775,175 @@ func Generate(conf *Config) {
 	if conf.MetaLinter != "" {
 		execCommand(conf.MetaLinter)
 	}
+	*/
 }
+
+func prepareSchemaConfig(conf *Config) {
+	tableNr := 0
+	for _, schema := range conf.Schemas {
+		prefix := conf.Prefix
+		if schema.Prefix != "" {
+			prefix = schema.Prefix
+		}
+
+		// which templates should be used
+		if schema.TemplateFolder == "" {
+			schema.TemplateFolder = conf.TemplateFolder
+		}
+
+		tableNames := make([]string, len(schema.Tables))
+		for i := range schema.Tables {
+			tableNames[i] = schema.Tables[i].Name
+		}
+		tablesCase, err := varcaser.Detect(tableNames)
+		if err != nil {
+			tablesCase = varcaser.LowerSnakeCase
+		}
+
+		for _, table := range schema.Tables {
+			if !table.Generate {
+				continue
+			}
+			table.id = tableNr
+			tableNr++
+
+			// generate helper variables
+			// parts := strings.Split(table.Name, "_")
+			// for i := range parts {
+			// 	if strings.ToLower(parts[i]) == "id" {
+			// 		parts[i] = "ID"
+			// 	} else {
+			// 		parts[i] = strings.Title(parts[i])
+			// 	}
+			// }
+			table.Title = prefix + varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(table.Name)
+			table.lower = lowerFirst(table.Title)
+			table.Initials = Initials(table.Name)
+			table.Initials += Initials(table.Name[1:])
+			table.Initials = strings.ToLower(table.Initials)
+			table.receiver = table.Initials + " *" + table.Title
+			table.store = table.Title + "Store"
+			table.StoreReceiver = table.Initials + " *" + table.store
+
+			fieldNames := make([]string, len(table.Fields))
+			for i := range table.Fields {
+				fieldNames[i] = table.Fields[i].Name
+			}
+			fieldsCase, err := varcaser.Detect(fieldNames)
+			if err != nil {
+				fieldsCase = varcaser.LowerSnakeCase
+			}
+
+			// fill mapping for easy access to field properties
+			table.FieldMapping = make(map[string]int)
+			for i := range table.Fields {
+				// if table.Fields[i].Name == "id" {
+				// 	table.Fields[i].Title = "ID"
+				// } else {
+				// 	parts := strings.Split(table.Fields[i].Name, "_")
+				// 	for i := range parts {
+				// 		if strings.ToLower(parts[i]) == "id" {
+				// 			parts[i] = "ID"
+				// 		} else {
+				// 			parts[i] = strings.Title(parts[i])
+				// 		}
+				// 	}
+				// 	table.Fields[i].Title = strings.Join(parts, "")
+				// }
+
+				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
+
+				// uppercase abbreviations
+				for _, substring := range commonInitialisms {
+					if strings.HasSuffix(strings.ToUpper(table.Fields[i].Title), substring) ||
+						strings.HasPrefix(strings.ToUpper(table.Fields[i].Title), substring) {
+						index := strings.Index(strings.ToUpper(table.Fields[i].Title), substring)
+						stemp := table.Fields[i].Title[index : index+len(substring)]
+						table.Fields[i].Title = strings.Replace(table.Fields[i].Title, stemp, substring, 1)
+						break
+					}
+				}
+
+				table.Fields[i].ParamName = strings.ToLower(table.Fields[i].Title)
+				table.FieldMapping[table.Fields[i].Name] = i
+				if table.Fields[i].IsPrimaryKey {
+					table.pkFields = append(table.pkFields, table.Fields[i])
+				} else {
+					table.otherFields = append(table.otherFields, table.Fields[i])
+				}
+				typename, ok := GoTypeMapping[table.Fields[i].DBType]
+				if !ok {
+					panic(table.Fields[i].Name)
+				}
+				/*
+					if table.Fields[i].IsNullable {
+						//fmt.Println("NullType", table.Name, table.Fields[i].Title)
+						nulltype, ok := goIsNullMapping[typename]
+						if !ok {
+							panic(table.Fields[i].Name)
+						}
+						typename = nulltype
+					}
+				*/
+				table.Fields[i].GoType = typename
+				zero, ok := goZeroMapping[typename]
+				if !ok {
+					panic(typename)
+				}
+				table.Fields[i].goZero = zero
+
+				jsonFunc, ok := goJSONMapping[typename]
+				if !ok {
+					panic(typename)
+				}
+				table.Fields[i].jsonFunc = jsonFunc
+
+				MappingFunc, ok := goDbMappingFunc[typename]
+				if !ok {
+					panic(typename)
+				}
+				table.Fields[i].MappingFunc = MappingFunc
+
+				table.numFields = len(table.Fields)
+
+			}
+		}
+
+		for _, table := range schema.Tables {
+			if !table.Generate {
+				continue
+			}
+
+			fieldNames := make([]string, len(table.Fields))
+			for i := range table.Fields {
+				fieldNames[i] = table.Fields[i].Name
+			}
+			fieldsCase, err := varcaser.Detect(fieldNames)
+			if err != nil {
+				fieldsCase = varcaser.LowerSnakeCase
+			}
+
+			for k, fk := range table.ForeignKeys {
+				if fk.IsUnique {
+					table.NumUniqueFKs += 1
+				}
+
+				fkRefTable := strings.Title(fk.RefTable)
+				fkSchema := conf.getSchema(fk.RefSchema)
+				if t := fkSchema.getTable(fk.RefTable); t != nil {
+					fkRefTable = t.Title
+				}
+				// table.ForeignKeys[k].RefTable = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(fkRefTable)
+				table.ForeignKeys[k].RefTableTitle = fkRefTable
+				if fk.CustomName == "" {
+					table.ForeignKeys[k].CustomName = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
+				}
+
+			}
+		}
+	}
+}
+
 func writeBufferToCodgenFile(bb *GenBuffer, conf *Config, filename string) {
 	fileName := filepath.Join(conf.DirOut, fmt.Sprintf(conf.FilePattern, strings.ToLower(strings.Replace(filename, "_", "", -1))))
 	fmt.Println("Writing to", fileName)

@@ -11,13 +11,6 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-/*
-
-TODO: update with bitset to allow custom updates with partial fields
-
-
-*/
-
 func main() {
 	// Subcommands
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)

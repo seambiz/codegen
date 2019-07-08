@@ -84,7 +84,7 @@ func selectJoinTableMultiTenant(bb *GenBuffer, conf *Config, table *Table, refAl
 		*tableAlias++
 		if fk.IsUnique {
 			fkSchema := conf.getSchema(fk.RefSchema)
-			if fkSchema.Name == "now00001" {
+			if fkSchema.Name == "now00002" {
 				bb.S(`sql.AppendRaw(`, table.Initials, ".joinType", `," JOIN ", fmt.Sprintf("now%05d", `, table.Initials, `.companyID), "`, ".", fk.RefTable, " ", string(*tableAlias), " ON (")
 			} else {
 				bb.S(`sql.Append(`, table.Initials, ".joinType", `," JOIN `, fkSchema.Name, ".", fk.RefTable, " ", string(*tableAlias), " ON (")

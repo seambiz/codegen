@@ -10,6 +10,7 @@ type Config struct {
 	FilePattern    string   `json:",omitempty"`
 	Templates      []string `json:",omitempty"`
 	TemplateFolder string   `json:",omitempty"`
+	Prefix         string   `json:",omitempty"`
 
 	Schemas  []*Schema `json:",omitempty"`
 	Database db
@@ -22,8 +23,12 @@ type db struct {
 
 // Schema single schema type
 type Schema struct {
-	Name   string   `json:",omitempty"`
-	Tables []*Table `json:",omitempty"`
+	Name           string   `json:",omitempty"`
+	Tables         []*Table `json:",omitempty"`
+	TemplateFolder string   `json:",omitempty"`
+	Prefix         string   `json:",omitempty"`
+
+	preparedTemplatefiles map[string][]string
 }
 
 func (c *Config) getSchema(schema string) *Schema {
@@ -59,18 +64,19 @@ type Table struct {
 	TemplateFiles []string `json:",omitempty"`
 
 	// generated Contents
-	Title         string         `json:"-"`
-	lower         string         `json:"-"`
-	receiver      string         `json:"-"`
-	Initials      string         `json:"-"`
-	store         string         `json:"-"`
-	StoreReceiver string         `json:"-"`
-	FieldMapping  map[string]int `json:"-"`
-	pkFields      []*Field       `json:"-"`
-	otherFields   []*Field       `json:"-"`
-	id            int            `json:"-"`
-	numFields     int            `json:"-"`
-	NumUniqueFKs  int            `json:"-"`
+	Title                 string `json:"-"`
+	lower                 string
+	receiver              string
+	Initials              string `json:"-"`
+	store                 string
+	StoreReceiver         string         `json:"-"`
+	FieldMapping          map[string]int `json:"-"`
+	pkFields              []*Field
+	otherFields           []*Field
+	id                    int
+	numFields             int
+	NumUniqueFKs          int
+	preparedTemplatefiles map[string][]string
 }
 
 // ForeignKey type
