@@ -10,26 +10,28 @@ It uses 2 steps.
    - This file may be changed to use some advanced features, which are not fully automagically possible with MySQL inspection.
 2. Read the config file and generate the code.
 
-# Example for project know-api
+# Usage for project know-api
 
-platform
+platform and tenant settings have been merged into one config file.
+tool has been refactored to use relative paths.
+
+## Install codegen
 
 ```
 cd cmd/codegen
-go build
- ./codegen -config ~/gospace/know-api/codegenplatform.json update
-
- # generation will not work at the moment (see Attention below)
- # ./codegen -config ~/gospace/know-api/codegenplatform.json gen
+go install
 ```
 
-instance / tenant
+## Update from Database
 
 ```
- ./codegen -config ~/gospace/know-api/codegen.json update
+# goto know-api folder
+codegen update
 ```
 
-## Attention
+## Generate code
 
-The two config files are not up to date. Maybe even some codegen changes have to be made. Currently paths are absolute and refer to an old location on my machine.
-We need to switch to relative paths and update the files respectively.
+```
+# goto know-api folder
+codegen gen
+```
