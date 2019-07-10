@@ -111,7 +111,7 @@ func Update(conf *Config) ([]byte, error) {
 	for _, schemaName := range conf.Database.Schemas {
 		schema := getSchema(conf, schemaName)
 
-		tables, err := models.NewTablesStore(conn.DB).Where("table_schema = ? AND table_type IN ('base table', 'system view')").Query(schema.Name)
+		tables, err := models.NewTablesStore(conn.DB).Where("UPPER(table_schema) = UPPER(?) AND table_type IN (UPPER('base table'), UPPER('system view'))").Query(schema.Name)
 		if err != nil {
 			panic(err)
 		}
@@ -130,8 +130,8 @@ func Update(conf *Config) ([]byte, error) {
 			sql.Append("FROM")
 			sql.Append("information_schema.columns")
 			sql.Append("WHERE")
-			sql.Append("table_schema = ?")
-			sql.Append("AND table_name = ?")
+			sql.Append("UPPER(table_schema) = UPPER(?)")
+			sql.Append("AND UPPER(table_name) = UPPER(?)")
 			sql.Append("ORDER BY ordinal_position")
 
 			var fields []Field
@@ -148,7 +148,7 @@ func Update(conf *Config) ([]byte, error) {
 				mergo.MergeWithOverwrite(f, fields[i])
 			}
 
-			foreignKeys, err := models.NewKeyColumnUsageStore(conn.DB).Where("table_schema = ? AND referenced_table_schema = ? AND table_name = ?").
+			foreignKeys, err := models.NewKeyColumnUsageStore(conn.DB).Where("UPPER(table_schema) = UPPER(?) AND UPPER(referenced_table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?)").
 				OrderBy("constraint_name, ordinal_position").
 				Query(schema.Name, schema.Name, table.Name)
 			if err != nil {
@@ -169,7 +169,7 @@ func Update(conf *Config) ([]byte, error) {
 
 			indices, err := models.NewStatisticsStore(conn.DB).
 				Columns(models.StatisticsIndexName).
-				Where("table_schema = ? AND table_name = ?").
+				Where("UPPER(table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?)").
 				GroupBy("index_name").
 				Query(schema.Name, table.Name)
 			if err != nil {
@@ -183,9 +183,9 @@ func Update(conf *Config) ([]byte, error) {
 				sql.Append("  column_name AS colname,")
 				sql.Append("  IF (non_unique = 0, TRUE, FALSE) as isunique")
 				sql.Append("FROM information_schema.statistics")
-				sql.Append("WHERE table_schema = ?")
-				sql.Append("  AND table_name = ?")
-				sql.Append("  AND index_name = ?")
+				sql.Append("WHERE UPPER(table_schema) = UPPER(?)")
+				sql.Append("  AND UPPER(table_name) = UPPER(?)")
+				sql.Append("  AND UPPER(index_name) = UPPER(?)")
 				sql.Append("ORDER BY seq_in_index")
 
 				var index []indexField
