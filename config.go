@@ -66,7 +66,7 @@ type Table struct {
 	// generated Contents
 	Title                 string `json:"-"`
 	lower                 string
-	receiver              string
+	Receiver              string `json:"-"`
 	Initials              string `json:"-"`
 	store                 string
 	StoreReceiver         string         `json:"-"`
@@ -91,6 +91,12 @@ type ForeignKey struct {
 	CustomName    string   `json:",omitempty"`
 
 	ForeignKeys []*ForeignKey `json:",omitempty"`
+
+	// generated Contents
+	GenTableName string `json:"-"`
+	GenTable     *Table `json:"-"`
+	GenName      string `json:"-"`
+	GenFuncName  string `json:"-"`
 }
 
 // Field type

@@ -23,7 +23,7 @@ func TForeign(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 		}
 
 		bb.Line("// Get", fk.CustomName, " fetches a record from referenced table '", fk.RefTable, "'.")
-		bb.Func(table.receiver, "Get"+fk.CustomName)
+		bb.Func(table.Receiver, "Get"+fk.CustomName)
 		bb.FuncParams("db *sql.DB")
 		bb.FuncReturn("error")
 		bb.Line("if ", table.Initials, ".", fk.CustomName, " == nil {")

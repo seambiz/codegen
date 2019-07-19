@@ -98,7 +98,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.StructEnd()
 
 	bb.Line("// new implements DTO.new")
-	bb.Func(table.receiver, "new")
+	bb.Func(table.Receiver, "new")
 	bb.FuncParams()
 	bb.FuncReturn("DTO")
 	bb.Line("return &", table.Title, "{}")
@@ -110,7 +110,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.StructEnd()
 
 	bb.Line("// append implements DTOSlice.append")
-	bb.Func(table.receiver+"Slice", "append")
+	bb.Func(table.Receiver+"Slice", "append")
 	bb.FuncParams("d DTO")
 	bb.FuncReturn("")
 	bb.Line(table.Initials, ".data = append(", table.Initials, ".data, d.(*", table.Title, "))")
@@ -128,7 +128,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	bb.FuncEnd()
 
 	bb.Line("// IsEmpty checks if primary key fields are zero.")
-	bb.Func(table.receiver, "IsEmpty")
+	bb.Func(table.Receiver, "IsEmpty")
 	bb.FuncParams()
 	bb.FuncReturn("bool")
 	if len(table.pkFields) == 1 {
@@ -145,7 +145,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 
 	if len(table.ForeignKeys) > 0 {
 		bb.Line("// checkJoinFields checks if join was successful and if not resets pointers to nil.")
-		bb.Func(table.receiver, "checkJoinFields")
+		bb.Func(table.Receiver, "checkJoinFields")
 		bb.FuncParams()
 		bb.FuncReturn()
 
@@ -230,7 +230,7 @@ func TType(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	/*
 	   wird jetzt mittels bind gemacht
 	   	// func fields
-	   	bb.Func(table.receiver, "scanFields")
+	   	bb.Func(table.Receiver, "scanFields")
 	   	bb.FuncParams("withJoin bool")
 	   	bb.FuncReturn("[]interface{}")
 
@@ -296,7 +296,7 @@ func bindJoin(bb *GenBuffer, conf *Config, table *Table, fks []*ForeignKey) {
 func bind(bb *GenBuffer, conf *Config, schema *Schema, table *Table) {
 	// func fields
 	bb.Line("// nolint[gocyclo]")
-	bb.Func(table.receiver, "bind")
+	bb.Func(table.Receiver, "bind")
 	bb.FuncParams("row []sql.RawBytes", "withJoin bool", "colSet *big.Int", "col *int")
 	bb.FuncReturn()
 

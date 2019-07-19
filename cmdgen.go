@@ -12,7 +12,6 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-
 	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/valyala/bytebufferpool"
 )
@@ -51,11 +50,11 @@ func (g *GenBuffer) S(ss ...string) {
 }
 
 // Func shortcut for writing string to buffer and check error
-func (g *GenBuffer) Func(receiver, funcName string) {
+func (g *GenBuffer) Func(Receiver, funcName string) {
 	g.S("func ")
-	if receiver != "" {
+	if Receiver != "" {
 		g.S("(")
-		g.S(receiver)
+		g.S(Receiver)
 		g.S(")")
 	}
 	g.S(" ")
@@ -408,16 +407,16 @@ func generateTemplatesConfig(conf *Config) {
 			}
 		}
 	}
-/*
-DEBUG
-	for _,s := range conf.Schemas {
-		fmt.Println(s.Name, s.preparedTemplatefiles)
+	/*
+	   DEBUG
+	   	for _,s := range conf.Schemas {
+	   		fmt.Println(s.Name, s.preparedTemplatefiles)
 
-		for _,t := range s.Tables {
-			fmt.Println(t.Name, t.preparedTemplatefiles)
-		}
+	   		for _,t := range s.Tables {
+	   			fmt.Println(t.Name, t.preparedTemplatefiles)
+	   		}
 
-	}
+	   	}
 	*/
 }
 
@@ -458,9 +457,9 @@ func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string,
 		segments := strings.Split(key, ".")
 		switch segments[1] {
 		case "package":
-			writeToCodgenFile(buf, conf,fileprefix + strings.Title(segments[2]), conf.Package)
+			writeToCodgenFile(buf, conf, fileprefix+strings.Title(segments[2]), conf.Package)
 		case "root":
-			writeToCodgenFile(buf, conf, fileprefix + strings.Title(segments[2]), "")
+			writeToCodgenFile(buf, conf, fileprefix+strings.Title(segments[2]), "")
 		}
 
 	}
@@ -473,9 +472,8 @@ func generateCode(conf *Config) {
 
 		generateFile(conf, schema, nil, schema.Prefix, schema.preparedTemplatefiles)
 
-
 		for _, table := range schema.Tables {
-			generateFile(conf, schema, table, schema.Prefix + table.Name, table.preparedTemplatefiles)
+			generateFile(conf, schema, table, schema.Prefix+table.Name, table.preparedTemplatefiles)
 		}
 
 	}
@@ -495,286 +493,286 @@ func Generate(conf *Config) {
 	generateTemplatesConfig(conf)
 	generateCode(conf)
 
-/*	if conf.TemplateFolder != "" {
-		files, err := ioutil.ReadDir(conf.TemplateFolder)
-		if err != nil {
-			panic(err)
-		}
-
-		for _, f := range files {
-			segments := strings.Split(f.Name(), ".")
-			if len(segments) != 4 && len(segments) != 5 {
-				panic("filename segment length != 4,5")
+	/*	if conf.TemplateFolder != "" {
+			files, err := ioutil.ReadDir(conf.TemplateFolder)
+			if err != nil {
+				panic(err)
 			}
 
-			if len(segments) == 4 {
-				contents, err := ioutil.ReadFile(conf.TemplateFolder + f.Name())
-				if err != nil {
-					panic(err)
+			for _, f := range files {
+				segments := strings.Split(f.Name(), ".")
+				if len(segments) != 4 && len(segments) != 5 {
+					panic("filename segment length != 4,5")
 				}
 
-				tmpl, err := template.New(f.Name()).Funcs(getFuncMap()).Parse(string(contents))
-				if err != nil {
-					panic(err)
-				}
-
-				switch segments[0] {
-				case "once":
-					var buf bytes.Buffer
-
-					err = tmpl.Execute(&buf, conf)
+				if len(segments) == 4 {
+					contents, err := ioutil.ReadFile(conf.TemplateFolder + f.Name())
 					if err != nil {
 						panic(err)
 					}
 
-					switch segments[1] {
-					case "package":
-						writeToCodgenFile(buf, conf, segments[2], conf.Package)
-					case "root":
-						writeToCodgenFile(buf, conf, segments[2], "")
+					tmpl, err := template.New(f.Name()).Funcs(getFuncMap()).Parse(string(contents))
+					if err != nil {
+						panic(err)
 					}
 
-				case "table":
+					switch segments[0] {
+					case "once":
+						var buf bytes.Buffer
 
-					type GenData struct {
-						Conf   *Config
-						Schema *Schema
-						Table  *Table
-					}
-
-					for _, s := range conf.Schemas {
-						for _, t := range s.Tables {
-							if !t.Generate {
-								continue
-							}
-							var buf bytes.Buffer
-
-							d := GenData{}
-							d.Conf = conf
-							d.Schema = s
-							d.Table = t
-
-							err = tmpl.Execute(&buf, d)
-							if err != nil {
-								panic(err)
-							}
-
-							switch segments[1] {
-							case "package":
-								writeToCodgenFile(buf, conf, segments[2], conf.Package)
-							case "root":
-								writeToCodgenFile(buf, conf, t.Name+strings.Title(segments[2]), "")
-							}
+						err = tmpl.Execute(&buf, conf)
+						if err != nil {
+							panic(err)
 						}
-					}
-				}
-			}
 
-		}
+						switch segments[1] {
+						case "package":
+							writeToCodgenFile(buf, conf, segments[2], conf.Package)
+						case "root":
+							writeToCodgenFile(buf, conf, segments[2], "")
+						}
 
-		for i := 0; i < len(files); i++ {
-			segments := strings.Split(files[i].Name(), ".")
-			if len(segments) != 5 {
-				files = append(files[:i], files[i+1:]...)
-				i--
-			}
-		}
+					case "table":
 
-		// TODO append templates to a new one respecting config
-		templateFiles := []string{}
-		currentFile := ""
-		for i, f := range files {
-			segments := strings.Split(f.Name(), ".")
-			if len(segments) == 5 {
-				if i == len(files)-1 {
-					templateFiles = append(templateFiles, f.Name())
-					currentFile += ".gen"
-				}
-				if currentFile != strings.Join([]string{segments[0], segments[1], segments[2]}, ".") {
-					// generate files
-					fmt.Println(currentFile)
-					fmt.Println(templateFiles)
+						type GenData struct {
+							Conf   *Config
+							Schema *Schema
+							Table  *Table
+						}
 
-					if len(templateFiles) > 0 {
-						oldSegments := strings.Split(currentFile, ".")
+						for _, s := range conf.Schemas {
+							for _, t := range s.Tables {
+								if !t.Generate {
+									continue
+								}
+								var buf bytes.Buffer
 
-						switch oldSegments[0] {
-						case "once":
-							var buf bytes.Buffer
-							templateContents := []byte("")
+								d := GenData{}
+								d.Conf = conf
+								d.Schema = s
+								d.Table = t
 
-							for _, tFile := range templateFiles {
-								contents, err := ioutil.ReadFile(conf.TemplateFolder + tFile)
+								err = tmpl.Execute(&buf, d)
 								if err != nil {
 									panic(err)
 								}
-								templateContents = append(templateContents, contents...)
+
+								switch segments[1] {
+								case "package":
+									writeToCodgenFile(buf, conf, segments[2], conf.Package)
+								case "root":
+									writeToCodgenFile(buf, conf, t.Name+strings.Title(segments[2]), "")
+								}
 							}
+						}
+					}
+				}
 
-							tmpl, err := template.New(f.Name()).Funcs(getFuncMap()).Parse(string(templateContents))
-							if err != nil {
-								panic(err)
-							}
+			}
 
-							err = tmpl.Execute(&buf, conf)
-							if err != nil {
-								panic(err)
-							}
+			for i := 0; i < len(files); i++ {
+				segments := strings.Split(files[i].Name(), ".")
+				if len(segments) != 5 {
+					files = append(files[:i], files[i+1:]...)
+					i--
+				}
+			}
 
-							switch oldSegments[1] {
-							case "package":
-								writeToCodgenFile(buf, conf, oldSegments[2], conf.Package)
-							case "root":
-								writeToCodgenFile(buf, conf, oldSegments[2], "")
-							}
+			// TODO append templates to a new one respecting config
+			templateFiles := []string{}
+			currentFile := ""
+			for i, f := range files {
+				segments := strings.Split(f.Name(), ".")
+				if len(segments) == 5 {
+					if i == len(files)-1 {
+						templateFiles = append(templateFiles, f.Name())
+						currentFile += ".gen"
+					}
+					if currentFile != strings.Join([]string{segments[0], segments[1], segments[2]}, ".") {
+						// generate files
+						fmt.Println(currentFile)
+						fmt.Println(templateFiles)
 
-						case "table":
+						if len(templateFiles) > 0 {
+							oldSegments := strings.Split(currentFile, ".")
 
-							type GenData struct {
-								Conf   *Config
-								Schema *Schema
-								Table  *Table
-							}
+							switch oldSegments[0] {
+							case "once":
+								var buf bytes.Buffer
+								templateContents := []byte("")
 
-							for _, s := range conf.Schemas {
-								for _, t := range s.Tables {
-									if !t.Generate {
-										continue
+								for _, tFile := range templateFiles {
+									contents, err := ioutil.ReadFile(conf.TemplateFolder + tFile)
+									if err != nil {
+										panic(err)
 									}
-									var buf bytes.Buffer
-									templateContents := []byte("")
+									templateContents = append(templateContents, contents...)
+								}
 
-									tempFiles := append(templateFiles[:0:0], templateFiles...)
-									if len(t.TemplateFiles) > 0 {
-										tempFiles = t.TemplateFiles
-									}
-									fmt.Println(tempFiles)
+								tmpl, err := template.New(f.Name()).Funcs(getFuncMap()).Parse(string(templateContents))
+								if err != nil {
+									panic(err)
+								}
 
-									for _, tFile := range tempFiles {
-										contents, err := ioutil.ReadFile(conf.TemplateFolder + tFile)
+								err = tmpl.Execute(&buf, conf)
+								if err != nil {
+									panic(err)
+								}
+
+								switch oldSegments[1] {
+								case "package":
+									writeToCodgenFile(buf, conf, oldSegments[2], conf.Package)
+								case "root":
+									writeToCodgenFile(buf, conf, oldSegments[2], "")
+								}
+
+							case "table":
+
+								type GenData struct {
+									Conf   *Config
+									Schema *Schema
+									Table  *Table
+								}
+
+								for _, s := range conf.Schemas {
+									for _, t := range s.Tables {
+										if !t.Generate {
+											continue
+										}
+										var buf bytes.Buffer
+										templateContents := []byte("")
+
+										tempFiles := append(templateFiles[:0:0], templateFiles...)
+										if len(t.TemplateFiles) > 0 {
+											tempFiles = t.TemplateFiles
+										}
+										fmt.Println(tempFiles)
+
+										for _, tFile := range tempFiles {
+											contents, err := ioutil.ReadFile(conf.TemplateFolder + tFile)
+											if err != nil {
+												panic(err)
+											}
+											templateContents = append(templateContents, contents...)
+										}
+
+										tmpl, err := template.New(f.Name()).Funcs(getFuncMap()).Parse(string(templateContents))
 										if err != nil {
 											panic(err)
 										}
-										templateContents = append(templateContents, contents...)
-									}
 
-									tmpl, err := template.New(f.Name()).Funcs(getFuncMap()).Parse(string(templateContents))
-									if err != nil {
-										panic(err)
-									}
+										d := GenData{}
+										d.Conf = conf
+										d.Schema = s
+										d.Table = t
 
-									d := GenData{}
-									d.Conf = conf
-									d.Schema = s
-									d.Table = t
+										err = tmpl.Execute(&buf, d)
+										if err != nil {
+											panic(err)
+										}
 
-									err = tmpl.Execute(&buf, d)
-									if err != nil {
-										panic(err)
-									}
-
-									switch oldSegments[1] {
-									case "package":
-										writeToCodgenFile(buf, conf, t.Name+strings.Title(oldSegments[2]), conf.Package)
-									case "root":
-										writeToCodgenFile(buf, conf, t.Name+strings.Title(oldSegments[2]), "")
+										switch oldSegments[1] {
+										case "package":
+											writeToCodgenFile(buf, conf, t.Name+strings.Title(oldSegments[2]), conf.Package)
+										case "root":
+											writeToCodgenFile(buf, conf, t.Name+strings.Title(oldSegments[2]), "")
+										}
 									}
 								}
 							}
 						}
+
+						templateFiles = templateFiles[:0]
+						currentFile = strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
+					}
+					templateFiles = append(templateFiles, f.Name())
+				}
+			}
+
+		} else {
+
+			for _, schema := range conf.Schemas {
+				for _, table := range schema.Tables {
+					if !table.Generate {
+						continue
+					}
+					bb := NewGenBuffer(bytebufferpool.Get())
+
+					var templateFiles = table.Templates
+					if len(templateFiles) == 0 {
+						templateFiles = conf.Templates
 					}
 
-					templateFiles = templateFiles[:0]
-					currentFile = strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
-				}
-				templateFiles = append(templateFiles, f.Name())
-			}
-		}
+					for _, templateFile := range templateFiles {
+						switch templateFile {
+						case "header":
+							THeader(bb, conf, schema)
+						case "delete":
+							TDelete(bb, conf, schema, table)
+						case "insert":
+							TInsert(bb, conf, schema, table)
+						case "truncate":
+							TTruncate(bb, conf, schema, table)
+						case "update":
+							TUpdate(bb, conf, schema, table)
+						case "upsert":
+							TUpsert(bb, conf, schema, table)
+						case "type":
+							TType(bb, conf, schema, table)
+						case "foreign":
+							TForeign(bb, conf, schema, table)
+						case "json":
+							TJSON(bb, conf, schema, table)
+						case "end":
+							TEnd(bb)
+						case "index":
+							type set map[string]struct{}
+							indexSet := set{}
 
-	} else {
+							for i := range table.Indices {
+								if len(table.Indices[i].Fields) == 1 {
+									indexSet[table.Indices[i].Fields[0]] = struct{}{}
+								}
+							}
 
-		for _, schema := range conf.Schemas {
-			for _, table := range schema.Tables {
-				if !table.Generate {
-					continue
-				}
-				bb := NewGenBuffer(bytebufferpool.Get())
-
-				var templateFiles = table.Templates
-				if len(templateFiles) == 0 {
-					templateFiles = conf.Templates
-				}
-
-				for _, templateFile := range templateFiles {
-					switch templateFile {
-					case "header":
-						THeader(bb, conf, schema)
-					case "delete":
-						TDelete(bb, conf, schema, table)
-					case "insert":
-						TInsert(bb, conf, schema, table)
-					case "truncate":
-						TTruncate(bb, conf, schema, table)
-					case "update":
-						TUpdate(bb, conf, schema, table)
-					case "upsert":
-						TUpsert(bb, conf, schema, table)
-					case "type":
-						TType(bb, conf, schema, table)
-					case "foreign":
-						TForeign(bb, conf, schema, table)
-					case "json":
-						TJSON(bb, conf, schema, table)
-					case "end":
-						TEnd(bb)
-					case "index":
-						type set map[string]struct{}
-						indexSet := set{}
-
-						for i := range table.Indices {
-							if len(table.Indices[i].Fields) == 1 {
+							for i := range table.Indices {
+								if len(table.Indices[i].Fields) > 1 {
+									if _, ok := indexSet[table.Indices[i].Fields[0]]; ok {
+										continue
+									}
+									index := *table.Indices[i]
+									index.IsUnique = false
+									index.Fields = []string{table.Indices[i].Fields[0]}
+									table.Indices = append(table.Indices, &index)
+								}
 								indexSet[table.Indices[i].Fields[0]] = struct{}{}
+
 							}
-						}
 
-						for i := range table.Indices {
-							if len(table.Indices[i].Fields) > 1 {
-								if _, ok := indexSet[table.Indices[i].Fields[0]]; ok {
-									continue
-								}
-								index := *table.Indices[i]
-								index.IsUnique = false
-								index.Fields = []string{table.Indices[i].Fields[0]}
-								table.Indices = append(table.Indices, &index)
+							for _, index := range table.Indices {
+								TIndex(bb, conf, schema, table, index)
 							}
-							indexSet[table.Indices[i].Fields[0]] = struct{}{}
-
-						}
-
-						for _, index := range table.Indices {
-							TIndex(bb, conf, schema, table, index)
 						}
 					}
+					writeBufferToCodgenFile(bb, conf, table.Name)
 				}
-				writeBufferToCodgenFile(bb, conf, table.Name)
 			}
+
+			// global files
+			s := &Schema{Name: "constants"}
+			bb := NewGenBuffer(bytebufferpool.Get())
+			THeader(bb, conf, s)
+			TGlobalType(bb, conf)
+			writeBufferToCodgenFile(bb, conf, "constants")
 		}
 
-		// global files
-		s := &Schema{Name: "constants"}
-		bb := NewGenBuffer(bytebufferpool.Get())
-		THeader(bb, conf, s)
-		TGlobalType(bb, conf)
-		writeBufferToCodgenFile(bb, conf, "constants")
-	}
-
-	execCommand("goimports -w " + conf.DirOut)
-	if conf.LintPackage != "" {
-		execCommand("go vet " + conf.LintPackage)
-	}
-	if conf.MetaLinter != "" {
-		execCommand(conf.MetaLinter)
-	}
+		execCommand("goimports -w " + conf.DirOut)
+		if conf.LintPackage != "" {
+			execCommand("go vet " + conf.LintPackage)
+		}
+		if conf.MetaLinter != "" {
+			execCommand(conf.MetaLinter)
+		}
 	*/
 }
 
@@ -821,7 +819,7 @@ func prepareSchemaConfig(conf *Config) {
 			table.Initials = Initials(table.Name)
 			table.Initials += Initials(table.Name[1:])
 			table.Initials = strings.ToLower(table.Initials)
-			table.receiver = table.Initials + " *" + table.Title
+			table.Receiver = table.Initials + " *" + table.Title
 			table.store = table.Title + "Store"
 			table.StoreReceiver = table.Initials + " *" + table.store
 
@@ -925,20 +923,41 @@ func prepareSchemaConfig(conf *Config) {
 
 			for k, fk := range table.ForeignKeys {
 				if fk.IsUnique {
-					table.NumUniqueFKs += 1
+					table.NumUniqueFKs++
 				}
+				fk.GenTableName = strings.Title(fk.RefTable)
 
-				fkRefTable := strings.Title(fk.RefTable)
 				fkSchema := conf.getSchema(fk.RefSchema)
 				if t := fkSchema.getTable(fk.RefTable); t != nil {
-					fkRefTable = t.Title
+					fk.GenTableName = t.Title
+					fk.GenTable = t
 				}
+
+				if fk.IsUnique {
+					fk.GenFuncName = "OneBy"
+				} else {
+					fk.GenFuncName = "QueryBy"
+				}
+				for i := range fk.Fields {
+					if i > 0 {
+						fk.GenFuncName += "And"
+					}
+					fk.GenFuncName += fk.GenTable.Fields[fk.GenTable.FieldMapping[fk.RefFields[i]]].Title
+				}
+
 				// table.ForeignKeys[k].RefTable = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(fkRefTable)
-				table.ForeignKeys[k].RefTableTitle = fkRefTable
+				table.ForeignKeys[k].RefTableTitle = fk.GenTableName
 				if fk.CustomName == "" {
 					table.ForeignKeys[k].CustomName = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
 				}
+			}
 
+			for _, fk := range table.ForeignKeys {
+				if fk.CustomName != "" {
+					fk.GenName = fk.CustomName
+				} else {
+					fk.GenName = fk.GenTable.Title + strings.Replace(fk.Name, "fk", "", 1)
+				}
 			}
 		}
 	}
