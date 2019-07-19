@@ -75,7 +75,7 @@ type Table struct {
 	otherFields           []*Field
 	id                    int
 	numFields             int
-	NumUniqueFKs          int
+	NumUniqueFKs          int `json:"-"`
 	preparedTemplatefiles map[string][]string
 }
 
