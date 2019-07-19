@@ -13,6 +13,7 @@ require (
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/huandu/xstrings v1.2.0 // indirect
 	github.com/imdario/mergo v0.3.6
+	github.com/pkg/errors v0.8.1 // indirect
 	github.com/rs/zerolog v1.8.0
 	github.com/stretchr/testify v1.3.0 // indirect
 	github.com/valyala/bytebufferpool v1.0.0
