@@ -20,8 +20,8 @@ func THeader(bb *GenBuffer, conf *Config, schema *Schema) {
 
 	"fmt"
 
-	"bitbucket.org/seambiz/seambiz/buffer"
-	"bitbucket.org/seambiz/seambiz/sdb"
+	"bitbucket.org/seambiz/buffer"
+	"bitbucket.org/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

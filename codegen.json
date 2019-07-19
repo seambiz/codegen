@@ -1,9 +1,9 @@
 {
-  "MetaLinter": "golangci-lint run /home/sl/gocode/src/bitbucket.org/seambiz/codegen/models --enable-all --disable lll,gocyclo,goconst",
-  "LintPackage": "bitbucket.org/seambiz/codegen/models",
+  "MetaLinter": "golangci-lint run /home/sl/gospace/codegen/models --enable-all --disable lll,gocyclo,goconst",
+  "LintPackage": "bitbucket.org/codegen/models",
   "Package": "models",
   "RootPackage": "codegen",
-  "DirOut": "/home/sl/gocode/src/bitbucket.org/seambiz/codegen/models",
+  "DirOut": "/home/sl/gospace/codegen/models",
   "FilePattern": "%s.go",
   "Templates": [
     "header",
@@ -3069,6 +3069,8 @@
   ],
   "Database": {
     "DSN": "ab@/?parseTime=true",
-    "Schemas": ["information_schema"]
+    "Schemas": [
+      "information_schema"
+    ]
   }
 }

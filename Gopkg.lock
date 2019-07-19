@@ -4,7 +4,7 @@
 [[projects]]
   branch = "master"
   digest = "1:ed57bba3e46914566a5975a39155b8c95c704412e1185a4f0e17fba2a267a34c"
-  name = "bitbucket.org/seambiz/kanban"
+  name = "bitbucket.org/kanban"
   packages = ["convert"]
   pruneopts = "UT"
   revision = "d5c4c71439e5ecec29670e0da1a89b8a66ca9ce3"
@@ -12,7 +12,7 @@
 [[projects]]
   branch = "master"
   digest = "1:aaef8451dbe50923fc5117322a6ac261eb6c591df29ca1d01c7534b452a1f215"
-  name = "bitbucket.org/seambiz/seambiz"
+  name = "bitbucket.org/seambiz"
   packages = [
     "buffer",
     "logging",
@@ -343,9 +343,9 @@
   analyzer-name = "dep"
   analyzer-version = 1
   input-imports = [
-    "bitbucket.org/seambiz/kanban/convert",
-    "bitbucket.org/seambiz/seambiz/buffer",
-    "bitbucket.org/seambiz/seambiz/sdb",
+    "bitbucket.org/codegen/convert",
+    "bitbucket.org/seambiz/buffer",
+    "bitbucket.org/seambiz/sdb",
     "github.com/DATA-DOG/go-sqlmock",
     "github.com/Masterminds/sprig",
     "github.com/RoaringBitmap/roaring",

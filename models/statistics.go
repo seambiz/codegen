@@ -6,9 +6,9 @@ import (
 	"io"
 	"math/big"
 
-	"bitbucket.org/seambiz/kanban/convert"
-	"bitbucket.org/seambiz/seambiz/buffer"
-	"bitbucket.org/seambiz/seambiz/sdb"
+	"bitbucket.org/codegen/convert"
+	"bitbucket.org/seambiz/buffer"
+	"bitbucket.org/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

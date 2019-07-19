@@ -2,13 +2,13 @@
 package models
 
 import (
+	"bitbucket.org/codegen/convert"
 	"database/sql"
 	"io"
 	"math/big"
 
-	"bitbucket.org/seambiz/kanban/convert"
-	"bitbucket.org/seambiz/seambiz/buffer"
-	"bitbucket.org/seambiz/seambiz/sdb"
+	"bitbucket.org/seambiz/buffer"
+	"bitbucket.org/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )

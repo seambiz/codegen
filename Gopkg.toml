@@ -27,7 +27,7 @@
 
 [[constraint]]
   branch = "master"
-  name = "bitbucket.org/seambiz/seambiz"
+  name = "bitbucket.org/seambiz"
 
 [[constraint]]
   name = "github.com/DATA-DOG/go-sqlmock"

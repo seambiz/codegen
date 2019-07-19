@@ -4,8 +4,8 @@ import (
 	"encoding/json"
 	"strings"
 
-	"bitbucket.org/seambiz/codegen/models"
-	"bitbucket.org/seambiz/seambiz/sdb"
+	"bitbucket.org/codegen/models"
+	"bitbucket.org/seambiz/sdb"
 	"github.com/imdario/mergo"
 )
 

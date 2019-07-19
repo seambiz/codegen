@@ -5,7 +5,7 @@ import (
 	"database/sql"
 	"time"
 
-	"bitbucket.org/seambiz/seambiz/sdb"
+	"bitbucket.org/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
