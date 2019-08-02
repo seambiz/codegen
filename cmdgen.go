@@ -146,6 +146,9 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	g.S(`("`)
 	g.S(f.Title)
 	g.S(`", `)
+	if f.IsNullable {
+		g.S("*")
+	}
 	if prefix != "" {
 		g.S(prefix)
 		g.S(".")
@@ -873,16 +876,6 @@ func prepareSchemaConfig(conf *Config) {
 				if !ok {
 					panic(table.Fields[i].Name)
 				}
-				/*
-					if table.Fields[i].IsNullable {
-						//fmt.Println("NullType", table.Name, table.Fields[i].Title)
-						nulltype, ok := goIsNullMapping[typename]
-						if !ok {
-							panic(table.Fields[i].Name)
-						}
-						typename = nulltype
-					}
-				*/
 				table.Fields[i].GoType = typename
 				zero, ok := goZeroMapping[typename]
 				if !ok {

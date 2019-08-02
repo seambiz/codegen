@@ -166,7 +166,11 @@ func genJSON(conf *Config, schema *Schema, table *Table) string {
 	lenFields := len(table.Fields) - 1
 	for i, f := range table.Fields {
 		bb.Line("if ", table.Initials, ".colSet == nil || ", table.Initials, ".colSet.Bit(", table.Title+"_"+f.Title, ") == 1 {")
-		bb.Line("t.", f.jsonFunc, `(prepend, "`, strings.ToLower(f.Name), `", data.`, f.Title, ")")
+		if f.IsNullable {
+			bb.Line("t.", f.jsonFunc, `(prepend, "`, strings.ToLower(f.Name), `", *data.`, f.Title, ")")
+		} else {
+			bb.Line("t.", f.jsonFunc, `(prepend, "`, strings.ToLower(f.Name), `", data.`, f.Title, ")")
+		}
 		if i != lenFields {
 			bb.Line(`prepend = ","`)
 		}

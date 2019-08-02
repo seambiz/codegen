@@ -3,7 +3,7 @@
 	"LintPackage": "bitbucket.org/codegen/models",
 	"Package": "models",
 	"RootPackage": "codegen",
-	"DirOut": "/home/sl/gospace/codegen/models",
+	"DirOut": "/home/sl/gospace/codegen",
 	"FilePattern": "%s.go",
 	"Templates": [
 		"header",
@@ -3064,7 +3064,8 @@
 					"Ignores": {},
 					"Generate": false
 				}
-			]
+			],
+			"TemplateFolder": "./templates/know/"
 		}
 	],
 	"Database": {

@@ -1,4 +1,4 @@
-package models
+package db
 
 import (
 	"database/sql"
@@ -24,7 +24,6 @@ type Store struct {
 	batch        int
 	colSet       *big.Int
 	stmt         *SQLStatement
-	companyID    int
 
 	// TODO vielleicht hier weg, da unnötig bezogen auf stmt. Nur für wirkliche Store Methoden relevant
 	dtos     []DTO

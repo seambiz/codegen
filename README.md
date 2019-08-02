@@ -35,3 +35,13 @@ codegen update
 # goto know-api folder
 codegen gen
 ```
+
+# Special Use-Cases
+
+## Removing a Table from a DB
+
+codegen does not remove anything from the settings file automatically, because manual change is allowed. Therefore a removal of a table can not be handled by codegen alone.
+
+1. Remove the table from the DB
+2. Remove the corresponding settings from your codegen.json
+3. Remove any previously generated files for that table.

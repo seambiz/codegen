@@ -47,20 +47,6 @@ var GoTypeMapping = map[string]string{
 	"longblob":   "[]byte",
 }
 
-var goIsNullMapping = map[string]string{
-	// numeric types
-	"int":    "sql.NullInt64",
-	"uint":   "sql.NullInt64",
-	"int64":  "sql.NullInt64",
-	"uint64": "sql.NullInt64",
-	"bool":   "sql.NullBool",
-
-	"float32":   "sql.NullFloat64",
-	"float64":   "sql.NullFloat64",
-	"time.Time": "time.Time{}",
-
-	"string": `""`,
-}
 var goZeroMapping = map[string]string{
 	// numeric types
 	"int":    "0",
