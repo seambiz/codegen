@@ -779,6 +779,41 @@ func Generate(conf *Config) {
 	*/
 }
 
+func fnTableJoinFields(baseTable *Table, conf *Config, table *Table, refAlias rune, tableAlias *rune, fks []*ForeignKey) {
+	for _, fk := range fks {
+		*tableAlias++
+		if fk.IsUnique {
+			fkRefTableTitle := strings.Title(fk.RefTable)
+			fkRefTable := strings.Title(fk.RefTable)
+			fkSchema := conf.getSchema(fk.RefSchema)
+			if t := fkSchema.getTable(fk.RefTable); t != nil {
+				fkRefTableTitle = t.Title
+				fkRefTable = t.Name
+			}
+			t := Join{
+				Alias:    string(*tableAlias),
+				Name:     fkRefTable,
+				Title:    fkRefTableTitle,
+				Initials: table.Initials,
+				Schema:   fkSchema.Name,
+			}
+			for i := range fk.Fields {
+				t.Fields = append(t.Fields, JoinField{
+					Alias:    string(refAlias),
+					Name:     fk.Fields[i],
+					RefAlias: string(*tableAlias),
+					RefName:  fk.RefFields[i],
+				})
+			}
+			baseTable.Joins = append(baseTable.Joins, t)
+
+			if len(fk.ForeignKeys) > 0 {
+				fnTableJoinFields(baseTable, conf, table, *tableAlias, tableAlias, fk.ForeignKeys)
+			}
+		}
+	}
+}
+
 func prepareSchemaConfig(conf *Config) {
 	tableNr := 0
 	for _, schema := range conf.Schemas {
@@ -868,9 +903,9 @@ func prepareSchemaConfig(conf *Config) {
 				table.Fields[i].ParamName = strings.ToLower(table.Fields[i].Title)
 				table.FieldMapping[table.Fields[i].Name] = i
 				if table.Fields[i].IsPrimaryKey {
-					table.pkFields = append(table.pkFields, table.Fields[i])
+					table.PkFields = append(table.PkFields, table.Fields[i])
 				} else {
-					table.otherFields = append(table.otherFields, table.Fields[i])
+					table.OtherFields = append(table.OtherFields, table.Fields[i])
 				}
 				typename, ok := GoTypeMapping[table.Fields[i].DBType]
 				if !ok {
@@ -887,7 +922,7 @@ func prepareSchemaConfig(conf *Config) {
 				if !ok {
 					panic(typename)
 				}
-				table.Fields[i].jsonFunc = jsonFunc
+				table.Fields[i].JsonFunc = jsonFunc
 
 				MappingFunc, ok := goDbMappingFunc[typename]
 				if !ok {
@@ -943,6 +978,10 @@ func prepareSchemaConfig(conf *Config) {
 				if fk.CustomName == "" {
 					table.ForeignKeys[k].CustomName = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
 				}
+
+				if !fk.IsUnique && len(fk.RefFields) > 1 {
+					panic("FK: too many ref fields")
+				}
 			}
 
 			for _, fk := range table.ForeignKeys {
@@ -951,6 +990,27 @@ func prepareSchemaConfig(conf *Config) {
 				} else {
 					fk.GenName = fk.GenTable.Title + strings.Replace(fk.Name, "fk", "", 1)
 				}
+			}
+
+			table.Alias = "A"
+			tableAlias := 'A'
+			fnTableJoinFields(table, conf, table, tableAlias, &tableAlias, table.ForeignKeys)
+
+			// Index func name
+			for _, index := range table.Indices {
+				funcName := ""
+				if index.IsUnique {
+					funcName = "OneBy"
+				} else {
+					funcName = "QueryBy"
+				}
+				for i, f := range index.Fields {
+					if i > 0 {
+						funcName += "And"
+					}
+					funcName += table.Fields[table.FieldMapping[f]].Title
+				}
+				index.FuncName = funcName
 			}
 		}
 	}

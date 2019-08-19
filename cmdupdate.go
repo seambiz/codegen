@@ -2,6 +2,7 @@ package codegen
 
 import (
 	"encoding/json"
+	"fmt"
 	"strings"
 
 	"bitbucket.org/codegen/models"
@@ -35,11 +36,12 @@ func getTable(schema *Schema, tableName string) *Table {
 		}
 	}
 	if t == nil {
+		fmt.Println("new table", tableName)
 		t = &Table{}
 		t.Generate = true
 		schema.Tables = append(schema.Tables, t)
+		t.Name = tableName
 	}
-	t.Name = tableName
 
 	return t
 }
@@ -128,10 +130,11 @@ func Update(conf *Config) ([]byte, error) {
 			sql.Append("IF(INSTR(extra, 'auto_increment'), TRUE, FALSE) as isautoincrement,")
 			sql.Append("IF(column_key = 'PRI', TRUE, FALSE) AS isprimarykey")
 			sql.Append("FROM")
-			sql.Append("information_schema.columns")
+			sql.Append("information_schema.columns c")
 			sql.Append("WHERE")
 			sql.Append("UPPER(table_schema) = UPPER(?)")
 			sql.Append("AND UPPER(table_name) = UPPER(?)")
+			sql.Append("AND UPPER(c.extra) not like '%VIRTUAL%'")
 			sql.Append("ORDER BY ordinal_position")
 
 			var fields []Field
@@ -202,6 +205,34 @@ func Update(conf *Config) ([]byte, error) {
 				}
 			}
 		}
+
+		/*
+			TODO: currently dont do the inverse stuff. it pollutes the code. actually needed foreign keys for eager fetching have to be added manually
+				for _, t := range tables {
+					table := getTable(schema, t.TableName)
+
+					for i := range table.ForeignKeys {
+						fk := getForeignKey(table, table.ForeignKeys[i].Name)
+						refTable := getTable(getSchema(conf, fk.RefSchema), fk.RefTable)
+
+						fkInverse := getForeignKey(refTable, table.ForeignKeys[i].Name)
+						fkInverse.Fields = fk.RefFields
+						fkInverse.RefFields = fk.Fields
+						fkInverse.RefSchema = schema.Name
+						fkInverse.RefTable = table.Name
+						fkInverse.Name = fk.Name
+
+						fkInverse.IsUnique = false
+						for _, index := range table.Indices {
+							if index.IsUnique && reflect.DeepEqual(index.Fields, fkInverse.RefFields) {
+								fkInverse.IsUnique = true
+								break
+							}
+						}
+
+					}
+				}
+		*/
 	}
 
 	jsonBytes, err := json.MarshalIndent(conf, "", "\t")

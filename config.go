@@ -48,6 +48,23 @@ func (s *Schema) getTable(table string) *Table {
 	return nil
 }
 
+type Join struct {
+	Alias    string
+	Name     string
+	Title    string
+	Initials string
+	Schema   string
+
+	Fields []JoinField
+}
+
+type JoinField struct {
+	Alias    string
+	Name     string
+	RefAlias string
+	RefName  string
+}
+
 // Table type
 type Table struct {
 	Name      string   `json:",omitempty"`
@@ -64,15 +81,18 @@ type Table struct {
 	TemplateFiles []string `json:",omitempty"`
 
 	// generated Contents
+	Alias                 string `json:"-"`
+	Schema                string `json:"-"`
 	Title                 string `json:"-"`
+	Joins                 []Join `json:"-"`
 	lower                 string
 	Receiver              string `json:"-"`
 	Initials              string `json:"-"`
 	store                 string
 	StoreReceiver         string         `json:"-"`
 	FieldMapping          map[string]int `json:"-"`
-	pkFields              []*Field
-	otherFields           []*Field
+	PkFields              []*Field       `json:"-"`
+	OtherFields           []*Field       `json:"-"`
 	id                    int
 	numFields             int
 	NumUniqueFKs          int `json:"-"`
@@ -108,12 +128,14 @@ type Field struct {
 	IsPrimaryKey    bool   `json:",omitempty"`
 
 	// generated Contents
+	Alias       string `json:"-"`
 	Title       string `json:"-"`
 	GoType      string `json:"-"`
 	goZero      string `json:"-"`
 	ParamName   string `json:"-"`
 	MappingFunc string `json:"-"`
-	jsonFunc    string `json:"-"`
+	JsonFunc    string `json:"-"`
+	Default     string `json:"-"`
 }
 
 // IgnoreFields is used to ignore fields for specific statements
@@ -123,6 +145,7 @@ type IgnoreFields struct {
 
 // Index type
 type Index struct {
+	FuncName string   `json:"-"`
 	Name     string   `json:",omitempty"`
 	Fields   []string `json:",omitempty"`
 	IsUnique bool     `json:",omitempty"`
