@@ -2,15 +2,16 @@ package codegen
 
 // Config base template input
 type Config struct {
-	MetaLinter     string   `json:",omitempty"`
-	LintPackage    string   `json:",omitempty"`
-	Package        string   `json:",omitempty"`
-	RootPackage    string   `json:",omitempty"`
-	DirOut         string   `json:",omitempty"`
-	FilePattern    string   `json:",omitempty"`
-	Templates      []string `json:",omitempty"`
-	TemplateFolder string   `json:",omitempty"`
-	Prefix         string   `json:",omitempty"`
+	MetaLinter         string   `json:",omitempty"`
+	LintPackage        string   `json:",omitempty"`
+	Package            string   `json:",omitempty"`
+	RootPackage        string   `json:",omitempty"`
+	RootPackageInclude string   `json:",omitempty"`
+	DirOut             string   `json:",omitempty"`
+	FilePattern        string   `json:",omitempty"`
+	Templates          []string `json:",omitempty"`
+	TemplateFolder     string   `json:",omitempty"`
+	Prefix             string   `json:",omitempty"`
 
 	Schemas  []*Schema `json:",omitempty"`
 	Database db
@@ -27,6 +28,10 @@ type Schema struct {
 	Tables         []*Table `json:",omitempty"`
 	TemplateFolder string   `json:",omitempty"`
 	Prefix         string   `json:",omitempty"`
+	IsMultiTenant  bool     `json:",omitempty"`
+	MTVarName      string   `json:",omitempty"`
+	MTVarType      string   `json:",omitempty"`
+	MTSchemaFmt    string   `json:",omitempty"`
 
 	preparedTemplatefiles map[string][]string
 }

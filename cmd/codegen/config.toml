@@ -1,8 +1,0 @@
-Package ="models"
-DirOut="/home/sl/gocode/src/bitbucket.com/kanban/models/"
-FilePattern ="%s.xo.go"
-Templates  = [ "header", "type", "" ]
-
-[Database]
-	DSN  = "root@/?parseTime=true"
-	Schemas =  [ "kanban" ]

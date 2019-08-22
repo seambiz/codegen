@@ -458,11 +458,15 @@ func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string,
 		}
 
 		segments := strings.Split(key, ".")
+		prefix := ""
+		if segments[0] == "table" {
+			prefix = fileprefix
+		}
 		switch segments[1] {
 		case "package":
-			writeToCodgenFile(buf, conf, fileprefix+strings.Title(segments[2]), conf.Package)
+			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), conf.Package)
 		case "root":
-			writeToCodgenFile(buf, conf, fileprefix+strings.Title(segments[2]), "")
+			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), "")
 		}
 
 	}

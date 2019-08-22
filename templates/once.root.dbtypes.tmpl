@@ -4,19 +4,16 @@ package {{ .Conf.RootPackage }}
 
 {{ range $schema := .Conf.Schemas }}
 	{{ range $table := $schema.Tables }}
-    {{if $table.Generate}}
+    {{- if $table.Generate}}
 	/* {{ $table.Title }} represents a row from {{ $table.Name }}. */
 	type {{ $table.Title }} struct {
 		{{- range $field := $table.Fields -}}
-			{{ $field.Title }} {{ $field.GoType }} `json:"{{ $field.Name }}" db:"{{ lower $field.Name }}"`
+			{{ $field.Title }} {{ if $field.IsNullable }}*{{ end }}{{ $field.GoType }} `json:"{{ $field.Name }}" db:"{{ lower $field.Name }}"`
 		{{ end -}}
 
-		{{- range $fk := $table.ForeignKeys -}}
-			{{ $fk.CustomName }}
-			{{- if not $fk.IsUnique }}
-				[]
-			{{ end }} *{{ $fk.RefTableTitle }}
-		{{ end }}
+		{{- range $fk := $table.ForeignKeys }}
+			{{ $fk.CustomName }} {{ if not $fk.IsUnique }}[]{{ end }}*{{ $fk.RefTableTitle }}
+		{{- end }}
 	}
 	{{ end }}
 	{{ end }}

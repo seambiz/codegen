@@ -1,0 +1,45 @@
+{{- $conf := .Conf -}}
+{{- $table := .Table -}}
+{{- $schema := .Schema }}
+{{- if gt (len $table.OtherFields) 0 }}
+
+// Update updates the {{ $table.Title }} in the database.
+// nolint[gocyclo]
+func ({{ $table.StoreReceiver }}) Update(data *{{ $conf.RootPackage }}.{{ $table.Title }}) (int64, error) {
+    sql := NewSQLStatement()
+    var prepend string
+    args := []interface{}{}
+	{{- if $schema.IsMultiTenant }}
+        sql.AppendRaw("UPDATE ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} SET ")
+    {{- else }}
+        sql.Append("UPDATE {{ $schema.Name }}.{{ $table.Name }} SET")
+    {{- end }}
+
+    {{- range $i, $f := $table.OtherFields }}
+        if {{ $table.Initials }}.colSet == nil || {{ $table.Initials }}.colSet.Bit({{ $table.Title }}_{{ $f.Title }}) == 1 {
+            sql.AppendRaw(prepend, "{{ $f.Name }} = ?")
+            {{- if ne (add $i 1) (len $table.OtherFields) }}
+                prepend = ","
+            {{- end }}
+            args = append(args, data.{{ $f.Title }})
+        }
+    {{- end }}
+    sql.Append(" WHERE {{ range $i, $f := $table.PkFields -}}
+		{{- if gt $i 0 }} AND {{ end }}{{ $f.Name }} = ?
+	{{- end -}}
+	")
+	
+    {{- range $f := $table.PkFields }}
+		args = append(args, data.{{ $f.Title }})
+	{{- end }}
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	}
+	res, err := {{ $table.Initials }}.db.Exec(sql.Query(), args...)
+	if err != nil {
+		log.Error().Err(err).Msg("exec")
+		return 0, err
+	}
+	return res.RowsAffected()
+}
+{{- end }}

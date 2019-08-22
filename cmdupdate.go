@@ -8,6 +8,7 @@ import (
 	"bitbucket.org/codegen/models"
 	"bitbucket.org/seambiz/sdb"
 	"github.com/imdario/mergo"
+	"github.com/jmoiron/sqlx"
 )
 
 func getSchema(conf *Config, name string) *Schema {
@@ -108,7 +109,8 @@ func getForeignKey(table *Table, fkName string) *ForeignKey {
 
 // Update command
 func Update(conf *Config) ([]byte, error) {
-	conn := sdb.OpenDatabaseDSN(conf.Database.DSN)
+	dbTemp := sdb.OpenDatabaseDSN(conf.Database.DSN)
+	conn := sqlx.NewDb(dbTemp, "mysql")
 
 	for _, schemaName := range conf.Database.Schemas {
 		schema := getSchema(conf, schemaName)

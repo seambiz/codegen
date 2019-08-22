@@ -24,7 +24,9 @@ type Store struct {
 	batch        int
 	colSet       *big.Int
 	stmt         *SQLStatement
-    companyID    int
+	{{- if .Schema.IsMultiTenant }}
+    {{ .Schema.MTVarName }} {{ .Schema.MTVarType }}
+	{{- end }}
 
 	// TODO vielleicht hier weg, da unnötig bezogen auf stmt. Nur für wirkliche Store Methoden relevant
 	dtos     []DTO
