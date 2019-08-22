@@ -3,16 +3,8 @@
 
 # default: main
 pkg = "static"
-
-# destination
 dest = "./static/"
-
-# gofmt
-# type: bool
-# default: false
 fmt = true
-
-# build tags for the main b0x.go file
 tags = ""
 
 # compress files
@@ -20,10 +12,6 @@ tags = ""
 #
 # type: object
 [compression]
-  # activates the compression
-  #
-  # type: bool
-  # default: false
   compress = true
 
   # valid values are:
@@ -54,7 +42,7 @@ tags = ""
 clean = false
 
 # default: ab0x.go
-output = "ab0x.go"
+output = "templates.go"
 
 # [noprefix] disables adding "a" prefix to output
 # type: bool
@@ -86,7 +74,7 @@ lcf = true
 # sytem. Useful for web dev when files change when the server is running.
 # type: bool
 # default: false
-debug = false
+debug = true
 
 # type: array of objects
 [[custom]]
@@ -96,7 +84,7 @@ debug = false
 
   # base is the path that will be removed from all files' path
   # type: string
-  base = "./"
+  base = "./templates"
 
   # prefix is the path that will be added to all files' path
   # type: string
@@ -105,44 +93,4 @@ debug = false
   # build tags for this set of files
   # it will only work if spread mode is enabled
   tags = ""
-# end: custom
-
-[[custom]]
-  # everything inside the folder
-  # type: array of strings
-  files = ["./public/"]
-
-  # base is the path that will be removed from all files' path
-  # type: string
-  base = ""
-
-  # prefix is the path that will be added to all files' path
-  # type: string
-  prefix = ""
-
-  # build tags for this set of files
-  # it will only work if spread mode is enabled
-  tags = ""
-
-  # if you have difficulty to understand what base and prefix is
-  # think about it like this: [prefix] will replace [base]
-
-  # accetps glob
-  # type: array of strings
-  exclude = ["public/assets/data/exclude_me.txt"]
-
-  # replace strings in the file
-  # type: array of objects
-  [[custom.replace]]
-  
-  # accepts glob
-  # type: string
-  file = "public/assets/data/*.json"
-
-  # case sensitive
-  # type: object with strings
-  [custom.replace.replace]
-    "{world}" = "hello world"
-    "{EMAIL}" = "contact@company.com"
-  # end: replace
 # end: custom
