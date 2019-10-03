@@ -11,13 +11,25 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
+var buildTime string
+var gitRevision string
+var gitBranch string
+
 func main() {
 	// Subcommands
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)
 	genCommand := flag.NewFlagSet("gen", flag.ExitOnError)
+	versionFlag := flag.Bool("v", false, "Print the current version and exit")
 
 	configFile := flag.String("config", "codegen.json", "config file (required)")
 	flag.Parse()
+
+	if *versionFlag {
+		fmt.Printf("build time:   %s\n", buildTime)
+		fmt.Printf("git revision: %s\n", gitRevision)
+		fmt.Printf("git branch:   %s\n", gitBranch)
+		return
+	}
 
 	if *configFile == "" {
 		fmt.Println("config file is required")
