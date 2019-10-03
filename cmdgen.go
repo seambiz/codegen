@@ -149,7 +149,22 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	g.S(f.Title)
 	g.S(`", `)
 	if f.IsNullable {
-		g.S("*")
+		switch f.GoType {
+		case "time.Time":
+			g.S("logTime")
+			break
+		case "string":
+			g.S("logString(")
+			break
+		case "int":
+			g.S("logInt(")
+			break
+		case "float32":
+			g.S("logFloat32(")
+			break
+		default:
+			panic("unsupported pointer type: " + f.GoType)
+		}
 	}
 	if prefix != "" {
 		g.S(prefix)
@@ -170,6 +185,9 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 		break
 	}
 	g.S(")")
+	if f.IsNullable {
+		g.S(")")
+	}
 }
 
 // Log generates zerolog logging instruction for array of fields

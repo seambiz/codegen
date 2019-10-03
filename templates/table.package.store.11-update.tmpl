@@ -6,7 +6,7 @@
 // Update updates the {{ $table.Title }} in the database.
 // nolint[gocyclo]
 func ({{ $table.StoreReceiver }}) Update(data *{{ $conf.RootPackage }}.{{ $table.Title }}) (int64, error) {
-    sql := NewSQLStatement()
+    sql := sdb.NewSQLStatement()
     var prepend string
     args := []interface{}{}
 	{{- if $schema.IsMultiTenant }}

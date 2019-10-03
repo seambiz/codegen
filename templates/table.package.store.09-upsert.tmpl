@@ -24,12 +24,12 @@ func ({{ $table.StoreReceiver }}) {{ $table.Title | untitle }}UpsertStmt() *sdb.
 }
 
 // UpsertOne inserts the {{ $table.Title }} to the database.
-func ({{ $table.StoreReceiver }}) UpsertOne(data *{{ $table.Title }}) (int64, error) {
-	return {{ $table.Initials }}.Upsert([]*{{ $table.Title }}{data})
+func ({{ $table.StoreReceiver }}) UpsertOne(data *{{ $conf.RootPackage }}.{{ $table.Title }}) (int64, error) {
+	return {{ $table.Initials }}.Upsert([]*{{ $conf.RootPackage }}.{{ $table.Title }}{data})
 }
 
 // Upsert executes upsert for array of {{ $table.Title }}
-func ({{ $table.StoreReceiver }}) Upsert(data []*{{ $table.Title }}) (int64, error) {
+func ({{ $table.StoreReceiver }}) Upsert(data []*{{ $conf.RootPackage }}.{{ $table.Title }}) (int64, error) {
 	sql := {{ $table.Initials }}.{{ $table.Title | untitle }}UpsertStmt()
 	
 	for _, d := range data {

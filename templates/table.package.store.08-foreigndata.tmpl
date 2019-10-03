@@ -14,8 +14,8 @@
 			{{- else }}
 				{{ $table.Initials }}.{{ $fk.GenName }}, err = New{{ $fk.GenTableName }}Store(db).{{ $fk.GenFuncName }}(
 		    {{- end }}
-			{{- range $i, $xx := $fk.Fields }}
-			    {{- if gt $i 0 }}
+			{{- range $i, $xx := $fk.Fields -}}
+			    {{- if gt $i 0 -}}
 				    ,
                 {{- end -}}
 				{{- $tmp := (index $table.Fields (index $table.FieldMapping (index $fk.Fields $i))) -}}
@@ -33,7 +33,7 @@
 	{{ if not $fk.IsUnique }}
 		// EagerFetch {{ $fk.CustomName }} eagerly fetches N records from referenced table '{{ $fk.RefTable }}'.
 		func ({{ $table.StoreReceiver }}) EagerFetch{{ $fk.CustomName}}(data []*{{ $table.Title }}) error {
-			stmt := NewSQLStatement()
+			stmt := sdb.NewSQLStatement()
 			stmt.Append("{{ index $fk.RefFields 0 }} IN (")
 			for i, d := range data {
 				if i > 0 {

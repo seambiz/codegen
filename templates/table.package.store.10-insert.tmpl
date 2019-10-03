@@ -5,7 +5,7 @@
 // Insert inserts the {{ $table.Title }} to the database.
 func ({{ $table.StoreReceiver }}) Insert(data *{{ $conf.RootPackage }}.{{ $table.Title }}) error {
     var err error
-    sql := NewSQLStatement()
+    sql := sdb.NewSQLStatement()
 	{{- if $schema.IsMultiTenant }}
 		sql.AppendRaw("INSERT INTO ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} (")
 	{{- else }}

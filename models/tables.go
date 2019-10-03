@@ -291,8 +291,8 @@ func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *
 		*col++
 	}
 }
-func (ta *TablesStore) selectStatement() *SQLStatement {
-	sql := NewSQLStatement()
+func (ta *TablesStore) selectStatement() *sdb.SQLStatement {
+	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", TablesQueryFields(ta.colSet))
 	sql.Append("FROM information_schema.TABLES A")
@@ -451,7 +451,7 @@ func (ta *TablesStore) Upsert(data []*Tables) (int64, error) {
 // Insert inserts the Tables to the database.
 func (ta *TablesStore) Insert(data *Tables) error {
 	var err error
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("INSERT INTO information_schema.TABLES (")
 	fields := TablesQueryFields(ta.colSet)
 	sql.Fields("", "", fields)
@@ -478,7 +478,7 @@ func (ta *TablesStore) Insert(data *Tables) error {
 // Update updates the Tables in the database.
 // nolint[gocyclo]
 func (ta *TablesStore) Update(data *Tables) (int64, error) {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.TABLES SET")
@@ -601,7 +601,7 @@ func (ta *TablesStore) Update(data *Tables) (int64, error) {
 
 // Truncate deletes all rows from Tables.
 func (ta *TablesStore) Truncate() error {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE information_schema.TABLES")
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
 		log.Debug().Str("fn", "information_schema.TABLES.Truncate").Str("stmt", sql.String()).Msg("sql")

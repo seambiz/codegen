@@ -8,13 +8,13 @@ package {{ .Conf.RootPackage }}
 type {{ .Table.Title }}Repository interface {
 	
 	{{- if $schema.IsMultiTenant }}
-		{{ if not .Table.NoCreate }}Create({{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
-		{{ if not .Table.NoUpdate }}Update({{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
-		{{ if not .Table.NoDelete }}Delete({{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
+		{{ if not .Table.NoCreate }}Create({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
+		{{ if not .Table.NoUpdate }}Update({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
+		{{ if not .Table.NoDelete }}Delete({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
 	{{- else -}}
-		{{ if not .Table.NoCreate }}Create(*{{ .Table.Title }}) error{{ end }}
-		{{ if not .Table.NoUpdate }}Update(*{{ .Table.Title }}) error{{ end }}
-		{{ if not .Table.NoDelete }}Delete(*{{ .Table.Title }}) error{{ end }}
+		{{ if not .Table.NoCreate }}Create({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Table.Title }}) error{{ end }}
+		{{ if not .Table.NoUpdate }}Update({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Table.Title }}) error{{ end }}
+		{{ if not .Table.NoDelete }}Delete({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Table.Title }}) error{{ end }}
 	{{- end }}
 	
 	{{- $table := .Table }}

@@ -29,7 +29,7 @@ type SQLStatement struct {
 	buffer bytes.Buffer
 }
 
-// NewSQLStatement return bytebuffer for a statement
+// sdb.NewSQLStatement return bytebuffer for a statement
 func NewSQLStatement() *SQLStatement {
 	return sqlBuffer.Get().(*SQLStatement)
 	// return &SQLStatement{}

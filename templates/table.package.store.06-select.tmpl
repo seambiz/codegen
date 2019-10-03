@@ -1,7 +1,7 @@
 {{- $table := .Table -}}
 {{- $schema := .Schema -}}
-func ({{ $table.Receiver }}Store) selectStatement() *SQLStatement {
-	sql := NewSQLStatement()
+func ({{ $table.Receiver }}Store) selectStatement() *sdb.SQLStatement {
+	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "{{ $table.Alias}}", {{ $table.Title }}QueryFields({{ $table.Initials }}.colSet))
 	{{- if gt $table.NumUniqueFKs 0 }}

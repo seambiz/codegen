@@ -250,8 +250,8 @@ func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, c
 		*col++
 	}
 }
-func (st *StatisticsStore) selectStatement() *SQLStatement {
-	sql := NewSQLStatement()
+func (st *StatisticsStore) selectStatement() *sdb.SQLStatement {
+	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", StatisticsQueryFields(st.colSet))
 	sql.Append("FROM information_schema.STATISTICS A")
@@ -395,7 +395,7 @@ func (st *StatisticsStore) Upsert(data []*Statistics) (int64, error) {
 // Insert inserts the Statistics to the database.
 func (st *StatisticsStore) Insert(data *Statistics) error {
 	var err error
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("INSERT INTO information_schema.STATISTICS (")
 	fields := StatisticsQueryFields(st.colSet)
 	sql.Fields("", "", fields)
@@ -422,7 +422,7 @@ func (st *StatisticsStore) Insert(data *Statistics) error {
 // Update updates the Statistics in the database.
 // nolint[gocyclo]
 func (st *StatisticsStore) Update(data *Statistics) (int64, error) {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.STATISTICS SET")
@@ -520,7 +520,7 @@ func (st *StatisticsStore) Update(data *Statistics) (int64, error) {
 
 // Truncate deletes all rows from Statistics.
 func (st *StatisticsStore) Truncate() error {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE information_schema.STATISTICS")
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
 		log.Debug().Str("fn", "information_schema.STATISTICS.Truncate").Str("stmt", sql.String()).Msg("sql")

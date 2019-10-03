@@ -218,8 +218,8 @@ func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.In
 		*col++
 	}
 }
-func (ke *KeyColumnUsageStore) selectStatement() *SQLStatement {
-	sql := NewSQLStatement()
+func (ke *KeyColumnUsageStore) selectStatement() *sdb.SQLStatement {
+	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", KeyColumnUsageQueryFields(ke.colSet))
 	sql.Append("FROM information_schema.KEY_COLUMN_USAGE A")
@@ -351,7 +351,7 @@ func (ke *KeyColumnUsageStore) Upsert(data []*KeyColumnUsage) (int64, error) {
 // Insert inserts the KeyColumnUsage to the database.
 func (ke *KeyColumnUsageStore) Insert(data *KeyColumnUsage) error {
 	var err error
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("INSERT INTO information_schema.KEY_COLUMN_USAGE (")
 	fields := KeyColumnUsageQueryFields(ke.colSet)
 	sql.Fields("", "", fields)
@@ -378,7 +378,7 @@ func (ke *KeyColumnUsageStore) Insert(data *KeyColumnUsage) error {
 // Update updates the KeyColumnUsage in the database.
 // nolint[gocyclo]
 func (ke *KeyColumnUsageStore) Update(data *KeyColumnUsage) (int64, error) {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.KEY_COLUMN_USAGE SET")
@@ -456,7 +456,7 @@ func (ke *KeyColumnUsageStore) Update(data *KeyColumnUsage) (int64, error) {
 
 // Truncate deletes all rows from KeyColumnUsage.
 func (ke *KeyColumnUsageStore) Truncate() error {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE information_schema.KEY_COLUMN_USAGE")
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
 		log.Debug().Str("fn", "information_schema.KEY_COLUMN_USAGE.Truncate").Str("stmt", sql.String()).Msg("sql")

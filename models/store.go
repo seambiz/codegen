@@ -4,6 +4,7 @@ import (
 	"database/sql"
 	"math/big"
 
+	"bitbucket.org/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -23,7 +24,7 @@ type Store struct {
 	offset       int
 	batch        int
 	colSet       *big.Int
-	stmt         *SQLStatement
+	stmt         *sdb.SQLStatement
 	companyID    int
 
 	// TODO vielleicht hier weg, da unnötig bezogen auf stmt. Nur für wirkliche Store Methoden relevant
@@ -38,7 +39,7 @@ type Result []Row
 func NewStore(conn *sql.Tx) *Store {
 	s := &Store{}
 	s.db = conn
-	s.stmt = NewSQLStatement()
+	s.stmt = sdb.NewSQLStatement()
 	return s
 }
 
@@ -134,7 +135,7 @@ func (s *Store) queryBegin(stmt string, args ...interface{}) (*sql.Rows, []sql.R
 }
 
 // One retrieves a row from 'best.bestellung' as a Bestellung with possible joined data.
-func (s *Store) one(data DTO, stmt *SQLStatement, args ...interface{}) error {
+func (s *Store) one(data DTO, stmt *sdb.SQLStatement, args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(stmt.Query(), args...)
 	defer rows.Close()
 	if err != nil {

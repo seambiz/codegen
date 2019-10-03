@@ -2,10 +2,11 @@
 package models
 
 import (
-	"bitbucket.org/codegen/convert"
 	"database/sql"
 	"io"
 	"math/big"
+
+	"bitbucket.org/codegen/convert"
 
 	"bitbucket.org/seambiz/buffer"
 	"bitbucket.org/seambiz/sdb"
@@ -290,8 +291,8 @@ func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col 
 		*col++
 	}
 }
-func (co *ColumnsStore) selectStatement() *SQLStatement {
-	sql := NewSQLStatement()
+func (co *ColumnsStore) selectStatement() *sdb.SQLStatement {
+	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", ColumnsQueryFields(co.colSet))
 	sql.Append("FROM information_schema.COLUMNS A")
@@ -450,7 +451,7 @@ func (co *ColumnsStore) Upsert(data []*Columns) (int64, error) {
 // Insert inserts the Columns to the database.
 func (co *ColumnsStore) Insert(data *Columns) error {
 	var err error
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("INSERT INTO information_schema.COLUMNS (")
 	fields := ColumnsQueryFields(co.colSet)
 	sql.Fields("", "", fields)
@@ -477,7 +478,7 @@ func (co *ColumnsStore) Insert(data *Columns) error {
 // Update updates the Columns in the database.
 // nolint[gocyclo]
 func (co *ColumnsStore) Update(data *Columns) (int64, error) {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.COLUMNS SET")
@@ -600,7 +601,7 @@ func (co *ColumnsStore) Update(data *Columns) (int64, error) {
 
 // Truncate deletes all rows from Columns.
 func (co *ColumnsStore) Truncate() error {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE information_schema.COLUMNS")
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
 		log.Debug().Str("fn", "information_schema.COLUMNS.Truncate").Str("stmt", sql.String()).Msg("sql")

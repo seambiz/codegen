@@ -3,7 +3,7 @@
 {{- $schema := .Schema }}
 // Truncate deletes all rows from {{ $table.Title }}.
 func ({{ $table.StoreReceiver }}) Truncate() error {
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	{{- if $schema.IsMultiTenant }}
 		sql.AppendRaw("TRUNCATE ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }}")
 	{{- else }}

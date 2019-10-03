@@ -6,7 +6,7 @@
 func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.Title }}) error {
 	var err error
 
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	{{- if $schema.IsMultiTenant }}
 		sql.AppendRaw("DELETE FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} WHERE ")
 	{{- else }}
@@ -41,7 +41,7 @@ func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.
 func ({{ $table.StoreReceiver }}) DeleteSlice(data []*{{ $conf.RootPackage}}.{{ $table.Title }}) error {
 	var err error
 
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	{{- if $schema.IsMultiTenant }}
 		sql.AppendRaw("DELETE FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} WHERE ")
 	{{- else }}
@@ -70,7 +70,7 @@ func ({{ $table.StoreReceiver }}) DeleteSlice(data []*{{ $conf.RootPackage}}.{{ 
 // DeleteByQuery uses a where condition to delete entries.
 func ({{ $table.StoreReceiver }}) DeleteByQuery(args ...interface{}) error {
 	var err error
-	sql := NewSQLStatement()
+	sql := sdb.NewSQLStatement()
 	{{- if $schema.IsMultiTenant }}
 		sql.AppendRaw("DELETE FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} ")
 	{{- else }}
