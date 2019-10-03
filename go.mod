@@ -9,7 +9,7 @@ require (
 	github.com/Masterminds/semver v1.4.2 // indirect
 	github.com/Masterminds/sprig v0.0.0-20190301161902-9f8fceff796f
 	github.com/danverbraganza/varcaser v0.0.0-20190207223536-e3fb03ee5b4c
-	github.com/davecgh/go-spew v1.1.1
+	github.com/davecgh/go-spew v1.1.1 // indirect
 	github.com/go-sql-driver/mysql v1.4.0
 	github.com/google/uuid v1.1.1 // indirect
 	github.com/huandu/xstrings v1.2.0 // indirect
