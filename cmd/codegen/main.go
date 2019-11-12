@@ -11,9 +11,14 @@ import (
 	_ "github.com/go-sql-driver/mysql"
 )
 
-var buildTime string
-var gitRevision string
-var gitBranch string
+var (
+	version      string
+	gitCommit    string
+	gitTreeState string
+	gitSha       string
+	gitTag       string
+	buildTime    string
+)
 
 func main() {
 	// Subcommands
@@ -25,9 +30,12 @@ func main() {
 	flag.Parse()
 
 	if *versionFlag {
+		fmt.Printf("version:      %s\n", version)
 		fmt.Printf("build time:   %s\n", buildTime)
-		fmt.Printf("git revision: %s\n", gitRevision)
-		fmt.Printf("git branch:   %s\n", gitBranch)
+		fmt.Printf("git commit:   %s\n", gitCommit)
+		fmt.Printf("git sha:      %s\n", gitSha)
+		fmt.Printf("git treestate:%s\n", gitTreeState)
+		fmt.Printf("git tag:      %s\n", gitTag)
 		return
 	}
 

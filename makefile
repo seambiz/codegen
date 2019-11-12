@@ -120,3 +120,6 @@ daoup:
 
 daogen:
 	codegen -config codegen.json gen
+
+install:
+	cd dist && cp codegen ~/gocode/bin/ && cd ..
