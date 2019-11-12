@@ -1,3 +1,3 @@
 .idea
-cmd/codegen/codegen
-vendor
+.vscode
+dist

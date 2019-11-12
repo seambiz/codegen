@@ -6,7 +6,7 @@ import (
 	"strings"
 
 	"bitbucket.org/codegen/models"
-	"bitbucket.org/seambiz/sdb"
+	"github.com/seambiz/seambiz/sdb"
 	"github.com/imdario/mergo"
 	"github.com/jmoiron/sqlx"
 )

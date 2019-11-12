@@ -3,13 +3,12 @@ package models
 
 import (
 	"database/sql"
+	"github.com/seambiz/seambiz/sdb"
 	"io"
 	"math/big"
 
 	"bitbucket.org/codegen/convert"
 
-	"bitbucket.org/seambiz/buffer"
-	"bitbucket.org/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -615,7 +614,7 @@ func (co *ColumnsStore) Truncate() error {
 
 // ToJSON writes a single object to the buffer.
 // nolint[gocylco]
-func (co *ColumnsStore) ToJSON(t *buffer.TemplateBuffer, data *Columns) {
+func (co *ColumnsStore) ToJSON(t *sdb.JsonBuffer, data *Columns) {
 	prepend := "{"
 	if co.colSet == nil || co.colSet.Bit(ColumnsTableCatalog) == 1 {
 		t.JS(prepend, "table_catalog", data.TableCatalog)
@@ -705,7 +704,7 @@ func (co *ColumnsStore) ToJSON(t *buffer.TemplateBuffer, data *Columns) {
 
 // ToJSONArray writes a slice to the named array.
 func (co *ColumnsStore) ToJSONArray(w io.Writer, data []*Columns, name string) {
-	t := buffer.NewTemplateBuffer()
+	t := sdb.NewJsonBuffer()
 	t.SS(`{"`, name, `":[`)
 	for i := range data {
 		if i > 0 {

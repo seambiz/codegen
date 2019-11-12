@@ -8,8 +8,8 @@ import (
 	"time"
 
 	"bitbucket.org/codegen/convert"
-	"bitbucket.org/seambiz/buffer"
-	"bitbucket.org/seambiz/sdb"
+	"github.com/seambiz/seambiz/sdb"
+
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -615,7 +615,7 @@ func (ta *TablesStore) Truncate() error {
 
 // ToJSON writes a single object to the buffer.
 // nolint[gocylco]
-func (ta *TablesStore) ToJSON(t *buffer.TemplateBuffer, data *Tables) {
+func (ta *TablesStore) ToJSON(t *sdb.JsonBuffer, data *Tables) {
 	prepend := "{"
 	if ta.colSet == nil || ta.colSet.Bit(TablesTableCatalog) == 1 {
 		t.JS(prepend, "table_catalog", data.TableCatalog)
@@ -705,7 +705,7 @@ func (ta *TablesStore) ToJSON(t *buffer.TemplateBuffer, data *Tables) {
 
 // ToJSONArray writes a slice to the named array.
 func (ta *TablesStore) ToJSONArray(w io.Writer, data []*Tables, name string) {
-	t := buffer.NewTemplateBuffer()
+	t := sdb.NewJsonBuffer()
 	t.SS(`{"`, name, `":[`)
 	for i := range data {
 		if i > 0 {

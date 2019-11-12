@@ -1,10 +1,10 @@
 package models
 
 import (
+	"github.com/seambiz/seambiz/sdb"
 	"database/sql"
 	"math/big"
 
-	"bitbucket.org/seambiz/sdb"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
