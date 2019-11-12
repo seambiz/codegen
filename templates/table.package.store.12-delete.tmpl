@@ -34,6 +34,7 @@ func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.
 	return err
 }
 
+{{- if gt (len $table.PkFields) 0 }}
 {{/* DeleteSlice only with single int primary keys */}}
 {{- $tmp := (index $table.PkFields 0) -}}
 {{ if and (eq (len $table.PkFields) 1) (eq $tmp.GoType "int") }}
@@ -65,6 +66,7 @@ func ({{ $table.StoreReceiver }}) DeleteSlice(data []*{{ $conf.RootPackage}}.{{ 
 
 	return err
 }
+{{ end }}
 {{ end }}
 
 // DeleteByQuery uses a where condition to delete entries.

@@ -5,10 +5,9 @@ import (
 	"fmt"
 	"strings"
 
-	"bitbucket.org/codegen/models"
-	"github.com/seambiz/seambiz/sdb"
 	"github.com/imdario/mergo"
 	"github.com/jmoiron/sqlx"
+	"github.com/seambiz/seambiz/sdb"
 )
 
 func getSchema(conf *Config, name string) *Schema {

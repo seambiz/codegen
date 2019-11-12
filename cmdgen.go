@@ -133,7 +133,7 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	case "sql.NullString":
 		g.S("Str")
 		break
-	case "sql.NullInt64":
+	case "sql.NullInt64", "int64":
 		g.S("Int64")
 		break
 	case "sql.NullFloat64":
@@ -141,6 +141,8 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 		break
 	case "string":
 		g.S("Str")
+	case "uint64":
+		g.S("UInt64")
 		break
 	default:
 		g.S(strings.Title(f.GoType))
@@ -162,6 +164,12 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 		case "float32":
 			g.S("logFloat32(")
 			break
+		case "uint64":
+			g.S("logUInt64")
+			break
+		case "int64":
+			g.S("logInt64")
+			break
 		default:
 			panic("unsupported pointer type: " + f.GoType)
 		}
@@ -173,6 +181,7 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	} else {
 		g.S(f.ParamName)
 	}
+
 	switch f.GoType {
 	case "sql.NullString":
 		g.S(".Str")
