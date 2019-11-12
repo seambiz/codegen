@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"strings"
 
+	"bitbucket.org/codegen/models"
 	"github.com/imdario/mergo"
 	"github.com/jmoiron/sqlx"
 	"github.com/seambiz/seambiz/sdb"
