@@ -38,6 +38,7 @@ $(BINARIES):
 	$(eval VERSION_FILE := cmd/$@/VERSION.txt)
 	$(eval VERSION := $(shell cat ${VERSION_FILE}))
 	$(eval LDF_LOCAL += -X main.version=${VERSION})
+	fileb0x b0x.toml
 	$(GO) build $(GOFLAGS) -tags '$(TAGS)' -o ./dist/$@  -ldflags "$(LDF_LOCAL)" ./cmd/$@
 	echo "done building $@ -> dist/$@"
 

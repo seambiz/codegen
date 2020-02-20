@@ -142,7 +142,7 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	case "string":
 		g.S("Str")
 	case "uint64":
-		g.S("UInt64")
+		g.S("Uint64")
 		break
 	default:
 		g.S(strings.Title(f.GoType))

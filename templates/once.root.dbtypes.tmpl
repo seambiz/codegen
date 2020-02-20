@@ -12,7 +12,7 @@ package {{ .Conf.RootPackage }}
 		{{ end -}}
 
 		{{- range $fk := $table.ForeignKeys }}
-			{{ $fk.CustomName }} {{ if not $fk.IsUnique }}[]{{ end }}*{{ $fk.RefTableTitle }}
+			{{ $fk.CustomName }} {{ if not $fk.IsUnique }}[]{{ end }}*{{ $fk.RefTableTitle }} `json:"{{ lower $fk.CustomName }},omitempty"`
 		{{- end }}
 	}
 	{{ end }}

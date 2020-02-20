@@ -13,7 +13,11 @@ func ({{ $table.StoreReceiver }}) {{ $table.Title | untitle }}UpsertStmt() *sdb.
 		{{- end }}
 	{{- end }}
 	sql := &sdb.UpsertStatement{}
-	sql.InsertInto("{{ $schema.Name }}.{{ $table.Name }}")
+	{{- if $schema.IsMultiTenant }}
+		sql.InsertInto(fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}) + ".{{ $table.Name }}")
+	{{- else }}
+		sql.InsertInto("{{ $schema.Name }}.{{ $table.Name }}")
+	{{- end }}
 	sql.Columns(
 	{{- range $f := $table.Fields -}}
 		"{{ $f.Name | lower }}",

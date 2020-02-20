@@ -37,7 +37,7 @@ type Row []DTO
 type Result []Row
 
 // NewStore return DAO Storr
-func NewStore(conn *sql.Tx) *Store {
+func NewStore(conn Execer) *Store {
 	s := &Store{}
 	s.db = conn
 	s.stmt = sdb.NewSQLStatement()
@@ -220,7 +220,9 @@ func (s *Store) queryCustom(res DTOSlice, d DTO, stmt string, args ...interface{
 		return err
 	}
 
+	noRows := true
 	for rows.Next() {
+		noRows = false
 		err = rows.Scan(valuePointers...)
 		if err != nil {
 			log.Error().Err(err).Msg("scan")
@@ -231,7 +233,12 @@ func (s *Store) queryCustom(res DTOSlice, d DTO, stmt string, args ...interface{
 		data.bind(values, s.withJoin, s.colSet, &col)
 		res.append(data)
 	}
-	return err
+
+	if noRows {
+		return sql.ErrNoRows
+	}
+
+	return nil
 }
 
 // QueryCustom retrieves many rows from 'best.bestellung' as a slice of Bestellung with possible joined data.
