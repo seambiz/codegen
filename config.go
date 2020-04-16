@@ -44,6 +44,7 @@ func (c *Config) getSchema(schema string) *Schema {
 	}
 	return nil
 }
+
 func (s *Schema) getTable(table string) *Table {
 	for i := range s.Tables {
 		if s.Tables[i].Name == table {
@@ -159,7 +160,7 @@ type Index struct {
 	Generate   bool
 }
 
-type indexField struct {
+type IndexField struct {
 	IndexName string
 	ColName   string
 	IsUnique  bool

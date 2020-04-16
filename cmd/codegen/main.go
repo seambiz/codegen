@@ -8,7 +8,10 @@ import (
 	"os"
 
 	"bitbucket.org/codegen"
+	"bitbucket.org/codegen/db"
+	"bitbucket.org/codegen/updater"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/seambiz/seambiz/sdb"
 )
 
 var (
@@ -88,11 +91,26 @@ func main() {
 	}
 
 	if updateCommand.Parsed() {
-		contents, err := codegen.Update(&conf)
+		var up codegen.UpdateCmd
+
+		conn := sdb.OpenDatabaseDSN(conf.Database.DSN)
+		repoTable := db.NewTablesRepo(conn)
+		repoStats := db.NewStatisticsRepo(conn)
+		repoKeyCol := db.NewKeyColUsageRepo(conn)
+		repoCols := db.NewColumnsRepo(conn)
+
+		up = updater.NewMysqlUpdate(repoTable, repoCols, repoKeyCol, repoStats)
+		conf, err = up.Update(&conf)
 		if err != nil {
 			panic(err)
 		}
-		err = ioutil.WriteFile(*configFile, contents, 0x644)
+
+		jsonBytes, err := json.MarshalIndent(conf, "", "\t")
+		if err != nil {
+			panic(err)
+		}
+
+		err = ioutil.WriteFile(*configFile, jsonBytes, 0x644)
 		if err != nil {
 			panic(err)
 		}

@@ -1,10 +1,10 @@
 {
-	"MetaLinter": "golangci-lint run /home/sl/gospace/codegen/models --enable-all --disable lll,gocyclo,goconst",
+	"MetaLinter": "golangci-lint run /home/sl/gospace/codegen/db/mysql --enable-all --disable lll,gocyclo,goconst",
 	"LintPackage": "bitbucket.org/codegen/models",
-	"Package": "models",
+	"Package": "mysql",
 	"RootPackage": "codegen",
 	"RootPackageInclude": "bitbucket.org/codegen",
-	"DirOut": "/home/sl/gospace/codegen",
+	"DirOut": "/home/sl/gospace/codegen/db",
 	"FilePattern": "%s.go",
 	"Templates": [
 		"header",

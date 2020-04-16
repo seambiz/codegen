@@ -153,7 +153,7 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	if f.IsNullable {
 		switch f.GoType {
 		case "time.Time":
-			g.S("logTime")
+			g.S("logTime(")
 			break
 		case "string":
 			g.S("logString(")
@@ -165,10 +165,10 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 			g.S("logFloat32(")
 			break
 		case "uint64":
-			g.S("logUInt64")
+			g.S("logUInt64(")
 			break
 		case "int64":
-			g.S("logInt64")
+			g.S("logInt64(")
 			break
 		default:
 			panic("unsupported pointer type: " + f.GoType)
@@ -201,7 +201,6 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 
 // Log generates zerolog logging instruction for array of fields
 func (g *GenBuffer) Log(fields []*Field, prefix string) {
-
 	for i, f := range fields {
 		if i > 0 {
 			g.S(".")
@@ -339,7 +338,6 @@ var commonInitialisms = []string{
  And this function will be easier to test.
 */
 func generateTemplatesConfig(conf *Config) {
-
 	// not the most performant approach, as templates will be rebuilt for each table, but much more readable than the old code
 	for _, schema := range conf.Schemas {
 
@@ -377,7 +375,6 @@ func generateTemplatesConfig(conf *Config) {
 			}
 
 			if len(segments) == 4 {
-
 				switch segments[0] {
 				case "once":
 					// 1. add all simple "once" templates to the schema
@@ -524,11 +521,9 @@ func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string,
 		}
 
 	}
-
 }
 
 func generateCode(conf *Config) {
-
 	for _, schema := range conf.Schemas {
 
 		generateFile(conf, schema, nil, schema.Prefix, schema.preparedTemplatefiles)
@@ -855,6 +850,7 @@ func writeToCodgenFile(buf bytes.Buffer, conf *Config, filename string, subfolde
 	// check if file exists and if it already has codegen comments
 	// if not, just write everything to the file
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+		fmt.Println(err)
 		err := ioutil.WriteFile(fileName, buf.Bytes(), os.ModePerm)
 		if err != nil {
 			panic(err)
