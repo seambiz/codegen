@@ -4,8 +4,8 @@ type {{ .Table.Title }} struct {
 	{{ .Conf.RootPackage }}.{{ .Table.Title }}
 }
 
-// new implements DTO.new
-func ({{ .Table.Initials }} *{{ .Table.Title }}) new() DTO {
+// new implements Bindable.new
+func ({{ .Table.Initials }} *{{ .Table.Title }}) new() Bindable {
 	return &{{ .Table.Title }}{}
 }
 
@@ -14,8 +14,8 @@ type {{ .Table.Title }}Slice struct {
 	data []*{{ .Table.Title }}
 }
 
-// append implements DTOSlice.append
-func ({{ .Table.Initials }} *{{ .Table.Title }}Slice) append(d DTO) {
+// append implements BindableSlice.append
+func ({{ .Table.Initials }} *{{ .Table.Title }}Slice) append(d Bindable) {
 	{{ .Table.Initials }}.data = append({{ .Table.Initials }}.data, d.(*{{ .Table.Title }}))
 }
 

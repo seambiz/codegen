@@ -151,11 +151,12 @@ type IgnoreFields struct {
 
 // Index type
 type Index struct {
-	FuncName string   `json:"-"`
-	Name     string   `json:",omitempty"`
-	Fields   []string `json:",omitempty"`
-	IsUnique bool     `json:",omitempty"`
-	Generate bool
+	FuncName   string   `json:"-"`
+	CustomName string   `json:",omitempty"`
+	Name       string   `json:",omitempty"`
+	Fields     []string `json:",omitempty"`
+	IsUnique   bool     `json:",omitempty"`
+	Generate   bool
 }
 
 type indexField struct {

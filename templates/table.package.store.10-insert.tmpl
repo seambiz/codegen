@@ -6,6 +6,15 @@
 func ({{ $table.StoreReceiver }}) Insert(data *{{ $conf.RootPackage }}.{{ $table.Title }}) error {
     var err error
     sql := sdb.NewSQLStatement()
+
+    {{- range $i, $f := $table.Fields -}}
+		{{- if eq $f.Title "CreatedAt" }}
+		data.{{ $f.Title }} = stime.Now()
+		{{- else if eq $f.Title "UpdatedAt" }}
+		data.{{ $f.Title }} = stime.Now()
+		{{- end -}}
+	{{- end -}}
+	
 	{{- if $schema.IsMultiTenant }}
 		sql.AppendRaw("INSERT INTO ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} (")
 	{{- else }}

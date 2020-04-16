@@ -29,18 +29,25 @@ type Store struct {
 	{{- end }}
 
 	// TODO vielleicht hier weg, da unnötig bezogen auf stmt. Nur für wirkliche Store Methoden relevant
-	dtos     []DTO
+	dtos     []Bindable
 	dtoslice *Result
 }
 
-type Row []DTO
-type Result []Row
+type (
+	Row    []Bindable
+	Result []Row
+)
 
 // NewStore return DAO Storr
 func NewStore(conn Execer) *Store {
 	s := &Store{}
 	s.db = conn
 	s.stmt = sdb.NewSQLStatement()
+	return s
+}
+
+func (s *Store) SQL(stmt string) *Store {
+	s.stmt.Append(stmt)
 	return s
 }
 
@@ -51,15 +58,16 @@ func (s *Store) BindSlice(res *Result, rowStructs Row) *Store {
 	s.dtoslice = res
 	return s
 }
-func (s *Store) Bind(datas ...DTO) *Store {
+func (s *Store) Bind(datas ...Bindable) *Store {
 	for i := range datas {
 		s.dtos = append(s.dtos, datas[i])
 	}
 	return s
 }
-func (s *Store) Select(columns string) *Store {
-	s.stmt.Append("SELECT", columns)
-	return s
+func (s *Store) Select(dest interface{}, args ...interface{}) error {
+	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")
+	log.Debug().Str("fn", "Store.Select").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
+	return dbx.Select(dest, s.stmt.Query(), args...)
 }
 func (s *Store) From(table string) *Store {
 	s.stmt.Append("FROM", table)
@@ -98,6 +106,9 @@ func (s *Store) Limit(limits ...int) *Store {
 
 // Columns to be used for various statements.
 func (s *Store) Columns(cols ...int) *Store {
+	if s.stmt != nil && !strings.HasPrefix(s.stmt.String(), "SELECT") {
+		s.stmt.Append("SELECT")
+	}
 	if s.colSet == nil {
 		s.colSet = big.NewInt(0)
 	}
@@ -136,7 +147,7 @@ func (s *Store) queryBegin(stmt string, args ...interface{}) (*sql.Rows, []sql.R
 }
 
 // One retrieves a row from 'best.bestellung' as a Bestellung with possible joined data.
-func (s *Store) one(data DTO, stmt *sdb.SQLStatement, args ...interface{}) error {
+func (s *Store) one(data Bindable, stmt *sdb.SQLStatement, args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(stmt.Query(), args...)
 	defer rows.Close()
 	if err != nil {
@@ -212,8 +223,52 @@ func (s *Store) One(args ...interface{}) error {
 	return err
 }
 
+// OneValue retrieves a single column from the first row as generic interface{}.
+// Specify the bindFunc to map the DB return value to the correct type.
+func (s *Store) OneValue(bindFunc func([]byte) interface{}, args ...interface{}) (interface{}, error) {
+	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
+	defer rows.Close()
+	if err != nil {
+		return false, err
+	}
+
+	if rows.Next() {
+		err = rows.Scan(valuePointers...)
+		if err != nil {
+			log.Error().Err(err).Msg("scan")
+			return false, err
+		}
+		return bindFunc(values[0]), nil
+	}
+	return false, sql.ErrNoRows
+}
+
+// OneString retrieves a single column from the first row as string.
+func (s *Store) OneString(args ...interface{}) (string, error) {
+	v, err := s.OneValue(func(b []byte) interface{} {
+		return sdb.ToString(b)
+	}, args...)
+	return v.(string), err
+}
+
+// OneInt retrieves a single column from the first row as int.
+func (s *Store) OneInt(args ...interface{}) (int, error) {
+	v, err := s.OneValue(func(b []byte) interface{} {
+		return sdb.ToInt(b)
+	}, args...)
+	return v.(int), err
+}
+
+// OneBool retrieves a single column from the first row as bool.
+func (s *Store) OneBool(args ...interface{}) (bool, error) {
+	v, err := s.OneValue(func(b []byte) interface{} {
+		return sdb.ToBool(b)
+	}, args...)
+	return v.(bool), err
+}
+
 // QueryCustom retrieves many rows from 'best.bestellung' as a slice of Bestellung with possible joined data.
-func (s *Store) queryCustom(res DTOSlice, d DTO, stmt string, args ...interface{}) error {
+func (s *Store) queryCustom(res BindableSlice, d Bindable, stmt string, args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(stmt, args...)
 	defer rows.Close()
 	if err != nil {
