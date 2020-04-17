@@ -511,27 +511,24 @@ func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string,
 		segments := strings.Split(key, ".")
 		prefix := ""
 		if segments[0] == "table" {
-			prefix = fileprefix
+			prefix = strings.ReplaceAll(fileprefix, "_", "")
 		}
 		switch segments[1] {
 		case "package":
-			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), conf.Package)
+			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), filepath.Join(conf.SubPackage, conf.Package))
 		case "root":
 			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), "")
 		}
-
 	}
 }
 
 func generateCode(conf *Config) {
 	for _, schema := range conf.Schemas {
-
 		generateFile(conf, schema, nil, schema.Prefix, schema.preparedTemplatefiles)
 
 		for _, table := range schema.Tables {
 			generateFile(conf, schema, table, schema.Prefix+table.Name, table.preparedTemplatefiles)
 		}
-
 	}
 
 	execCommand("goimports -w " + conf.DirOut)
@@ -687,7 +684,7 @@ func prepareSchemaConfig(conf *Config) {
 				if !ok {
 					panic(typename)
 				}
-				table.Fields[i].goZero = zero
+				table.Fields[i].GoZero = zero
 
 				jsonFunc, ok := goJSONMapping[typename]
 				if !ok {
@@ -702,7 +699,6 @@ func prepareSchemaConfig(conf *Config) {
 				table.Fields[i].MappingFunc = MappingFunc
 
 				table.numFields = len(table.Fields)
-
 			}
 		}
 
@@ -844,7 +840,7 @@ func writeBufferToCodgenFile(bb *GenBuffer, conf *Config, filename string) {
 }
 
 func writeToCodgenFile(buf bytes.Buffer, conf *Config, filename string, subfolder string) {
-	fileName := filepath.Join(conf.DirOut, subfolder, fmt.Sprintf(conf.FilePattern, strings.ToLower(strings.Replace(filename, "_", "", -1))))
+	fileName := filepath.Join(conf.DirOut, subfolder, fmt.Sprintf(conf.FilePattern, strings.ToLower(filename)))
 	fmt.Println("Writing to", fileName)
 
 	// check if file exists and if it already has codegen comments

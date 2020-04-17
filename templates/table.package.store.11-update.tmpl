@@ -17,7 +17,7 @@ func ({{ $table.StoreReceiver }}) Update(data *{{ $conf.RootPackage }}.{{ $table
 
     {{- range $i, $f := $table.OtherFields }}
         if {{ $table.Initials }}.colSet == nil || {{ $table.Initials }}.colSet.Bit({{ $table.Title }}_{{ $f.Title }}) == 1 {
-            sql.AppendRaw(prepend, "{{ $f.Name }} = ?")
+            sql.AppendRaw(prepend, "{{ lower $f.Name }} = ?")
             {{- if ne (add $i 1) (len $table.OtherFields) }}
                 prepend = ","
             {{- end }}

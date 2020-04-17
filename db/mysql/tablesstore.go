@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"database/sql"
-	"errors"
 	"io"
 	"math/big"
 	"time"
@@ -191,6 +190,12 @@ func (ta *TablesStore) JoinType(jt string) *TablesStore {
 	return ta
 }
 
+// Columns sets bits for specific columns.
+func (ta *TablesStore) Columns(cols ...int) *TablesStore {
+	ta.Store.Columns(cols...)
+	return ta
+}
+
 // nolint[gocyclo]
 func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Tables_TableCatalog) == 1 {
@@ -357,6 +362,7 @@ func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *
 		ta.TableComment = sdb.ToString(row[*col])
 		*col++
 	}
+
 }
 
 func (ta *TablesStore) selectStatement() *sdb.SQLStatement {
@@ -421,67 +427,67 @@ func (ta *TablesStore) Query(args ...interface{}) ([]*codegen.Tables, error) {
 func (ta *TablesStore) tablesUpsertStmt() *sdb.UpsertStatement {
 	upsert := []string{}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCatalog) == 1 {
-		upsert = append(upsert, "TABLE_CATALOG = VALUES(TABLE_CATALOG)")
+		upsert = append(upsert, "table_catalog = VALUES(table_catalog)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableSchema) == 1 {
-		upsert = append(upsert, "TABLE_SCHEMA = VALUES(TABLE_SCHEMA)")
+		upsert = append(upsert, "table_schema = VALUES(table_schema)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableName) == 1 {
-		upsert = append(upsert, "TABLE_NAME = VALUES(TABLE_NAME)")
+		upsert = append(upsert, "table_name = VALUES(table_name)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableType) == 1 {
-		upsert = append(upsert, "TABLE_TYPE = VALUES(TABLE_TYPE)")
+		upsert = append(upsert, "table_type = VALUES(table_type)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_Engine) == 1 {
-		upsert = append(upsert, "ENGINE = VALUES(ENGINE)")
+		upsert = append(upsert, "engine = VALUES(engine)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_Version) == 1 {
-		upsert = append(upsert, "VERSION = VALUES(VERSION)")
+		upsert = append(upsert, "version = VALUES(version)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_RowFormat) == 1 {
-		upsert = append(upsert, "ROW_FORMAT = VALUES(ROW_FORMAT)")
+		upsert = append(upsert, "row_format = VALUES(row_format)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableRows) == 1 {
-		upsert = append(upsert, "TABLE_ROWS = VALUES(TABLE_ROWS)")
+		upsert = append(upsert, "table_rows = VALUES(table_rows)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_AvgRowLength) == 1 {
-		upsert = append(upsert, "AVG_ROW_LENGTH = VALUES(AVG_ROW_LENGTH)")
+		upsert = append(upsert, "avg_row_length = VALUES(avg_row_length)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_DataLength) == 1 {
-		upsert = append(upsert, "DATA_LENGTH = VALUES(DATA_LENGTH)")
+		upsert = append(upsert, "data_length = VALUES(data_length)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_MaxDataLength) == 1 {
-		upsert = append(upsert, "MAX_DATA_LENGTH = VALUES(MAX_DATA_LENGTH)")
+		upsert = append(upsert, "max_data_length = VALUES(max_data_length)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_IndexLength) == 1 {
-		upsert = append(upsert, "INDEX_LENGTH = VALUES(INDEX_LENGTH)")
+		upsert = append(upsert, "index_length = VALUES(index_length)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_DataFree) == 1 {
-		upsert = append(upsert, "DATA_FREE = VALUES(DATA_FREE)")
+		upsert = append(upsert, "data_free = VALUES(data_free)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_AutoIncrement) == 1 {
-		upsert = append(upsert, "AUTO_INCREMENT = VALUES(AUTO_INCREMENT)")
+		upsert = append(upsert, "auto_increment = VALUES(auto_increment)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateTime) == 1 {
-		upsert = append(upsert, "CREATE_TIME = VALUES(CREATE_TIME)")
+		upsert = append(upsert, "create_time = VALUES(create_time)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_UpdateTime) == 1 {
-		upsert = append(upsert, "UPDATE_TIME = VALUES(UPDATE_TIME)")
+		upsert = append(upsert, "update_time = VALUES(update_time)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_CheckTime) == 1 {
-		upsert = append(upsert, "CHECK_TIME = VALUES(CHECK_TIME)")
+		upsert = append(upsert, "check_time = VALUES(check_time)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCollation) == 1 {
-		upsert = append(upsert, "TABLE_COLLATION = VALUES(TABLE_COLLATION)")
+		upsert = append(upsert, "table_collation = VALUES(table_collation)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_Checksum) == 1 {
-		upsert = append(upsert, "CHECKSUM = VALUES(CHECKSUM)")
+		upsert = append(upsert, "checksum = VALUES(checksum)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateOptions) == 1 {
-		upsert = append(upsert, "CREATE_OPTIONS = VALUES(CREATE_OPTIONS)")
+		upsert = append(upsert, "create_options = VALUES(create_options)")
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableComment) == 1 {
-		upsert = append(upsert, "TABLE_COMMENT = VALUES(TABLE_COMMENT)")
+		upsert = append(upsert, "table_comment = VALUES(table_comment)")
 	}
 	sql := &sdb.UpsertStatement{}
 	sql.InsertInto("information_schema.TABLES")
@@ -536,6 +542,9 @@ func (ta *TablesStore) Insert(data *codegen.Tables) error {
 	}
 	sql.Append(")")
 
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "information_schema.TABLES.Insert").Str("stmt", sql.String()).Str("TableCatalog", data.TableCatalog).Str("TableSchema", data.TableSchema).Str("TableName", data.TableName).Str("TableType", data.TableType).Str("Engine", logString(data.Engine)).Uint64("Version", logUInt64(data.Version)).Str("RowFormat", logString(data.RowFormat)).Uint64("TableRows", logUInt64(data.TableRows)).Uint64("AvgRowLength", logUInt64(data.AvgRowLength)).Uint64("DataLength", logUInt64(data.DataLength)).Uint64("MaxDataLength", logUInt64(data.MaxDataLength)).Uint64("IndexLength", logUInt64(data.IndexLength)).Uint64("DataFree", logUInt64(data.DataFree)).Uint64("AutoIncrement", logUInt64(data.AutoIncrement)).Time("CreateTime", logTime(data.CreateTime)).Time("UpdateTime", logTime(data.UpdateTime)).Time("CheckTime", logTime(data.CheckTime)).Str("TableCollation", logString(data.TableCollation)).Uint64("Checksum", logUInt64(data.Checksum)).Str("CreateOptions", logString(data.CreateOptions)).Str("TableComment", data.TableComment).Msg("sql")
+	}
 	_, err = ta.db.Exec(sql.Query(), data.TableCatalog, data.TableSchema, data.TableName, data.TableType, data.Engine, data.Version, data.RowFormat, data.TableRows, data.AvgRowLength, data.DataLength, data.MaxDataLength, data.IndexLength, data.DataFree, data.AutoIncrement, data.CreateTime, data.UpdateTime, data.CheckTime, data.TableCollation, data.Checksum, data.CreateOptions, data.TableComment)
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
@@ -552,107 +561,107 @@ func (ta *TablesStore) Update(data *codegen.Tables) (int64, error) {
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.TABLES SET")
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCatalog) == 1 {
-		sql.AppendRaw(prepend, "TABLE_CATALOG = ?")
+		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableSchema) == 1 {
-		sql.AppendRaw(prepend, "TABLE_SCHEMA = ?")
+		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableName) == 1 {
-		sql.AppendRaw(prepend, "TABLE_NAME = ?")
+		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableType) == 1 {
-		sql.AppendRaw(prepend, "TABLE_TYPE = ?")
+		sql.AppendRaw(prepend, "table_type = ?")
 		prepend = ","
 		args = append(args, data.TableType)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_Engine) == 1 {
-		sql.AppendRaw(prepend, "ENGINE = ?")
+		sql.AppendRaw(prepend, "engine = ?")
 		prepend = ","
 		args = append(args, data.Engine)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_Version) == 1 {
-		sql.AppendRaw(prepend, "VERSION = ?")
+		sql.AppendRaw(prepend, "version = ?")
 		prepend = ","
 		args = append(args, data.Version)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_RowFormat) == 1 {
-		sql.AppendRaw(prepend, "ROW_FORMAT = ?")
+		sql.AppendRaw(prepend, "row_format = ?")
 		prepend = ","
 		args = append(args, data.RowFormat)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableRows) == 1 {
-		sql.AppendRaw(prepend, "TABLE_ROWS = ?")
+		sql.AppendRaw(prepend, "table_rows = ?")
 		prepend = ","
 		args = append(args, data.TableRows)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_AvgRowLength) == 1 {
-		sql.AppendRaw(prepend, "AVG_ROW_LENGTH = ?")
+		sql.AppendRaw(prepend, "avg_row_length = ?")
 		prepend = ","
 		args = append(args, data.AvgRowLength)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_DataLength) == 1 {
-		sql.AppendRaw(prepend, "DATA_LENGTH = ?")
+		sql.AppendRaw(prepend, "data_length = ?")
 		prepend = ","
 		args = append(args, data.DataLength)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_MaxDataLength) == 1 {
-		sql.AppendRaw(prepend, "MAX_DATA_LENGTH = ?")
+		sql.AppendRaw(prepend, "max_data_length = ?")
 		prepend = ","
 		args = append(args, data.MaxDataLength)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_IndexLength) == 1 {
-		sql.AppendRaw(prepend, "INDEX_LENGTH = ?")
+		sql.AppendRaw(prepend, "index_length = ?")
 		prepend = ","
 		args = append(args, data.IndexLength)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_DataFree) == 1 {
-		sql.AppendRaw(prepend, "DATA_FREE = ?")
+		sql.AppendRaw(prepend, "data_free = ?")
 		prepend = ","
 		args = append(args, data.DataFree)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_AutoIncrement) == 1 {
-		sql.AppendRaw(prepend, "AUTO_INCREMENT = ?")
+		sql.AppendRaw(prepend, "auto_increment = ?")
 		prepend = ","
 		args = append(args, data.AutoIncrement)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateTime) == 1 {
-		sql.AppendRaw(prepend, "CREATE_TIME = ?")
+		sql.AppendRaw(prepend, "create_time = ?")
 		prepend = ","
 		args = append(args, data.CreateTime)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_UpdateTime) == 1 {
-		sql.AppendRaw(prepend, "UPDATE_TIME = ?")
+		sql.AppendRaw(prepend, "update_time = ?")
 		prepend = ","
 		args = append(args, data.UpdateTime)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_CheckTime) == 1 {
-		sql.AppendRaw(prepend, "CHECK_TIME = ?")
+		sql.AppendRaw(prepend, "check_time = ?")
 		prepend = ","
 		args = append(args, data.CheckTime)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCollation) == 1 {
-		sql.AppendRaw(prepend, "TABLE_COLLATION = ?")
+		sql.AppendRaw(prepend, "table_collation = ?")
 		prepend = ","
 		args = append(args, data.TableCollation)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_Checksum) == 1 {
-		sql.AppendRaw(prepend, "CHECKSUM = ?")
+		sql.AppendRaw(prepend, "checksum = ?")
 		prepend = ","
 		args = append(args, data.Checksum)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateOptions) == 1 {
-		sql.AppendRaw(prepend, "CREATE_OPTIONS = ?")
+		sql.AppendRaw(prepend, "create_options = ?")
 		prepend = ","
 		args = append(args, data.CreateOptions)
 	}
 	if ta.colSet == nil || ta.colSet.Bit(Tables_TableComment) == 1 {
-		sql.AppendRaw(prepend, "TABLE_COMMENT = ?")
+		sql.AppendRaw(prepend, "table_comment = ?")
 		args = append(args, data.TableComment)
 	}
 	sql.Append(" WHERE ")
@@ -665,43 +674,6 @@ func (ta *TablesStore) Update(data *codegen.Tables) (int64, error) {
 		return 0, err
 	}
 	return res.RowsAffected()
-}
-
-// Delete deletes the Tables from the database.
-func (ta *TablesStore) Delete(data *codegen.Tables) error {
-	var err error
-
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.TABLES WHERE")
-	sql.Append("")
-
-	_, err = ta.db.Exec(sql.Query())
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
-}
-
-// DeleteByQuery uses a where condition to delete entries.
-func (ta *TablesStore) DeleteByQuery(args ...interface{}) error {
-	var err error
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.TABLES")
-	if ta.where == "" {
-		return errors.New("no where condition set")
-	}
-	sql.Append("WHERE", ta.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "information_schema.TABLES.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
-	}
-
-	_, err = ta.db.Exec(sql.Query(), args...)
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
 }
 
 // Truncate deletes all rows from Tables.

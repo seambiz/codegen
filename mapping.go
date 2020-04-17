@@ -58,10 +58,12 @@ var goZeroMapping = map[string]string{
 
 	"float32":   "0",
 	"float64":   "0",
-	"time.Time": "*time.Time",
+	"time.Time": "time.Time{}",
 
-	"string": "sql.NullString",
+	"string":  `""`,
+	"*string": `nil`,
 }
+
 var goJSONMapping = map[string]string{
 	"int":    "JD",
 	"uint":   "JDu",
@@ -76,6 +78,7 @@ var goJSONMapping = map[string]string{
 
 	"string": "JS",
 }
+
 var goDbMappingFunc = map[string]string{
 	// numeric types
 	"int":    "sdb.ToInt",
@@ -83,7 +86,7 @@ var goDbMappingFunc = map[string]string{
 	"int64":  "sdb.ToInt64",
 	"uint64": "sdb.ToUInt64",
 	"bool":   "sdb.ToBool",
-	"[]byte": "", //nothing to be done
+	"[]byte": "", // nothing to be done
 
 	"float32":   "sdb.ToFloat32",
 	"float64":   "sdb.ToFloat64",

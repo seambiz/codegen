@@ -8,7 +8,7 @@ func ({{ $table.StoreReceiver }}) {{ $table.Title | untitle }}UpsertStmt() *sdb.
 	{{- range $f := $table.OtherFields }}
 		{{- if not (has $f.Name $table.Ignores.Upsert) }}
         	if {{ $table.Initials }}.colSet == nil || {{ $table.Initials }}.colSet.Bit({{ $table.Title }}_{{ $f.Title }}) == 1 {
-			    upsert = append(upsert, "{{ $f.Name }} = VALUES({{ $f.Name }})")
+			    upsert = append(upsert, "{{ lower $f.Name }} = VALUES({{ lower $f.Name }})")
 			}
 		{{- end }}
 	{{- end }}

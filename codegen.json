@@ -1,23 +1,14 @@
 {
 	"MetaLinter": "golangci-lint run /home/sl/gospace/codegen/db/mysql --enable-all --disable lll,gocyclo,goconst",
-	"LintPackage": "bitbucket.org/codegen/models",
+	"LintPackage": "bitbucket.org/codegen/db/mysql",
 	"Package": "mysql",
 	"RootPackage": "codegen",
 	"RootPackageInclude": "bitbucket.org/codegen",
-	"DirOut": "/home/sl/gospace/codegen/db",
+	"DirOut": "/home/sl/gospace/codegen",
+	"SubPackage": "db",
+	"Tests": true,
+	"Benchmarks": true,
 	"FilePattern": "%s.go",
-	"Templates": [
-		"header",
-		"type",
-		"foreign",
-		"upsert",
-		"insert",
-		"update",
-		"truncate",
-		"index",
-		"json",
-		"end"
-	],
 	"Schemas": [
 		{
 			"Name": "information_schema",
@@ -3064,6 +3055,104 @@
 					],
 					"Ignores": {},
 					"Generate": false
+				},
+				{
+					"Name": "fake_benchmark",
+					"Tables": [
+						{
+							"Name": "person",
+							"Fields": [
+								{
+									"Name": "id",
+									"DBType": "int",
+									"IsAutoincrement": true,
+									"IsPrimaryKey": true
+								},
+								{
+									"Name": "name",
+									"DBType": "varchar"
+								}
+							],
+							"Indices": [
+								{
+									"Name": "primary",
+									"Fields": [
+										"id"
+									],
+									"IsUnique": true,
+									"Generate": true
+								}
+							],
+							"ForeignKeys": [
+								{
+									"Name": "fk_person_pet",
+									"Fields": [
+										"id"
+									],
+									"RefSchema": "fake_benchmark",
+									"RefTable": "pet",
+									"RefFields": [
+										"person_id"
+									],
+									"IsUnique": false
+								}
+							],
+							"Ignores": {},
+							"Generate": true
+						},
+						{
+							"Name": "pet",
+							"Fields": [
+								{
+									"Name": "id",
+									"DBType": "int",
+									"IsAutoincrement": true,
+									"IsPrimaryKey": true
+								},
+								{
+									"Name": "person_id",
+									"DBType": "int"
+								},
+								{
+									"Name": "species",
+									"DBType": "varchar"
+								}
+							],
+							"Indices": [
+								{
+									"Name": "primary",
+									"Fields": [
+										"id"
+									],
+									"IsUnique": true,
+									"Generate": true
+								},
+								{
+									"Name": "fk_pet_person_idx",
+									"Fields": [
+										"person_id"
+									],
+									"Generate": true
+								}
+							],
+							"ForeignKeys": [
+								{
+									"Name": "fk_pet_person",
+									"Fields": [
+										"person_id"
+									],
+									"RefSchema": "fake_benchmark",
+									"RefTable": "person",
+									"RefFields": [
+										"id"
+									],
+									"IsUnique": true
+								}
+							],
+							"Ignores": {},
+							"Generate": true
+						}
+					]
 				}
 			],
 			"TemplateFolder": "./templates/"

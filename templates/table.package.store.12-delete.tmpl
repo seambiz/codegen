@@ -1,7 +1,7 @@
 {{- $conf := .Conf -}}
 {{- $table := .Table -}}
 {{- $schema := .Schema }}
-
+{{- if gt (len $table.PkFields) 0 }}
 // Delete deletes the {{ $table.Title }} from the database.
 func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.Title }}) error {
 	var err error
@@ -93,3 +93,4 @@ func ({{ $table.StoreReceiver }}) DeleteByQuery(args ...interface{}) error {
 
 	return err
 }
+{{ end }}

@@ -58,50 +58,41 @@ func (s *Store) BindSlice(res *Result, rowStructs Row) *Store {
 	s.dtoslice = res
 	return s
 }
-
 func (s *Store) Bind(datas ...Bindable) *Store {
 	for i := range datas {
 		s.dtos = append(s.dtos, datas[i])
 	}
 	return s
 }
-
 func (s *Store) Select(dest interface{}, args ...interface{}) error {
 	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")
 	log.Debug().Str("fn", "Store.Select").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
 	return dbx.Select(dest, s.stmt.Query(), args...)
 }
-
 func (s *Store) From(table string) *Store {
 	s.stmt.Append("FROM", table)
 	return s
 }
-
 func (s *Store) Join(table, condition string) *Store {
 	s.stmt.Append("INNER JOIN", table, "ON", condition)
 	return s
 }
-
 func (s *Store) LeftJoin(table, condition string) *Store {
 	s.stmt.Append("LEFT JOIN", table, "ON", condition)
 	return s
 }
-
 func (s *Store) RightJoin(table, condition string) *Store {
 	s.stmt.Append("RIGHT JOIN", table, "ON", condition)
 	return s
 }
-
 func (s *Store) Where(condition string) *Store {
 	s.stmt.Append("WHERE", condition)
 	return s
 }
-
 func (s *Store) OrderBy(columns string) *Store {
 	s.stmt.Append("ORDER BY", columns)
 	return s
 }
-
 func (s *Store) Limit(limits ...int) *Store {
 	if len(limits) == 0 {
 		return s
@@ -133,6 +124,7 @@ func (s *Store) Fields(prefix string, fieldFunc func(*big.Int) []string) *Store 
 	return s
 }
 
+// queryBegin is a helper for other querying funcs.
 func (s *Store) queryBegin(stmt string, args ...interface{}) (*sql.Rows, []sql.RawBytes, []interface{}, error) {
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
 		log.Debug().Str("fn", "Store.One").Str("stmt", stmt).Interface("args", args).Msg("sql")
@@ -155,13 +147,13 @@ func (s *Store) queryBegin(stmt string, args ...interface{}) (*sql.Rows, []sql.R
 	return rows, columnValues, columnPointers, err
 }
 
-// One retrieves a row from 'best.bestellung' as a Bestellung with possible joined data.
+// one is a helper for other stores' One's funcs.
 func (s *Store) one(data Bindable, stmt *sdb.SQLStatement, args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(stmt.Query(), args...)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
 	if rows.Next() {
 		err = rows.Scan(valuePointers...)
@@ -174,16 +166,23 @@ func (s *Store) one(data Bindable, stmt *sdb.SQLStatement, args ...interface{}) 
 	} else {
 		return sql.ErrNoRows
 	}
-	return err
+	if err := rows.Close(); err != nil {
+		return err
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// One retrieves a row from 'best.bestellung' as a Bestellung with possible joined data.
+// MapScan gets a single row from a custom query.
 func (s *Store) MapScan(dest map[string]sql.RawBytes, args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
 	if rows.Next() {
 		err = rows.Scan(valuePointers...)
@@ -205,16 +204,23 @@ func (s *Store) MapScan(dest map[string]sql.RawBytes, args ...interface{}) error
 	} else {
 		return sql.ErrNoRows
 	}
-	return err
+	if err := rows.Close(); err != nil {
+		return err
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
-// One retrieves a row from 'best.bestellung' as a Bestellung with possible joined data.
+// One retrieves a single row with optionally joined data.
 func (s *Store) One(args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
 	if rows.Next() {
 		err = rows.Scan(valuePointers...)
@@ -229,17 +235,24 @@ func (s *Store) One(args ...interface{}) error {
 	} else {
 		return sql.ErrNoRows
 	}
-	return err
+	if err := rows.Close(); err != nil {
+		return err
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // OneValue retrieves a single column from the first row as generic interface{}.
 // Specify the bindFunc to map the DB return value to the correct type.
 func (s *Store) OneValue(bindFunc func([]byte) interface{}, args ...interface{}) (interface{}, error) {
 	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
-	defer rows.Close()
 	if err != nil {
 		return false, err
 	}
+	defer rows.Close()
 
 	if rows.Next() {
 		err = rows.Scan(valuePointers...)
@@ -279,39 +292,40 @@ func (s *Store) OneBool(args ...interface{}) (bool, error) {
 // QueryCustom retrieves many rows from 'best.bestellung' as a slice of Bestellung with possible joined data.
 func (s *Store) queryCustom(res BindableSlice, d Bindable, stmt string, args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(stmt, args...)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
-	noRows := true
+	col := 0
 	for rows.Next() {
-		noRows = false
 		err = rows.Scan(valuePointers...)
 		if err != nil {
 			log.Error().Err(err).Msg("scan")
 			return err
 		}
 		data := d.new()
-		col := 0
+		col = 0
 		data.bind(values, s.withJoin, s.colSet, &col)
 		res.append(data)
 	}
-
-	if noRows {
-		return sql.ErrNoRows
+	if err := rows.Close(); err != nil {
+		return err
+	}
+	if err := rows.Err(); err != nil {
+		return err
 	}
 
 	return nil
 }
 
-// QueryCustom retrieves many rows from 'best.bestellung' as a slice of Bestellung with possible joined data.
+// Query retrieves many rows.
 func (s *Store) Query(args ...interface{}) error {
 	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
-	defer rows.Close()
 	if err != nil {
 		return err
 	}
+	defer rows.Close()
 
 	for rows.Next() {
 		err = rows.Scan(valuePointers...)
@@ -328,7 +342,14 @@ func (s *Store) Query(args ...interface{}) error {
 		}
 		*s.dtoslice = append(*s.dtoslice, row)
 	}
-	return err
+	if err := rows.Close(); err != nil {
+		return err
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 // ^^ END OF GENERATED BY CODEGEN. DO NOT EDIT. ^^

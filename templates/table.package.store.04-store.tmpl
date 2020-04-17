@@ -63,3 +63,8 @@ func ({{ .Table.Initials }} *{{ .Table.Title }}Store) JoinType(jt string) *{{ .T
 	return {{ .Table.Initials }}
 }
 
+// Columns sets bits for specific columns.
+func ({{ .Table.Initials }} *{{ .Table.Title }}Store) Columns(cols ...int) *{{ .Table.Title }}Store {
+	{{ .Table.Initials }}.Store.Columns(cols...)
+	return {{ .Table.Initials }}
+}

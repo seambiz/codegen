@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"database/sql"
-	"errors"
 	"io"
 	"math/big"
 
@@ -190,6 +189,12 @@ func (co *ColumnsStore) JoinType(jt string) *ColumnsStore {
 	return co
 }
 
+// Columns sets bits for specific columns.
+func (co *ColumnsStore) Columns(cols ...int) *ColumnsStore {
+	co.Store.Columns(cols...)
+	return co
+}
+
 // nolint[gocyclo]
 func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Columns_TableCatalog) == 1 {
@@ -316,6 +321,7 @@ func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col 
 		co.GenerationExpression = sdb.ToString(row[*col])
 		*col++
 	}
+
 }
 
 func (co *ColumnsStore) selectStatement() *sdb.SQLStatement {
@@ -380,67 +386,67 @@ func (co *ColumnsStore) Query(args ...interface{}) ([]*codegen.Columns, error) {
 func (co *ColumnsStore) columnsUpsertStmt() *sdb.UpsertStatement {
 	upsert := []string{}
 	if co.colSet == nil || co.colSet.Bit(Columns_TableCatalog) == 1 {
-		upsert = append(upsert, "TABLE_CATALOG = VALUES(TABLE_CATALOG)")
+		upsert = append(upsert, "table_catalog = VALUES(table_catalog)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_TableSchema) == 1 {
-		upsert = append(upsert, "TABLE_SCHEMA = VALUES(TABLE_SCHEMA)")
+		upsert = append(upsert, "table_schema = VALUES(table_schema)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_TableName) == 1 {
-		upsert = append(upsert, "TABLE_NAME = VALUES(TABLE_NAME)")
+		upsert = append(upsert, "table_name = VALUES(table_name)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnName) == 1 {
-		upsert = append(upsert, "COLUMN_NAME = VALUES(COLUMN_NAME)")
+		upsert = append(upsert, "column_name = VALUES(column_name)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_OrdinalPosition) == 1 {
-		upsert = append(upsert, "ORDINAL_POSITION = VALUES(ORDINAL_POSITION)")
+		upsert = append(upsert, "ordinal_position = VALUES(ordinal_position)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnDefault) == 1 {
-		upsert = append(upsert, "COLUMN_DEFAULT = VALUES(COLUMN_DEFAULT)")
+		upsert = append(upsert, "column_default = VALUES(column_default)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_IsNullable) == 1 {
-		upsert = append(upsert, "IS_NULLABLE = VALUES(IS_NULLABLE)")
+		upsert = append(upsert, "is_nullable = VALUES(is_nullable)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_DataType) == 1 {
-		upsert = append(upsert, "DATA_TYPE = VALUES(DATA_TYPE)")
+		upsert = append(upsert, "data_type = VALUES(data_type)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CharacterMaximumLength) == 1 {
-		upsert = append(upsert, "CHARACTER_MAXIMUM_LENGTH = VALUES(CHARACTER_MAXIMUM_LENGTH)")
+		upsert = append(upsert, "character_maximum_length = VALUES(character_maximum_length)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CharacterOctetLength) == 1 {
-		upsert = append(upsert, "CHARACTER_OCTET_LENGTH = VALUES(CHARACTER_OCTET_LENGTH)")
+		upsert = append(upsert, "character_octet_length = VALUES(character_octet_length)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_NumericPrecision) == 1 {
-		upsert = append(upsert, "NUMERIC_PRECISION = VALUES(NUMERIC_PRECISION)")
+		upsert = append(upsert, "numeric_precision = VALUES(numeric_precision)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_NumericScale) == 1 {
-		upsert = append(upsert, "NUMERIC_SCALE = VALUES(NUMERIC_SCALE)")
+		upsert = append(upsert, "numeric_scale = VALUES(numeric_scale)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_DatetimePrecision) == 1 {
-		upsert = append(upsert, "DATETIME_PRECISION = VALUES(DATETIME_PRECISION)")
+		upsert = append(upsert, "datetime_precision = VALUES(datetime_precision)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CharacterSetName) == 1 {
-		upsert = append(upsert, "CHARACTER_SET_NAME = VALUES(CHARACTER_SET_NAME)")
+		upsert = append(upsert, "character_set_name = VALUES(character_set_name)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CollationName) == 1 {
-		upsert = append(upsert, "COLLATION_NAME = VALUES(COLLATION_NAME)")
+		upsert = append(upsert, "collation_name = VALUES(collation_name)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnType) == 1 {
-		upsert = append(upsert, "COLUMN_TYPE = VALUES(COLUMN_TYPE)")
+		upsert = append(upsert, "column_type = VALUES(column_type)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnKey) == 1 {
-		upsert = append(upsert, "COLUMN_KEY = VALUES(COLUMN_KEY)")
+		upsert = append(upsert, "column_key = VALUES(column_key)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_Extra) == 1 {
-		upsert = append(upsert, "EXTRA = VALUES(EXTRA)")
+		upsert = append(upsert, "extra = VALUES(extra)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_Privileges) == 1 {
-		upsert = append(upsert, "PRIVILEGES = VALUES(PRIVILEGES)")
+		upsert = append(upsert, "privileges = VALUES(privileges)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnComment) == 1 {
-		upsert = append(upsert, "COLUMN_COMMENT = VALUES(COLUMN_COMMENT)")
+		upsert = append(upsert, "column_comment = VALUES(column_comment)")
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_GenerationExpression) == 1 {
-		upsert = append(upsert, "GENERATION_EXPRESSION = VALUES(GENERATION_EXPRESSION)")
+		upsert = append(upsert, "generation_expression = VALUES(generation_expression)")
 	}
 	sql := &sdb.UpsertStatement{}
 	sql.InsertInto("information_schema.COLUMNS")
@@ -495,6 +501,9 @@ func (co *ColumnsStore) Insert(data *codegen.Columns) error {
 	}
 	sql.Append(")")
 
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "information_schema.COLUMNS.Insert").Str("stmt", sql.String()).Str("TableCatalog", data.TableCatalog).Str("TableSchema", data.TableSchema).Str("TableName", data.TableName).Str("ColumnName", data.ColumnName).Uint64("OrdinalPosition", data.OrdinalPosition).Str("ColumnDefault", logString(data.ColumnDefault)).Str("IsNullable", data.IsNullable).Str("DataType", data.DataType).Uint64("CharacterMaximumLength", logUInt64(data.CharacterMaximumLength)).Uint64("CharacterOctetLength", logUInt64(data.CharacterOctetLength)).Uint64("NumericPrecision", logUInt64(data.NumericPrecision)).Uint64("NumericScale", logUInt64(data.NumericScale)).Uint64("DatetimePrecision", logUInt64(data.DatetimePrecision)).Str("CharacterSetName", logString(data.CharacterSetName)).Str("CollationName", logString(data.CollationName)).Str("ColumnType", data.ColumnType).Str("ColumnKey", data.ColumnKey).Str("Extra", data.Extra).Str("Privileges", data.Privileges).Str("ColumnComment", data.ColumnComment).Str("GenerationExpression", data.GenerationExpression).Msg("sql")
+	}
 	_, err = co.db.Exec(sql.Query(), data.TableCatalog, data.TableSchema, data.TableName, data.ColumnName, data.OrdinalPosition, data.ColumnDefault, data.IsNullable, data.DataType, data.CharacterMaximumLength, data.CharacterOctetLength, data.NumericPrecision, data.NumericScale, data.DatetimePrecision, data.CharacterSetName, data.CollationName, data.ColumnType, data.ColumnKey, data.Extra, data.Privileges, data.ColumnComment, data.GenerationExpression)
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
@@ -511,107 +520,107 @@ func (co *ColumnsStore) Update(data *codegen.Columns) (int64, error) {
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.COLUMNS SET")
 	if co.colSet == nil || co.colSet.Bit(Columns_TableCatalog) == 1 {
-		sql.AppendRaw(prepend, "TABLE_CATALOG = ?")
+		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_TableSchema) == 1 {
-		sql.AppendRaw(prepend, "TABLE_SCHEMA = ?")
+		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_TableName) == 1 {
-		sql.AppendRaw(prepend, "TABLE_NAME = ?")
+		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnName) == 1 {
-		sql.AppendRaw(prepend, "COLUMN_NAME = ?")
+		sql.AppendRaw(prepend, "column_name = ?")
 		prepend = ","
 		args = append(args, data.ColumnName)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_OrdinalPosition) == 1 {
-		sql.AppendRaw(prepend, "ORDINAL_POSITION = ?")
+		sql.AppendRaw(prepend, "ordinal_position = ?")
 		prepend = ","
 		args = append(args, data.OrdinalPosition)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnDefault) == 1 {
-		sql.AppendRaw(prepend, "COLUMN_DEFAULT = ?")
+		sql.AppendRaw(prepend, "column_default = ?")
 		prepend = ","
 		args = append(args, data.ColumnDefault)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_IsNullable) == 1 {
-		sql.AppendRaw(prepend, "IS_NULLABLE = ?")
+		sql.AppendRaw(prepend, "is_nullable = ?")
 		prepend = ","
 		args = append(args, data.IsNullable)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_DataType) == 1 {
-		sql.AppendRaw(prepend, "DATA_TYPE = ?")
+		sql.AppendRaw(prepend, "data_type = ?")
 		prepend = ","
 		args = append(args, data.DataType)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CharacterMaximumLength) == 1 {
-		sql.AppendRaw(prepend, "CHARACTER_MAXIMUM_LENGTH = ?")
+		sql.AppendRaw(prepend, "character_maximum_length = ?")
 		prepend = ","
 		args = append(args, data.CharacterMaximumLength)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CharacterOctetLength) == 1 {
-		sql.AppendRaw(prepend, "CHARACTER_OCTET_LENGTH = ?")
+		sql.AppendRaw(prepend, "character_octet_length = ?")
 		prepend = ","
 		args = append(args, data.CharacterOctetLength)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_NumericPrecision) == 1 {
-		sql.AppendRaw(prepend, "NUMERIC_PRECISION = ?")
+		sql.AppendRaw(prepend, "numeric_precision = ?")
 		prepend = ","
 		args = append(args, data.NumericPrecision)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_NumericScale) == 1 {
-		sql.AppendRaw(prepend, "NUMERIC_SCALE = ?")
+		sql.AppendRaw(prepend, "numeric_scale = ?")
 		prepend = ","
 		args = append(args, data.NumericScale)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_DatetimePrecision) == 1 {
-		sql.AppendRaw(prepend, "DATETIME_PRECISION = ?")
+		sql.AppendRaw(prepend, "datetime_precision = ?")
 		prepend = ","
 		args = append(args, data.DatetimePrecision)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CharacterSetName) == 1 {
-		sql.AppendRaw(prepend, "CHARACTER_SET_NAME = ?")
+		sql.AppendRaw(prepend, "character_set_name = ?")
 		prepend = ","
 		args = append(args, data.CharacterSetName)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_CollationName) == 1 {
-		sql.AppendRaw(prepend, "COLLATION_NAME = ?")
+		sql.AppendRaw(prepend, "collation_name = ?")
 		prepend = ","
 		args = append(args, data.CollationName)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnType) == 1 {
-		sql.AppendRaw(prepend, "COLUMN_TYPE = ?")
+		sql.AppendRaw(prepend, "column_type = ?")
 		prepend = ","
 		args = append(args, data.ColumnType)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnKey) == 1 {
-		sql.AppendRaw(prepend, "COLUMN_KEY = ?")
+		sql.AppendRaw(prepend, "column_key = ?")
 		prepend = ","
 		args = append(args, data.ColumnKey)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_Extra) == 1 {
-		sql.AppendRaw(prepend, "EXTRA = ?")
+		sql.AppendRaw(prepend, "extra = ?")
 		prepend = ","
 		args = append(args, data.Extra)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_Privileges) == 1 {
-		sql.AppendRaw(prepend, "PRIVILEGES = ?")
+		sql.AppendRaw(prepend, "privileges = ?")
 		prepend = ","
 		args = append(args, data.Privileges)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_ColumnComment) == 1 {
-		sql.AppendRaw(prepend, "COLUMN_COMMENT = ?")
+		sql.AppendRaw(prepend, "column_comment = ?")
 		prepend = ","
 		args = append(args, data.ColumnComment)
 	}
 	if co.colSet == nil || co.colSet.Bit(Columns_GenerationExpression) == 1 {
-		sql.AppendRaw(prepend, "GENERATION_EXPRESSION = ?")
+		sql.AppendRaw(prepend, "generation_expression = ?")
 		args = append(args, data.GenerationExpression)
 	}
 	sql.Append(" WHERE ")
@@ -624,43 +633,6 @@ func (co *ColumnsStore) Update(data *codegen.Columns) (int64, error) {
 		return 0, err
 	}
 	return res.RowsAffected()
-}
-
-// Delete deletes the Columns from the database.
-func (co *ColumnsStore) Delete(data *codegen.Columns) error {
-	var err error
-
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.COLUMNS WHERE")
-	sql.Append("")
-
-	_, err = co.db.Exec(sql.Query())
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
-}
-
-// DeleteByQuery uses a where condition to delete entries.
-func (co *ColumnsStore) DeleteByQuery(args ...interface{}) error {
-	var err error
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.COLUMNS")
-	if co.where == "" {
-		return errors.New("no where condition set")
-	}
-	sql.Append("WHERE", co.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "information_schema.COLUMNS.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
-	}
-
-	_, err = co.db.Exec(sql.Query(), args...)
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
 }
 
 // Truncate deletes all rows from Columns.

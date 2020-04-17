@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"database/sql"
-	"errors"
 	"io"
 	"math/big"
 
@@ -154,6 +153,12 @@ func (ke *KeyColumnUsageStore) JoinType(jt string) *KeyColumnUsageStore {
 	return ke
 }
 
+// Columns sets bits for specific columns.
+func (ke *KeyColumnUsageStore) Columns(cols ...int) *KeyColumnUsageStore {
+	ke.Store.Columns(cols...)
+	return ke
+}
+
 // nolint[gocyclo]
 func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
@@ -224,6 +229,7 @@ func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.In
 		}
 		*col++
 	}
+
 }
 
 func (ke *KeyColumnUsageStore) selectStatement() *sdb.SQLStatement {
@@ -288,40 +294,40 @@ func (ke *KeyColumnUsageStore) Query(args ...interface{}) ([]*codegen.KeyColumnU
 func (ke *KeyColumnUsageStore) keyColumnUsageUpsertStmt() *sdb.UpsertStatement {
 	upsert := []string{}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
-		upsert = append(upsert, "CONSTRAINT_CATALOG = VALUES(CONSTRAINT_CATALOG)")
+		upsert = append(upsert, "constraint_catalog = VALUES(constraint_catalog)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintSchema) == 1 {
-		upsert = append(upsert, "CONSTRAINT_SCHEMA = VALUES(CONSTRAINT_SCHEMA)")
+		upsert = append(upsert, "constraint_schema = VALUES(constraint_schema)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintName) == 1 {
-		upsert = append(upsert, "CONSTRAINT_NAME = VALUES(CONSTRAINT_NAME)")
+		upsert = append(upsert, "constraint_name = VALUES(constraint_name)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableCatalog) == 1 {
-		upsert = append(upsert, "TABLE_CATALOG = VALUES(TABLE_CATALOG)")
+		upsert = append(upsert, "table_catalog = VALUES(table_catalog)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableSchema) == 1 {
-		upsert = append(upsert, "TABLE_SCHEMA = VALUES(TABLE_SCHEMA)")
+		upsert = append(upsert, "table_schema = VALUES(table_schema)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableName) == 1 {
-		upsert = append(upsert, "TABLE_NAME = VALUES(TABLE_NAME)")
+		upsert = append(upsert, "table_name = VALUES(table_name)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ColumnName) == 1 {
-		upsert = append(upsert, "COLUMN_NAME = VALUES(COLUMN_NAME)")
+		upsert = append(upsert, "column_name = VALUES(column_name)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_OrdinalPosition) == 1 {
-		upsert = append(upsert, "ORDINAL_POSITION = VALUES(ORDINAL_POSITION)")
+		upsert = append(upsert, "ordinal_position = VALUES(ordinal_position)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_PositionInUniqueConstraint) == 1 {
-		upsert = append(upsert, "POSITION_IN_UNIQUE_CONSTRAINT = VALUES(POSITION_IN_UNIQUE_CONSTRAINT)")
+		upsert = append(upsert, "position_in_unique_constraint = VALUES(position_in_unique_constraint)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableSchema) == 1 {
-		upsert = append(upsert, "REFERENCED_TABLE_SCHEMA = VALUES(REFERENCED_TABLE_SCHEMA)")
+		upsert = append(upsert, "referenced_table_schema = VALUES(referenced_table_schema)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableName) == 1 {
-		upsert = append(upsert, "REFERENCED_TABLE_NAME = VALUES(REFERENCED_TABLE_NAME)")
+		upsert = append(upsert, "referenced_table_name = VALUES(referenced_table_name)")
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedColumnName) == 1 {
-		upsert = append(upsert, "REFERENCED_COLUMN_NAME = VALUES(REFERENCED_COLUMN_NAME)")
+		upsert = append(upsert, "referenced_column_name = VALUES(referenced_column_name)")
 	}
 	sql := &sdb.UpsertStatement{}
 	sql.InsertInto("information_schema.KEY_COLUMN_USAGE")
@@ -376,6 +382,9 @@ func (ke *KeyColumnUsageStore) Insert(data *codegen.KeyColumnUsage) error {
 	}
 	sql.Append(")")
 
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "information_schema.KEY_COLUMN_USAGE.Insert").Str("stmt", sql.String()).Str("ConstraintCatalog", data.ConstraintCatalog).Str("ConstraintSchema", data.ConstraintSchema).Str("ConstraintName", data.ConstraintName).Str("TableCatalog", data.TableCatalog).Str("TableSchema", data.TableSchema).Str("TableName", data.TableName).Str("ColumnName", data.ColumnName).Int64("OrdinalPosition", data.OrdinalPosition).Int64("PositionInUniqueConstraint", logInt64(data.PositionInUniqueConstraint)).Str("ReferencedTableSchema", logString(data.ReferencedTableSchema)).Str("ReferencedTableName", logString(data.ReferencedTableName)).Str("ReferencedColumnName", logString(data.ReferencedColumnName)).Msg("sql")
+	}
 	_, err = ke.db.Exec(sql.Query(), data.ConstraintCatalog, data.ConstraintSchema, data.ConstraintName, data.TableCatalog, data.TableSchema, data.TableName, data.ColumnName, data.OrdinalPosition, data.PositionInUniqueConstraint, data.ReferencedTableSchema, data.ReferencedTableName, data.ReferencedColumnName)
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
@@ -392,62 +401,62 @@ func (ke *KeyColumnUsageStore) Update(data *codegen.KeyColumnUsage) (int64, erro
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.KEY_COLUMN_USAGE SET")
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
-		sql.AppendRaw(prepend, "CONSTRAINT_CATALOG = ?")
+		sql.AppendRaw(prepend, "constraint_catalog = ?")
 		prepend = ","
 		args = append(args, data.ConstraintCatalog)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintSchema) == 1 {
-		sql.AppendRaw(prepend, "CONSTRAINT_SCHEMA = ?")
+		sql.AppendRaw(prepend, "constraint_schema = ?")
 		prepend = ","
 		args = append(args, data.ConstraintSchema)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintName) == 1 {
-		sql.AppendRaw(prepend, "CONSTRAINT_NAME = ?")
+		sql.AppendRaw(prepend, "constraint_name = ?")
 		prepend = ","
 		args = append(args, data.ConstraintName)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableCatalog) == 1 {
-		sql.AppendRaw(prepend, "TABLE_CATALOG = ?")
+		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableSchema) == 1 {
-		sql.AppendRaw(prepend, "TABLE_SCHEMA = ?")
+		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableName) == 1 {
-		sql.AppendRaw(prepend, "TABLE_NAME = ?")
+		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ColumnName) == 1 {
-		sql.AppendRaw(prepend, "COLUMN_NAME = ?")
+		sql.AppendRaw(prepend, "column_name = ?")
 		prepend = ","
 		args = append(args, data.ColumnName)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_OrdinalPosition) == 1 {
-		sql.AppendRaw(prepend, "ORDINAL_POSITION = ?")
+		sql.AppendRaw(prepend, "ordinal_position = ?")
 		prepend = ","
 		args = append(args, data.OrdinalPosition)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_PositionInUniqueConstraint) == 1 {
-		sql.AppendRaw(prepend, "POSITION_IN_UNIQUE_CONSTRAINT = ?")
+		sql.AppendRaw(prepend, "position_in_unique_constraint = ?")
 		prepend = ","
 		args = append(args, data.PositionInUniqueConstraint)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableSchema) == 1 {
-		sql.AppendRaw(prepend, "REFERENCED_TABLE_SCHEMA = ?")
+		sql.AppendRaw(prepend, "referenced_table_schema = ?")
 		prepend = ","
 		args = append(args, data.ReferencedTableSchema)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableName) == 1 {
-		sql.AppendRaw(prepend, "REFERENCED_TABLE_NAME = ?")
+		sql.AppendRaw(prepend, "referenced_table_name = ?")
 		prepend = ","
 		args = append(args, data.ReferencedTableName)
 	}
 	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedColumnName) == 1 {
-		sql.AppendRaw(prepend, "REFERENCED_COLUMN_NAME = ?")
+		sql.AppendRaw(prepend, "referenced_column_name = ?")
 		args = append(args, data.ReferencedColumnName)
 	}
 	sql.Append(" WHERE ")
@@ -460,43 +469,6 @@ func (ke *KeyColumnUsageStore) Update(data *codegen.KeyColumnUsage) (int64, erro
 		return 0, err
 	}
 	return res.RowsAffected()
-}
-
-// Delete deletes the KeyColumnUsage from the database.
-func (ke *KeyColumnUsageStore) Delete(data *codegen.KeyColumnUsage) error {
-	var err error
-
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.KEY_COLUMN_USAGE WHERE")
-	sql.Append("")
-
-	_, err = ke.db.Exec(sql.Query())
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
-}
-
-// DeleteByQuery uses a where condition to delete entries.
-func (ke *KeyColumnUsageStore) DeleteByQuery(args ...interface{}) error {
-	var err error
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.KEY_COLUMN_USAGE")
-	if ke.where == "" {
-		return errors.New("no where condition set")
-	}
-	sql.Append("WHERE", ke.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "information_schema.KEY_COLUMN_USAGE.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
-	}
-
-	_, err = ke.db.Exec(sql.Query(), args...)
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
 }
 
 // Truncate deletes all rows from KeyColumnUsage.

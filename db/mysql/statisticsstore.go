@@ -2,7 +2,6 @@ package mysql
 
 import (
 	"database/sql"
-	"errors"
 	"io"
 	"math/big"
 
@@ -170,6 +169,12 @@ func (st *StatisticsStore) JoinType(jt string) *StatisticsStore {
 	return st
 }
 
+// Columns sets bits for specific columns.
+func (st *StatisticsStore) Columns(cols ...int) *StatisticsStore {
+	st.Store.Columns(cols...)
+	return st
+}
+
 // nolint[gocyclo]
 func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Statistics_TableCatalog) == 1 {
@@ -261,6 +266,7 @@ func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, c
 		st.IndexComment = sdb.ToString(row[*col])
 		*col++
 	}
+
 }
 
 func (st *StatisticsStore) selectStatement() *sdb.SQLStatement {
@@ -325,52 +331,52 @@ func (st *StatisticsStore) Query(args ...interface{}) ([]*codegen.Statistics, er
 func (st *StatisticsStore) statisticsUpsertStmt() *sdb.UpsertStatement {
 	upsert := []string{}
 	if st.colSet == nil || st.colSet.Bit(Statistics_TableCatalog) == 1 {
-		upsert = append(upsert, "TABLE_CATALOG = VALUES(TABLE_CATALOG)")
+		upsert = append(upsert, "table_catalog = VALUES(table_catalog)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_TableSchema) == 1 {
-		upsert = append(upsert, "TABLE_SCHEMA = VALUES(TABLE_SCHEMA)")
+		upsert = append(upsert, "table_schema = VALUES(table_schema)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_TableName) == 1 {
-		upsert = append(upsert, "TABLE_NAME = VALUES(TABLE_NAME)")
+		upsert = append(upsert, "table_name = VALUES(table_name)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_NonUnique) == 1 {
-		upsert = append(upsert, "NON_UNIQUE = VALUES(NON_UNIQUE)")
+		upsert = append(upsert, "non_unique = VALUES(non_unique)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexSchema) == 1 {
-		upsert = append(upsert, "INDEX_SCHEMA = VALUES(INDEX_SCHEMA)")
+		upsert = append(upsert, "index_schema = VALUES(index_schema)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexName) == 1 {
-		upsert = append(upsert, "INDEX_NAME = VALUES(INDEX_NAME)")
+		upsert = append(upsert, "index_name = VALUES(index_name)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_SeqInIndex) == 1 {
-		upsert = append(upsert, "SEQ_IN_INDEX = VALUES(SEQ_IN_INDEX)")
+		upsert = append(upsert, "seq_in_index = VALUES(seq_in_index)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_ColumnName) == 1 {
-		upsert = append(upsert, "COLUMN_NAME = VALUES(COLUMN_NAME)")
+		upsert = append(upsert, "column_name = VALUES(column_name)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Collation) == 1 {
-		upsert = append(upsert, "COLLATION = VALUES(COLLATION)")
+		upsert = append(upsert, "collation = VALUES(collation)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Cardinality) == 1 {
-		upsert = append(upsert, "CARDINALITY = VALUES(CARDINALITY)")
+		upsert = append(upsert, "cardinality = VALUES(cardinality)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_SubPart) == 1 {
-		upsert = append(upsert, "SUB_PART = VALUES(SUB_PART)")
+		upsert = append(upsert, "sub_part = VALUES(sub_part)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Packed) == 1 {
-		upsert = append(upsert, "PACKED = VALUES(PACKED)")
+		upsert = append(upsert, "packed = VALUES(packed)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Nullable) == 1 {
-		upsert = append(upsert, "NULLABLE = VALUES(NULLABLE)")
+		upsert = append(upsert, "nullable = VALUES(nullable)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexType) == 1 {
-		upsert = append(upsert, "INDEX_TYPE = VALUES(INDEX_TYPE)")
+		upsert = append(upsert, "index_type = VALUES(index_type)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Comment) == 1 {
-		upsert = append(upsert, "COMMENT = VALUES(COMMENT)")
+		upsert = append(upsert, "comment = VALUES(comment)")
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexComment) == 1 {
-		upsert = append(upsert, "INDEX_COMMENT = VALUES(INDEX_COMMENT)")
+		upsert = append(upsert, "index_comment = VALUES(index_comment)")
 	}
 	sql := &sdb.UpsertStatement{}
 	sql.InsertInto("information_schema.STATISTICS")
@@ -425,6 +431,9 @@ func (st *StatisticsStore) Insert(data *codegen.Statistics) error {
 	}
 	sql.Append(")")
 
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "information_schema.STATISTICS.Insert").Str("stmt", sql.String()).Str("TableCatalog", data.TableCatalog).Str("TableSchema", data.TableSchema).Str("TableName", data.TableName).Int64("NonUnique", data.NonUnique).Str("IndexSchema", data.IndexSchema).Str("IndexName", data.IndexName).Int64("SeqInIndex", data.SeqInIndex).Str("ColumnName", data.ColumnName).Str("Collation", logString(data.Collation)).Int64("Cardinality", logInt64(data.Cardinality)).Int64("SubPart", logInt64(data.SubPart)).Str("Packed", logString(data.Packed)).Str("Nullable", data.Nullable).Str("IndexType", data.IndexType).Str("Comment", logString(data.Comment)).Str("IndexComment", data.IndexComment).Msg("sql")
+	}
 	_, err = st.db.Exec(sql.Query(), data.TableCatalog, data.TableSchema, data.TableName, data.NonUnique, data.IndexSchema, data.IndexName, data.SeqInIndex, data.ColumnName, data.Collation, data.Cardinality, data.SubPart, data.Packed, data.Nullable, data.IndexType, data.Comment, data.IndexComment)
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
@@ -441,82 +450,82 @@ func (st *StatisticsStore) Update(data *codegen.Statistics) (int64, error) {
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.STATISTICS SET")
 	if st.colSet == nil || st.colSet.Bit(Statistics_TableCatalog) == 1 {
-		sql.AppendRaw(prepend, "TABLE_CATALOG = ?")
+		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_TableSchema) == 1 {
-		sql.AppendRaw(prepend, "TABLE_SCHEMA = ?")
+		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_TableName) == 1 {
-		sql.AppendRaw(prepend, "TABLE_NAME = ?")
+		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_NonUnique) == 1 {
-		sql.AppendRaw(prepend, "NON_UNIQUE = ?")
+		sql.AppendRaw(prepend, "non_unique = ?")
 		prepend = ","
 		args = append(args, data.NonUnique)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexSchema) == 1 {
-		sql.AppendRaw(prepend, "INDEX_SCHEMA = ?")
+		sql.AppendRaw(prepend, "index_schema = ?")
 		prepend = ","
 		args = append(args, data.IndexSchema)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexName) == 1 {
-		sql.AppendRaw(prepend, "INDEX_NAME = ?")
+		sql.AppendRaw(prepend, "index_name = ?")
 		prepend = ","
 		args = append(args, data.IndexName)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_SeqInIndex) == 1 {
-		sql.AppendRaw(prepend, "SEQ_IN_INDEX = ?")
+		sql.AppendRaw(prepend, "seq_in_index = ?")
 		prepend = ","
 		args = append(args, data.SeqInIndex)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_ColumnName) == 1 {
-		sql.AppendRaw(prepend, "COLUMN_NAME = ?")
+		sql.AppendRaw(prepend, "column_name = ?")
 		prepend = ","
 		args = append(args, data.ColumnName)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Collation) == 1 {
-		sql.AppendRaw(prepend, "COLLATION = ?")
+		sql.AppendRaw(prepend, "collation = ?")
 		prepend = ","
 		args = append(args, data.Collation)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Cardinality) == 1 {
-		sql.AppendRaw(prepend, "CARDINALITY = ?")
+		sql.AppendRaw(prepend, "cardinality = ?")
 		prepend = ","
 		args = append(args, data.Cardinality)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_SubPart) == 1 {
-		sql.AppendRaw(prepend, "SUB_PART = ?")
+		sql.AppendRaw(prepend, "sub_part = ?")
 		prepend = ","
 		args = append(args, data.SubPart)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Packed) == 1 {
-		sql.AppendRaw(prepend, "PACKED = ?")
+		sql.AppendRaw(prepend, "packed = ?")
 		prepend = ","
 		args = append(args, data.Packed)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Nullable) == 1 {
-		sql.AppendRaw(prepend, "NULLABLE = ?")
+		sql.AppendRaw(prepend, "nullable = ?")
 		prepend = ","
 		args = append(args, data.Nullable)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexType) == 1 {
-		sql.AppendRaw(prepend, "INDEX_TYPE = ?")
+		sql.AppendRaw(prepend, "index_type = ?")
 		prepend = ","
 		args = append(args, data.IndexType)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_Comment) == 1 {
-		sql.AppendRaw(prepend, "COMMENT = ?")
+		sql.AppendRaw(prepend, "comment = ?")
 		prepend = ","
 		args = append(args, data.Comment)
 	}
 	if st.colSet == nil || st.colSet.Bit(Statistics_IndexComment) == 1 {
-		sql.AppendRaw(prepend, "INDEX_COMMENT = ?")
+		sql.AppendRaw(prepend, "index_comment = ?")
 		args = append(args, data.IndexComment)
 	}
 	sql.Append(" WHERE ")
@@ -529,43 +538,6 @@ func (st *StatisticsStore) Update(data *codegen.Statistics) (int64, error) {
 		return 0, err
 	}
 	return res.RowsAffected()
-}
-
-// Delete deletes the Statistics from the database.
-func (st *StatisticsStore) Delete(data *codegen.Statistics) error {
-	var err error
-
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.STATISTICS WHERE")
-	sql.Append("")
-
-	_, err = st.db.Exec(sql.Query())
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
-}
-
-// DeleteByQuery uses a where condition to delete entries.
-func (st *StatisticsStore) DeleteByQuery(args ...interface{}) error {
-	var err error
-	sql := sdb.NewSQLStatement()
-	sql.Append("DELETE FROM information_schema.STATISTICS")
-	if st.where == "" {
-		return errors.New("no where condition set")
-	}
-	sql.Append("WHERE", st.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "information_schema.STATISTICS.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
-	}
-
-	_, err = st.db.Exec(sql.Query(), args...)
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-	}
-
-	return err
 }
 
 // Truncate deletes all rows from Statistics.

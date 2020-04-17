@@ -8,6 +8,7 @@ type Config struct {
 	RootPackage        string   `json:",omitempty"`
 	RootPackageInclude string   `json:",omitempty"`
 	DirOut             string   `json:",omitempty"`
+	SubPackage         string   `json:",omitempty"`
 	FilePattern        string   `json:",omitempty"`
 	Templates          []string `json:",omitempty"`
 	TemplateFolder     string   `json:",omitempty"`
@@ -138,7 +139,7 @@ type Field struct {
 	Alias       string `json:"-"`
 	Title       string `json:"-"`
 	GoType      string `json:"-"`
-	goZero      string `json:"-"`
+	GoZero      string `json:"-"`
 	ParamName   string `json:"-"`
 	MappingFunc string `json:"-"`
 	JsonFunc    string `json:"-"`
