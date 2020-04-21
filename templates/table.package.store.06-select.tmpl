@@ -7,12 +7,12 @@ func ({{ $table.Receiver }}Store) selectStatement() *sdb.SQLStatement {
 	{{- if gt $table.NumUniqueFKs 0 }}
 		if {{ $table.Initials }}.withJoin {
             {{- range $join := $table.Joins }}
-                sql.Fields(",", "{{ $join.Alias }}", {{ $join.Title }}QueryFields({{ $join.Initials }}.colSet))
+                sql.Fields(", ", "{{ $join.Alias }}", {{ $join.Title }}QueryFields({{ $join.Initials }}.colSet))
             {{- end }}
 			{{- if $schema.IsMultiTenant }}
-				sql.AppendRaw("FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
+				sql.AppendRaw(" FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
 			{{- else }}
-				sql.Append("FROM {{ $schema.Name }}.{{ $table.Name }} A")
+				sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A")
 			{{- end }}
             {{- range $join := $table.Joins }}
 				{{- if $schema.IsMultiTenant }}
@@ -28,16 +28,16 @@ func ({{ $table.Receiver }}Store) selectStatement() *sdb.SQLStatement {
             {{- end }}
 		} else {
 			{{- if $schema.IsMultiTenant }}
-				sql.AppendRaw("FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
+				sql.AppendRaw(" FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
 			{{- else }}
-				sql.Append("FROM {{ $schema.Name }}.{{ $table.Name }} A")
+				sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A")
 			{{- end }}
         }
     {{- else }}
 		{{- if $schema.IsMultiTenant }}
-			sql.AppendRaw("FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
+			sql.AppendRaw(" FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
 		{{- else }}
-			sql.Append("FROM {{ $schema.Name }}.{{ $table.Name }} A")
+			sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A")
 		{{- end }}
     {{- end }}	
 	if {{ $table.Initials }}.where != "" {

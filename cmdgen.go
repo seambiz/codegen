@@ -452,17 +452,6 @@ func generateTemplatesConfig(conf *Config) {
 			}
 		}
 	}
-	/*
-		// DEBUG
-		for _, s := range conf.Schemas {
-			fmt.Println(s.Name, s.preparedTemplatefiles)
-
-			for _, t := range s.Tables {
-				fmt.Println(t.Name, t.preparedTemplatefiles)
-			}
-
-		}
-	*/
 }
 
 func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string, templateFiles map[string][]string) {
@@ -554,9 +543,10 @@ func fnTableJoinFields(baseTable *Table, conf *Config, table *Table, refAlias ru
 			fkRefTableTitle := strings.Title(fk.RefTable)
 			fkRefTable := strings.Title(fk.RefTable)
 			fkSchema := conf.getSchema(fk.RefSchema)
-			if t := fkSchema.getTable(fk.RefTable); t != nil {
-				fkRefTableTitle = t.Title
-				fkRefTable = t.Name
+			pRefTable := fkSchema.getTable(fk.RefTable)
+			if pRefTable != nil {
+				fkRefTableTitle = pRefTable.Title
+				fkRefTable = pRefTable.Name
 			}
 			t := Join{
 				Alias:    string(*tableAlias),
@@ -564,6 +554,7 @@ func fnTableJoinFields(baseTable *Table, conf *Config, table *Table, refAlias ru
 				Title:    fkRefTableTitle,
 				Initials: table.Initials,
 				Schema:   fkSchema.Name,
+				Table:    pRefTable,
 			}
 			for i := range fk.Fields {
 				t.Fields = append(t.Fields, JoinField{
@@ -603,6 +594,7 @@ func prepareSchemaConfig(conf *Config) {
 		if err != nil {
 			tablesCase = varcaser.LowerSnakeCase
 		}
+		schema.Title = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(schema.Name)
 
 		for _, table := range schema.Tables {
 			if !table.Generate {

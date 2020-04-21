@@ -3055,107 +3055,157 @@
 					],
 					"Ignores": {},
 					"Generate": false
-				},
-				{
-					"Name": "fake_benchmark",
-					"Tables": [
-						{
-							"Name": "person",
-							"Fields": [
-								{
-									"Name": "id",
-									"DBType": "int",
-									"IsAutoincrement": true,
-									"IsPrimaryKey": true
-								},
-								{
-									"Name": "name",
-									"DBType": "varchar"
-								}
-							],
-							"Indices": [
-								{
-									"Name": "primary",
-									"Fields": [
-										"id"
-									],
-									"IsUnique": true,
-									"Generate": true
-								}
-							],
-							"ForeignKeys": [
-								{
-									"Name": "fk_person_pet",
-									"Fields": [
-										"id"
-									],
-									"RefSchema": "fake_benchmark",
-									"RefTable": "pet",
-									"RefFields": [
-										"person_id"
-									],
-									"IsUnique": false
-								}
-							],
-							"Ignores": {},
-							"Generate": true
-						},
-						{
-							"Name": "pet",
-							"Fields": [
-								{
-									"Name": "id",
-									"DBType": "int",
-									"IsAutoincrement": true,
-									"IsPrimaryKey": true
-								},
-								{
-									"Name": "person_id",
-									"DBType": "int"
-								},
-								{
-									"Name": "species",
-									"DBType": "varchar"
-								}
-							],
-							"Indices": [
-								{
-									"Name": "primary",
-									"Fields": [
-										"id"
-									],
-									"IsUnique": true,
-									"Generate": true
-								},
-								{
-									"Name": "fk_pet_person_idx",
-									"Fields": [
-										"person_id"
-									],
-									"Generate": true
-								}
-							],
-							"ForeignKeys": [
-								{
-									"Name": "fk_pet_person",
-									"Fields": [
-										"person_id"
-									],
-									"RefSchema": "fake_benchmark",
-									"RefTable": "person",
-									"RefFields": [
-										"id"
-									],
-									"IsUnique": true
-								}
-							],
-							"Ignores": {},
-							"Generate": true
-						}
-					]
 				}
 			],
 			"TemplateFolder": "./templates/"
+		},
+		{
+			"Name": "fake_benchmark",
+			"Tables": [
+				{
+					"Name": "person",
+					"Fields": [
+						{
+							"Name": "id",
+							"DBType": "int",
+							"IsAutoincrement": true,
+							"IsPrimaryKey": true
+						},
+						{
+							"Name": "name",
+							"DBType": "varchar"
+						}
+					],
+					"Indices": [
+						{
+							"Name": "primary",
+							"Fields": [
+								"id"
+							],
+							"IsUnique": true,
+							"Generate": true
+						}
+					],
+					"ForeignKeys": [
+						{
+							"Name": "pets",
+							"Fields": [
+								"id"
+							],
+							"RefSchema": "fake_benchmark",
+							"RefTable": "pet",
+							"RefFields": [
+								"person_id"
+							],
+							"IsUnique": false
+						}
+					],
+					"Ignores": {},
+					"Generate": true
+				},
+				{
+					"Name": "tag",
+					"Fields": [
+						{
+							"Name": "id",
+							"DBType": "int",
+							"IsAutoincrement": true,
+							"IsPrimaryKey": true
+						},
+						{
+							"Name": "name",
+							"DBType": "varchar"
+						}
+					],
+					"Indices": [
+						{
+							"Name": "primary",
+							"Fields": [
+								"id"
+							],
+							"IsUnique": true,
+							"Generate": true
+						}
+					],
+					"Ignores": {},
+					"Generate": true
+				},
+				{
+					"Name": "pet",
+					"Fields": [
+						{
+							"Name": "id",
+							"DBType": "int",
+							"IsAutoincrement": true,
+							"IsPrimaryKey": true
+						},
+						{
+							"Name": "person_id",
+							"DBType": "int"
+						},
+						{
+							"Name": "tag_id",
+							"DBType": "int"
+						},
+						{
+							"Name": "species",
+							"DBType": "varchar"
+						}
+					],
+					"Indices": [
+						{
+							"Name": "primary",
+							"Fields": [
+								"id"
+							],
+							"IsUnique": true,
+							"Generate": true
+						},
+						{
+							"Name": "fk_pet_person_idx",
+							"Fields": [
+								"person_id"
+							],
+							"Generate": true
+						},
+						{
+							"Name": "fk_pet_tag_idx",
+							"Fields": [
+								"tag_id"
+							],
+							"Generate": true
+						}
+					],
+					"ForeignKeys": [
+						{
+							"Name": "belongs_to",
+							"Fields": [
+								"person_id"
+							],
+							"RefSchema": "fake_benchmark",
+							"RefTable": "person",
+							"RefFields": [
+								"id"
+							],
+							"IsUnique": true
+						},
+						{
+							"Name": "has_tag",
+							"Fields": [
+								"tag_id"
+							],
+							"RefSchema": "fake_benchmark",
+							"RefTable": "tag",
+							"RefFields": [
+								"id"
+							],
+							"IsUnique": true
+						}
+					],
+					"Ignores": {},
+					"Generate": true
+				}
+			]
 		}
 	],
 	"Database": {

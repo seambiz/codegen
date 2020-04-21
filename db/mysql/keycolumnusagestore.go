@@ -161,6 +161,11 @@ func (ke *KeyColumnUsageStore) Columns(cols ...int) *KeyColumnUsageStore {
 
 // nolint[gocyclo]
 func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+	BindInformationSchemaKeyColumnUsage(ke, row, withJoin, colSet, col)
+
+}
+
+func BindInformationSchemaKeyColumnUsage(ke *KeyColumnUsage, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
 		ke.ConstraintCatalog = sdb.ToString(row[*col])
 		*col++
@@ -229,14 +234,13 @@ func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.In
 		}
 		*col++
 	}
-
 }
 
 func (ke *KeyColumnUsageStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", KeyColumnUsageQueryFields(ke.colSet))
-	sql.Append("FROM information_schema.KEY_COLUMN_USAGE A")
+	sql.Append(" FROM information_schema.KEY_COLUMN_USAGE A")
 	if ke.where != "" {
 		sql.Append("WHERE", ke.where)
 	}
@@ -336,13 +340,8 @@ func (ke *KeyColumnUsageStore) keyColumnUsageUpsertStmt() *sdb.UpsertStatement {
 	return sql
 }
 
-// UpsertOne inserts the KeyColumnUsage to the database.
-func (ke *KeyColumnUsageStore) UpsertOne(data *codegen.KeyColumnUsage) (int64, error) {
-	return ke.Upsert([]*codegen.KeyColumnUsage{data})
-}
-
 // Upsert executes upsert for array of KeyColumnUsage
-func (ke *KeyColumnUsageStore) Upsert(data []*codegen.KeyColumnUsage) (int64, error) {
+func (ke *KeyColumnUsageStore) Upsert(data ...*codegen.KeyColumnUsage) (int64, error) {
 	sql := ke.keyColumnUsageUpsertStmt()
 
 	for _, d := range data {

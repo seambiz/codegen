@@ -10,6 +10,7 @@ import (
 
 func init() {
 	zerolog.SetGlobalLevel(zerolog.ErrorLevel)
+	gofakeit.Seed(1)
 }
 
 func insertQuery() (*sql.DB, error) {

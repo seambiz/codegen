@@ -14,6 +14,7 @@ import (
 type Store struct {
 	db           Execer
 	withJoin     bool
+	selectCalled bool
 	joinType     string
 	where        string
 	orderBy      string
@@ -27,10 +28,6 @@ type Store struct {
 	{{- if .Schema.IsMultiTenant }}
     {{ .Schema.MTVarName }} {{ .Schema.MTVarType }}
 	{{- end }}
-
-	// TODO vielleicht hier weg, da unnötig bezogen auf stmt. Nur für wirkliche Store Methoden relevant
-	dtos     []Bindable
-	dtoslice *Result
 }
 
 type (
@@ -58,41 +55,64 @@ func (s *Store) BindSlice(res *Result, rowStructs Row) *Store {
 	s.dtoslice = res
 	return s
 }
+
 func (s *Store) Bind(datas ...Bindable) *Store {
 	for i := range datas {
 		s.dtos = append(s.dtos, datas[i])
 	}
 	return s
 }
-func (s *Store) Select(dest interface{}, args ...interface{}) error {
-	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")
-	log.Debug().Str("fn", "Store.Select").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
-	return dbx.Select(dest, s.stmt.Query(), args...)
-}
-func (s *Store) From(table string) *Store {
-	s.stmt.Append("FROM", table)
+
+func (s *Store) Select(columns string) *Store {
+	s.stmt.Append("SELECT", columns)
+	s.selectCalled = true
 	return s
 }
+
+// QueryInto uses sqlx.Select for raw SQL querying. Mapping uses tag (db) or field name.
+func (s *Store) QueryInto(dest interface{}, args ...interface{}) error {
+	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")
+	log.Debug().Str("fn", "Store.QueryInto").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
+	return dbx.Select(dest, s.stmt.Query(), args...)
+}
+ 
+// OneInto uses sqlx.Get for raw SQL querying. Mapping uses tag (db) or field name.
+func (s *Store) OneInto(dest interface{}, args ...interface{}) error {
+	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")
+	log.Debug().Str("fn", "Store.QueryInto").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
+	return dbx.Get(dest, s.stmt.Query(), args...)
+}
+
+func (s *Store) From(table string) *Store {
+	s.stmt.Append(" FROM", table)
+	return s
+}
+
 func (s *Store) Join(table, condition string) *Store {
 	s.stmt.Append("INNER JOIN", table, "ON", condition)
 	return s
 }
+
 func (s *Store) LeftJoin(table, condition string) *Store {
 	s.stmt.Append("LEFT JOIN", table, "ON", condition)
 	return s
 }
+
 func (s *Store) RightJoin(table, condition string) *Store {
 	s.stmt.Append("RIGHT JOIN", table, "ON", condition)
 	return s
 }
+
 func (s *Store) Where(condition string) *Store {
 	s.stmt.Append("WHERE", condition)
 	return s
 }
+
 func (s *Store) OrderBy(columns string) *Store {
 	s.stmt.Append("ORDER BY", columns)
 	return s
 }
+
 func (s *Store) Limit(limits ...int) *Store {
 	if len(limits) == 0 {
 		return s
@@ -106,7 +126,7 @@ func (s *Store) Limit(limits ...int) *Store {
 
 // Columns to be used for various statements.
 func (s *Store) Columns(cols ...int) *Store {
-	if s.stmt != nil && !strings.HasPrefix(s.stmt.String(), "SELECT") {
+	if s.stmt != nil && !s.selectCalled {
 		s.stmt.Append("SELECT")
 	}
 	if s.colSet == nil {

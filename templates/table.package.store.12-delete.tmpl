@@ -3,7 +3,7 @@
 {{- $schema := .Schema }}
 {{- if gt (len $table.PkFields) 0 }}
 // Delete deletes the {{ $table.Title }} from the database.
-func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.Title }}) error {
+func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.Title }}) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
@@ -22,16 +22,16 @@ func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.
 		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Delete").Str("stmt", sql.String()).
         {{- zerologFields $table.PkFields "data" }}.Msg("sql")
     }
-	_, err = {{ $table.Initials }}.db.Exec(sql.Query(),
+	res, err := {{ $table.Initials }}.db.Exec(sql.Query(),
 	{{- range $i, $f := $table.PkFields -}}
 		{{ if gt $i 0 }}, {{ end }}data.{{ $f.Title }}
 	{{- end -}}
 	)
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
+		return 0, err
 	}
-
-	return err
+	return res.RowsAffected()
 }
 
 {{- if gt (len $table.PkFields) 0 }}
@@ -39,7 +39,7 @@ func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.
 {{- $tmp := (index $table.PkFields 0) -}}
 {{ if and (eq (len $table.PkFields) 1) (eq $tmp.GoType "int") }}
 // DeleteSlice delets all slice element from the database.
-func ({{ $table.StoreReceiver }}) DeleteSlice(data []*{{ $conf.RootPackage}}.{{ $table.Title }}) error {
+func ({{ $table.StoreReceiver }}) DeleteSlice(data []*{{ $conf.RootPackage}}.{{ $table.Title }}) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
@@ -59,18 +59,18 @@ func ({{ $table.StoreReceiver }}) DeleteSlice(data []*{{ $conf.RootPackage}}.{{ 
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
 		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
 	}
-    _, err = {{ $table.Initials }}.db.Exec(sql.Query())
+    res, err := {{ $table.Initials }}.db.Exec(sql.Query())
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
+		return 0, err
 	}
-
-	return err
+	return res.RowsAffected()
 }
 {{ end }}
 {{ end }}
 
 // DeleteByQuery uses a where condition to delete entries.
-func ({{ $table.StoreReceiver }}) DeleteByQuery(args ...interface{}) error {
+func ({{ $table.StoreReceiver }}) DeleteByQuery(args ...interface{}) (int64, error) {
 	var err error
 	sql := sdb.NewSQLStatement()
 	{{- if $schema.IsMultiTenant }}
@@ -79,18 +79,18 @@ func ({{ $table.StoreReceiver }}) DeleteByQuery(args ...interface{}) error {
 		sql.Append("DELETE FROM {{ $schema.Name }}.{{ $table.Name }}")
 	{{- end }}
 	if {{ $table.Initials }}.where == "" {
-	    return errors.New("no where condition set")
+	    return 0, errors.New("no where condition set")
 	}
 	sql.Append("WHERE", {{ $table.Initials }}.where)
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
 		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
 	
-	_, err = {{ $table.Initials }}.db.Exec(sql.Query(), args...)
+    res, err := {{ $table.Initials }}.db.Exec(sql.Query())
 	if err != nil {
 		log.Error().Err(err).Msg("exec")
+		return 0, err
 	}
-
-	return err
+	return res.RowsAffected()
 }
 {{ end }}

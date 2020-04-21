@@ -26,6 +26,7 @@ type db struct {
 // Schema single schema type
 type Schema struct {
 	Name           string   `json:",omitempty"`
+	Title          string   `json:"-"`
 	Tables         []*Table `json:",omitempty"`
 	TemplateFolder string   `json:",omitempty"`
 	Prefix         string   `json:",omitempty"`
@@ -63,6 +64,7 @@ type Join struct {
 	Schema   string
 
 	Fields []JoinField
+	Table  *Table
 }
 
 type JoinField struct {

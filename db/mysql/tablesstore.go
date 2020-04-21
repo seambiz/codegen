@@ -198,6 +198,11 @@ func (ta *TablesStore) Columns(cols ...int) *TablesStore {
 
 // nolint[gocyclo]
 func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+	BindInformationSchemaTables(ta, row, withJoin, colSet, col)
+
+}
+
+func BindInformationSchemaTables(ta *Tables, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Tables_TableCatalog) == 1 {
 		ta.TableCatalog = sdb.ToString(row[*col])
 		*col++
@@ -362,14 +367,13 @@ func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *
 		ta.TableComment = sdb.ToString(row[*col])
 		*col++
 	}
-
 }
 
 func (ta *TablesStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", TablesQueryFields(ta.colSet))
-	sql.Append("FROM information_schema.TABLES A")
+	sql.Append(" FROM information_schema.TABLES A")
 	if ta.where != "" {
 		sql.Append("WHERE", ta.where)
 	}
@@ -496,13 +500,8 @@ func (ta *TablesStore) tablesUpsertStmt() *sdb.UpsertStatement {
 	return sql
 }
 
-// UpsertOne inserts the Tables to the database.
-func (ta *TablesStore) UpsertOne(data *codegen.Tables) (int64, error) {
-	return ta.Upsert([]*codegen.Tables{data})
-}
-
 // Upsert executes upsert for array of Tables
-func (ta *TablesStore) Upsert(data []*codegen.Tables) (int64, error) {
+func (ta *TablesStore) Upsert(data ...*codegen.Tables) (int64, error) {
 	sql := ta.tablesUpsertStmt()
 
 	for _, d := range data {

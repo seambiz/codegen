@@ -3,7 +3,6 @@ package mysql
 import (
 	"database/sql"
 	"math/big"
-	"strings"
 
 	"github.com/jmoiron/sqlx"
 	"github.com/rs/zerolog"
@@ -17,6 +16,7 @@ import (
 type Store struct {
 	db           Execer
 	withJoin     bool
+	selectCalled bool
 	joinType     string
 	where        string
 	orderBy      string
@@ -25,18 +25,10 @@ type Store struct {
 	limit        int
 	offset       int
 	batch        int
+	row          int
 	colSet       *big.Int
 	stmt         *sdb.SQLStatement
-
-	// TODO vielleicht hier weg, da unnötig bezogen auf stmt. Nur für wirkliche Store Methoden relevant
-	dtos     []Bindable
-	dtoslice *Result
 }
-
-type (
-	Row    []Bindable
-	Result []Row
-)
 
 // NewStore return DAO Storr
 func NewStore(conn Execer) *Store {
@@ -51,62 +43,29 @@ func (s *Store) SQL(stmt string) *Store {
 	return s
 }
 
-func (s *Store) BindSlice(res *Result, rowStructs Row) *Store {
-	for i := range rowStructs {
-		s.dtos = append(s.dtos, rowStructs[i])
-	}
-	s.dtoslice = res
+func (s *Store) Select(columns string) *Store {
+	s.stmt.Append("SELECT", columns)
+	s.selectCalled = true
 	return s
 }
-func (s *Store) Bind(datas ...Bindable) *Store {
-	for i := range datas {
-		s.dtos = append(s.dtos, datas[i])
-	}
-	return s
-}
-func (s *Store) Select(dest interface{}, args ...interface{}) error {
+
+// QueryxInto uses sqlx.Select for raw SQL querying. Mapping uses tag (db) or field name.
+func (s *Store) QueryxInto(dest interface{}, args ...interface{}) error {
 	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")
-	log.Debug().Str("fn", "Store.Select").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
+	log.Debug().Str("fn", "Store.QueryInto").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
 	return dbx.Select(dest, s.stmt.Query(), args...)
 }
-func (s *Store) From(table string) *Store {
-	s.stmt.Append("FROM", table)
-	return s
-}
-func (s *Store) Join(table, condition string) *Store {
-	s.stmt.Append("INNER JOIN", table, "ON", condition)
-	return s
-}
-func (s *Store) LeftJoin(table, condition string) *Store {
-	s.stmt.Append("LEFT JOIN", table, "ON", condition)
-	return s
-}
-func (s *Store) RightJoin(table, condition string) *Store {
-	s.stmt.Append("RIGHT JOIN", table, "ON", condition)
-	return s
-}
-func (s *Store) Where(condition string) *Store {
-	s.stmt.Append("WHERE", condition)
-	return s
-}
-func (s *Store) OrderBy(columns string) *Store {
-	s.stmt.Append("ORDER BY", columns)
-	return s
-}
-func (s *Store) Limit(limits ...int) *Store {
-	if len(limits) == 0 {
-		return s
-	}
-	s.stmt.Append("LIMIT", limits[0])
-	if len(limits) > 1 {
-		s.stmt.Append(",", limits[1])
-	}
-	return s
+
+// OnexInto uses sqlx.Get for raw SQL querying. Mapping uses tag (db) or field name.
+func (s *Store) OnexInto(dest interface{}, args ...interface{}) error {
+	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")
+	log.Debug().Str("fn", "Store.QueryInto").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
+	return dbx.Get(dest, s.stmt.Query(), args...)
 }
 
 // Columns to be used for various statements.
 func (s *Store) Columns(cols ...int) *Store {
-	if s.stmt != nil && !strings.HasPrefix(s.stmt.String(), "SELECT") {
+	if s.stmt != nil && !s.selectCalled {
 		s.stmt.Append("SELECT")
 	}
 	if s.colSet == nil {
@@ -214,37 +173,6 @@ func (s *Store) MapScan(dest map[string]sql.RawBytes, args ...interface{}) error
 	return nil
 }
 
-// One retrieves a single row with optionally joined data.
-func (s *Store) One(args ...interface{}) error {
-	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	if rows.Next() {
-		err = rows.Scan(valuePointers...)
-		if err != nil {
-			log.Error().Err(err).Msg("scan")
-			return err
-		}
-		col := 0
-		for i := range s.dtos {
-			s.dtos[i].bind(values, s.withJoin, s.colSet, &col)
-		}
-	} else {
-		return sql.ErrNoRows
-	}
-	if err := rows.Close(); err != nil {
-		return err
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
 // OneValue retrieves a single column from the first row as generic interface{}.
 // Specify the bindFunc to map the DB return value to the correct type.
 func (s *Store) OneValue(bindFunc func([]byte) interface{}, args ...interface{}) (interface{}, error) {
@@ -308,39 +236,6 @@ func (s *Store) queryCustom(res BindableSlice, d Bindable, stmt string, args ...
 		col = 0
 		data.bind(values, s.withJoin, s.colSet, &col)
 		res.append(data)
-	}
-	if err := rows.Close(); err != nil {
-		return err
-	}
-	if err := rows.Err(); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// Query retrieves many rows.
-func (s *Store) Query(args ...interface{}) error {
-	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
-	if err != nil {
-		return err
-	}
-	defer rows.Close()
-
-	for rows.Next() {
-		err = rows.Scan(valuePointers...)
-		if err != nil {
-			log.Error().Err(err).Msg("scan")
-			return err
-		}
-		col := 0
-		row := Row{}
-		for i := range s.dtos {
-			d := s.dtos[i].new()
-			d.bind(values, false, s.colSet, &col)
-			row = append(row, d)
-		}
-		*s.dtoslice = append(*s.dtoslice, row)
 	}
 	if err := rows.Close(); err != nil {
 		return err

@@ -1,5 +1,6 @@
 {{- $table := .Table }}
 {{- $schema := .Schema }}
+{{/*
 {{ range $fk := .Table.ForeignKeys }}
 	// Get{{ $fk.GenName }} fetches a record from referenced table '{{ $fk.RefTable }}'.
   	{{- if $schema.IsMultiTenant }}
@@ -27,23 +28,24 @@
 		return nil
     }
 {{ end }}
+*/}}
 
 {{ if not $schema.IsMultiTenant }}
 {{ range $fk := .Table.ForeignKeys }}
 	{{ if not $fk.IsUnique }}
 		// EagerFetch {{ $fk.CustomName }} eagerly fetches N records from referenced table '{{ $fk.RefTable }}'.
-		func ({{ $table.StoreReceiver }}) EagerFetch{{ $fk.CustomName}}(data []*{{ $table.Title }}) error {
-			stmt := sdb.NewSQLStatement()
-			stmt.Append("{{ index $fk.RefFields 0 }} IN (")
+		func ({{ $table.StoreReceiver }}) EagerFetch{{ $fk.CustomName}}(data []*{{ $conf.RootPackage }}.{{ $table.Title }}) error {
+			where := sdb.NewSQLStatement()
+			where.AppendRaw("{{ index $fk.RefFields 0 }} IN (")
 			for i, d := range data {
 				if i > 0 {
-					stmt.Append(",")
+					where.Append(",")
 				}
-				stmt.AppendInt(d.{{ (index $table.Fields (index $table.FieldMapping (index $fk.Fields 0))).Title }})
+				where.AppendInt(d.{{ (index $table.Fields (index $table.FieldMapping (index $fk.Fields 0))).Title }})
 			}
-			stmt.Append(")")
+			where.Append(")")
 
-			details, err := New{{ $fk.GenTableName }}Store({{ $table.Initials }}.db).Where(stmt.Query()).OrderBy("A.{{ index $fk.RefFields 0 }} DESC, A.{{ index $fk.Fields 0 }} DESC").Query()
+			details, err := New{{ $fk.GenTableName }}Store({{ $table.Initials }}.db).Where(where.Query()).OrderBy("A.{{ index $fk.RefFields 0 }} DESC, A.{{ index $fk.Fields 0 }} DESC").Query()
 			if err != nil {
 				log.Error().Err(err).Msg("fetch details")
 				return err

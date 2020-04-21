@@ -177,6 +177,11 @@ func (st *StatisticsStore) Columns(cols ...int) *StatisticsStore {
 
 // nolint[gocyclo]
 func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+	BindInformationSchemaStatistics(st, row, withJoin, colSet, col)
+
+}
+
+func BindInformationSchemaStatistics(st *Statistics, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Statistics_TableCatalog) == 1 {
 		st.TableCatalog = sdb.ToString(row[*col])
 		*col++
@@ -266,14 +271,13 @@ func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, c
 		st.IndexComment = sdb.ToString(row[*col])
 		*col++
 	}
-
 }
 
 func (st *StatisticsStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", StatisticsQueryFields(st.colSet))
-	sql.Append("FROM information_schema.STATISTICS A")
+	sql.Append(" FROM information_schema.STATISTICS A")
 	if st.where != "" {
 		sql.Append("WHERE", st.where)
 	}
@@ -385,13 +389,8 @@ func (st *StatisticsStore) statisticsUpsertStmt() *sdb.UpsertStatement {
 	return sql
 }
 
-// UpsertOne inserts the Statistics to the database.
-func (st *StatisticsStore) UpsertOne(data *codegen.Statistics) (int64, error) {
-	return st.Upsert([]*codegen.Statistics{data})
-}
-
 // Upsert executes upsert for array of Statistics
-func (st *StatisticsStore) Upsert(data []*codegen.Statistics) (int64, error) {
+func (st *StatisticsStore) Upsert(data ...*codegen.Statistics) (int64, error) {
 	sql := st.statisticsUpsertStmt()
 
 	for _, d := range data {

@@ -197,6 +197,11 @@ func (co *ColumnsStore) Columns(cols ...int) *ColumnsStore {
 
 // nolint[gocyclo]
 func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+	BindInformationSchemaColumns(co, row, withJoin, colSet, col)
+
+}
+
+func BindInformationSchemaColumns(co *Columns, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Columns_TableCatalog) == 1 {
 		co.TableCatalog = sdb.ToString(row[*col])
 		*col++
@@ -321,14 +326,13 @@ func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col 
 		co.GenerationExpression = sdb.ToString(row[*col])
 		*col++
 	}
-
 }
 
 func (co *ColumnsStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", ColumnsQueryFields(co.colSet))
-	sql.Append("FROM information_schema.COLUMNS A")
+	sql.Append(" FROM information_schema.COLUMNS A")
 	if co.where != "" {
 		sql.Append("WHERE", co.where)
 	}
@@ -455,13 +459,8 @@ func (co *ColumnsStore) columnsUpsertStmt() *sdb.UpsertStatement {
 	return sql
 }
 
-// UpsertOne inserts the Columns to the database.
-func (co *ColumnsStore) UpsertOne(data *codegen.Columns) (int64, error) {
-	return co.Upsert([]*codegen.Columns{data})
-}
-
 // Upsert executes upsert for array of Columns
-func (co *ColumnsStore) Upsert(data []*codegen.Columns) (int64, error) {
+func (co *ColumnsStore) Upsert(data ...*codegen.Columns) (int64, error) {
 	sql := co.columnsUpsertStmt()
 
 	for _, d := range data {
