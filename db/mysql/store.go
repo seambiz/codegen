@@ -2,9 +2,14 @@ package mysql
 
 import (
 	"database/sql"
+	"errors"
+	"fmt"
 	"math/big"
+	"reflect"
 
+	codegen "bitbucket.org/codegen"
 	"github.com/jmoiron/sqlx"
+	"github.com/jmoiron/sqlx/reflectx"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 	"github.com/seambiz/seambiz/sdb"
@@ -244,6 +249,201 @@ func (s *Store) queryCustom(res BindableSlice, d Bindable, stmt string, args ...
 	}
 
 	return nil
+}
+
+func (s *Store) SelectFields(tableAlias string, fieldFunc func(*big.Int) []string, columns ...int) *Store {
+	if len(columns) > 0 {
+		if s.colSet == nil {
+			s.colSet = big.NewInt(0)
+		}
+
+		for _, col := range columns {
+			s.colSet.SetBit(s.colSet, col, 1)
+		}
+	}
+
+	if !s.selectCalled {
+		s.stmt.AppendStr("SELECT ")
+		s.selectCalled = true
+	}
+
+	s.stmt.Fields(s.prependField, tableAlias, fieldFunc(s.colSet))
+	s.prependField = ", "
+
+	s.stmt.AppendStr(" ")
+
+	return s
+}
+
+func (s *Store) rowToSlice(dest interface{}, values []sql.RawBytes, col *int) error {
+	value := reflect.ValueOf(dest)
+
+	if value.Kind() != reflect.Ptr {
+		panic("must pass a pointer, not a value, to StructScan destination")
+	}
+	if value.IsNil() {
+		panic("nil pointer passed to StructScan destination")
+	}
+	var direct reflect.Value
+	if value.Kind() == reflect.Struct {
+		tempSlicePtrValue := reflect.New(reflect.SliceOf(value.Type()))
+		tempSliceValue := tempSlicePtrValue.Elem()
+		direct = reflect.Indirect(tempSliceValue)
+	} else {
+		direct = reflect.Indirect(value)
+	}
+
+	slice, err := baseType(value.Type(), reflect.Slice)
+	if err != nil {
+		return err
+	}
+
+	if direct.Kind() != reflect.Slice {
+		panic("must pass a pointer to a slice")
+	}
+
+	slice, err = baseType(value.Type(), reflect.Slice)
+	if err != nil {
+		panic(err)
+	}
+
+	base := reflectx.Deref(slice.Elem())
+	vp := reflect.New(base)
+	v := reflect.Indirect(vp)
+
+	s.mapRowToStruct(v, values, col)
+
+	direct.Set(reflect.Append(direct, v))
+
+	// spew.Dump("final", dest)
+
+	return nil
+}
+
+func (s *Store) mapRowToStruct(pStruct reflect.Value, values []sql.RawBytes, col *int) error {
+	baseType := pStruct.Type()
+
+	for i := 0; i < pStruct.NumField(); i++ {
+		field := pStruct.Field(i)
+
+		switch field.Kind() {
+		case reflect.Struct:
+			fType := baseType.Field(i)
+			if fType.Anonymous {
+				switch field.Type().String() {
+				case "codegen.Person":
+					data, ok := field.Interface().(codegen.Person)
+					if !ok {
+						return errors.New("not ptr person")
+					}
+					BindFakeBenchmarkPerson(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
+				case "codegen.Pet":
+					data, ok := field.Interface().(codegen.Pet)
+					if !ok {
+						return errors.New("not ptr pet")
+					}
+					BindFakeBenchmarkPet(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
+				case "codegen.Tag":
+					data, ok := field.Interface().(codegen.Tag)
+					if !ok {
+						return errors.New("not ptr Tag")
+					}
+					BindFakeBenchmarkTag(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
+				}
+			} else {
+				s.mapRowToStruct(field, values, col)
+			}
+		case reflect.Slice:
+
+		default:
+			return errors.New("only structs and slices allowed")
+		}
+	}
+	return nil
+}
+
+func (s *Store) QueryBind(dest interface{}, args ...interface{}) error {
+	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	col := 0
+	for rows.Next() {
+		err = rows.Scan(valuePointers...)
+		if err != nil {
+			log.Error().Err(err).Msg("scan")
+			return err
+		}
+		col = 0
+		err = s.rowToSlice(dest, values, &col)
+		if err != nil {
+			log.Error().Err(err).Msg("scan")
+			return err
+		}
+	}
+	if err := rows.Close(); err != nil {
+		return err
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func (s *Store) OneBind(dest interface{}, args ...interface{}) error {
+	value := reflect.ValueOf(dest)
+	if value.Kind() != reflect.Ptr {
+		panic("must pass a pointer, not a value, to StructScan destination")
+	}
+	if value.IsNil() {
+		panic("nil pointer passed to StructScan destination")
+	}
+	direct := reflect.Indirect(value)
+
+	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
+	if err != nil {
+		return err
+	}
+	defer rows.Close()
+
+	col := 0
+	if rows.Next() {
+		err = rows.Scan(valuePointers...)
+		if err != nil {
+			log.Error().Err(err).Msg("scan")
+			return err
+		}
+		col = 0
+		err = s.mapRowToStruct(direct, values, &col)
+		if err != nil {
+			log.Error().Err(err).Msg("mapping")
+			return err
+		}
+	} else {
+		return sql.ErrNoRows
+	}
+	if err := rows.Close(); err != nil {
+		return err
+	}
+	if err := rows.Err(); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+func baseType(t reflect.Type, expected reflect.Kind) (reflect.Type, error) {
+	t = reflectx.Deref(t)
+	if t.Kind() != expected {
+		return nil, fmt.Errorf("expected %s but got %s", expected, t.Kind())
+	}
+	return t, nil
 }
 
 // ^^ END OF GENERATED BY CODEGEN. DO NOT EDIT. ^^
