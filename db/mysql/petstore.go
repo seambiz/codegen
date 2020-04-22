@@ -225,26 +225,6 @@ func (pe *PetStore) Query(args ...interface{}) ([]*codegen.Pet, error) {
 	return pe.QueryCustom(stmt.Query(), args...)
 }
 
-// GetBelongsTo fetches a record from referenced table 'person'.
-func (pe *Pet) GetBelongsTo(db Execer) error {
-	if pe.BelongsTo == nil {
-		var err error
-		pe.BelongsTo, err = NewPersonStore(db).OneByID(pe.PersonID)
-		return err
-	}
-	return nil
-}
-
-// GetHasTag fetches a record from referenced table 'tag'.
-func (pe *Pet) GetHasTag(db Execer) error {
-	if pe.HasTag == nil {
-		var err error
-		pe.HasTag, err = NewTagStore(db).OneByID(pe.TagID)
-		return err
-	}
-	return nil
-}
-
 // petUpsertStmt helper for generating Upsert statement.
 // nolint[gocyclo]
 func (pe *PetStore) petUpsertStmt() *sdb.UpsertStatement {

@@ -193,16 +193,6 @@ func (pe *PersonStore) Query(args ...interface{}) ([]*codegen.Person, error) {
 	return pe.QueryCustom(stmt.Query(), args...)
 }
 
-// GetPets fetches a record from referenced table 'pet'.
-func (pe *Person) GetPets(db Execer) error {
-	if pe.Pets == nil {
-		var err error
-		pe.Pets, err = NewPetStore(db).QueryByPersonID(pe.ID)
-		return err
-	}
-	return nil
-}
-
 // EagerFetch Pets eagerly fetches N records from referenced table 'pet'.
 func (pe *PersonStore) EagerFetchPets(data []*codegen.Person) error {
 	where := sdb.NewSQLStatement()

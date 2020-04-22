@@ -177,11 +177,10 @@ func (st *StatisticsStore) Columns(cols ...int) *StatisticsStore {
 
 // nolint[gocyclo]
 func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindInformationSchemaStatistics(st, row, withJoin, colSet, col)
-
+	BindInformationSchemaStatistics(&st.Statistics, row, withJoin, colSet, col)
 }
 
-func BindInformationSchemaStatistics(st *Statistics, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Statistics_TableCatalog) == 1 {
 		st.TableCatalog = sdb.ToString(row[*col])
 		*col++

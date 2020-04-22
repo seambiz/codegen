@@ -2,7 +2,6 @@
 // nolint[gocyclo]
 func ({{ .Table.Initials }} *{{ .Table.Title }}) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
     Bind{{ .Schema.Title }}{{ $table.Title }}(&{{ $table.Initials }}.{{ $table.Title }},  row, withJoin, colSet, col)
-
 }
 
 func Bind{{ .Schema.Title }}{{ $table.Title }}({{ $table.Initials }} *{{ .Conf.RootPackage }}.{{ $table.Title }},  row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
@@ -21,12 +20,11 @@ func Bind{{ .Schema.Title }}{{ $table.Title }}({{ $table.Initials }} *{{ .Conf.R
 		*col++
 	}
 	{{- end -}}
-
-	{{ if gt (len .Table.ForeignKeys) 0 }}
+	{{ if gt $table.NumUniqueFKs 0 }}
 		if withJoin {
 		{{- template "bindJoin" dict "Table" .Table "Foreignkeys" .Table.ForeignKeys }}
 		}
-	{{ end }}
+	{{ end -}}
 }
 
 {{ define "bindJoin" }}

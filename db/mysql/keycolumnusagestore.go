@@ -161,11 +161,10 @@ func (ke *KeyColumnUsageStore) Columns(cols ...int) *KeyColumnUsageStore {
 
 // nolint[gocyclo]
 func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindInformationSchemaKeyColumnUsage(ke, row, withJoin, colSet, col)
-
+	BindInformationSchemaKeyColumnUsage(&ke.KeyColumnUsage, row, withJoin, colSet, col)
 }
 
-func BindInformationSchemaKeyColumnUsage(ke *KeyColumnUsage, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+func BindInformationSchemaKeyColumnUsage(ke *codegen.KeyColumnUsage, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
 		ke.ConstraintCatalog = sdb.ToString(row[*col])
 		*col++

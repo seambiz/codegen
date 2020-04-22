@@ -197,11 +197,10 @@ func (co *ColumnsStore) Columns(cols ...int) *ColumnsStore {
 
 // nolint[gocyclo]
 func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindInformationSchemaColumns(co, row, withJoin, colSet, col)
-
+	BindInformationSchemaColumns(&co.Columns, row, withJoin, colSet, col)
 }
 
-func BindInformationSchemaColumns(co *Columns, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(Columns_TableCatalog) == 1 {
 		co.TableCatalog = sdb.ToString(row[*col])
 		*col++

@@ -25,7 +25,6 @@ type Store struct {
 	limit        int
 	offset       int
 	batch        int
-	row          int
 	colSet       *big.Int
 	stmt         *sdb.SQLStatement
 }

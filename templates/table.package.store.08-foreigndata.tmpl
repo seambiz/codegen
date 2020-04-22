@@ -52,7 +52,6 @@
 			}
 			for i := range data {
 				for j := len(details) - 1; j >= 0; j-- {
-					
 					if details[j].{{ (index $fk.GenTable.Fields (index $fk.GenTable.FieldMapping (index $fk.RefFields 0))).Title }} == data[i].{{ (index $table.Fields (index $table.FieldMapping (index $fk.Fields 0))).Title }} {
 						data[i].{{ $fk.CustomName }} = append(data[i].{{ $fk.CustomName }}, details[j])
 						details = append(details[:j], details[j+1:]...)
