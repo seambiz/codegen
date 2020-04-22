@@ -57,7 +57,7 @@ func BenchmarkKeyColumnUsageUpdate(b *testing.B) {
 func BenchmarkKeyColumnUsageSelectAll(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(keycolumnusageQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -82,7 +82,7 @@ func BenchmarkKeyColumnUsageSelectAll(b *testing.B) {
 func BenchmarkKeyColumnUsageSelectCols(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(keycolumnusageQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}

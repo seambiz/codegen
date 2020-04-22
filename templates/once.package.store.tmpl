@@ -327,27 +327,20 @@ func (s *Store) mapRowToStruct(pStruct reflect.Value, values []sql.RawBytes, col
 			fType := baseType.Field(i)
 			if fType.Anonymous {
 				switch field.Type().String() {
-				case "codegen.Person":
-					data, ok := field.Interface().(codegen.Person)
+{{- $package := .Conf.RootPackage -}}
+{{- range $schema := .Conf.Schemas -}}
+	{{- range $table := $schema.Tables -}}
+    	{{- if $table.Generate }}
+				case "{{ $package }}.{{ $table.Title }}":
+					data, ok := field.Interface().({{ $package }}.{{ $table.Title }})
 					if !ok {
-						return errors.New("not ptr person")
+						return errors.New("struct not {{ $package }}.{{ $table.Title }}")
 					}
-					BindFakeBenchmarkPerson(&data, values, false, s.colSet, col)
+					Bind{{ $schema.Title }}{{ $table.Title }}(&data, values, false, s.colSet, col)
 					field.Set(reflect.ValueOf(data))
-				case "codegen.Pet":
-					data, ok := field.Interface().(codegen.Pet)
-					if !ok {
-						return errors.New("not ptr pet")
-					}
-					BindFakeBenchmarkPet(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case "codegen.Tag":
-					data, ok := field.Interface().(codegen.Tag)
-					if !ok {
-						return errors.New("not ptr Tag")
-					}
-					BindFakeBenchmarkTag(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
+		{{- end -}}
+	{{- end -}}
+{{- end -}}
 				}
 			} else {
 				s.mapRowToStruct(field, values, col)

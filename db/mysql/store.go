@@ -331,26 +331,54 @@ func (s *Store) mapRowToStruct(pStruct reflect.Value, values []sql.RawBytes, col
 			fType := baseType.Field(i)
 			if fType.Anonymous {
 				switch field.Type().String() {
+				case "codegen.Columns":
+					data, ok := field.Interface().(codegen.Columns)
+					if !ok {
+						return errors.New("struct not codegen.Columns")
+					}
+					BindInformationSchemaColumns(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
+				case "codegen.KeyColumnUsage":
+					data, ok := field.Interface().(codegen.KeyColumnUsage)
+					if !ok {
+						return errors.New("struct not codegen.KeyColumnUsage")
+					}
+					BindInformationSchemaKeyColumnUsage(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
+				case "codegen.Statistics":
+					data, ok := field.Interface().(codegen.Statistics)
+					if !ok {
+						return errors.New("struct not codegen.Statistics")
+					}
+					BindInformationSchemaStatistics(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
+				case "codegen.Tables":
+					data, ok := field.Interface().(codegen.Tables)
+					if !ok {
+						return errors.New("struct not codegen.Tables")
+					}
+					BindInformationSchemaTables(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
 				case "codegen.Person":
 					data, ok := field.Interface().(codegen.Person)
 					if !ok {
-						return errors.New("not ptr person")
+						return errors.New("struct not codegen.Person")
 					}
 					BindFakeBenchmarkPerson(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case "codegen.Pet":
-					data, ok := field.Interface().(codegen.Pet)
-					if !ok {
-						return errors.New("not ptr pet")
-					}
-					BindFakeBenchmarkPet(&data, values, false, s.colSet, col)
 					field.Set(reflect.ValueOf(data))
 				case "codegen.Tag":
 					data, ok := field.Interface().(codegen.Tag)
 					if !ok {
-						return errors.New("not ptr Tag")
+						return errors.New("struct not codegen.Tag")
 					}
 					BindFakeBenchmarkTag(&data, values, false, s.colSet, col)
+					field.Set(reflect.ValueOf(data))
+				case "codegen.Pet":
+					data, ok := field.Interface().(codegen.Pet)
+					if !ok {
+						return errors.New("struct not codegen.Pet")
+					}
+					BindFakeBenchmarkPet(&data, values, false, s.colSet, col)
 					field.Set(reflect.ValueOf(data))
 				}
 			} else {

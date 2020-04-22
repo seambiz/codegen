@@ -89,7 +89,7 @@ func Benchmark{{ $table.Title }}Delete(b *testing.B) {
 func Benchmark{{ $table.Title }}SelectAll(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery({{ lower .Table.Title }}QueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -123,7 +123,7 @@ func Benchmark{{ $table.Title }}SelectAll(b *testing.B) {
 func Benchmark{{ $table.Title }}SelectCols(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery({{ lower .Table.Title }}QueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}

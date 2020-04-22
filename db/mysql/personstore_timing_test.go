@@ -79,7 +79,7 @@ func BenchmarkPersonDelete(b *testing.B) {
 func BenchmarkPersonSelectAll(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(personQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -104,7 +104,7 @@ func BenchmarkPersonSelectAll(b *testing.B) {
 func BenchmarkPersonSelectCols(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(personQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}

@@ -79,7 +79,7 @@ func BenchmarkPetDelete(b *testing.B) {
 func BenchmarkPetSelectAll(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(petQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -104,7 +104,7 @@ func BenchmarkPetSelectAll(b *testing.B) {
 func BenchmarkPetSelectCols(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(petQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}

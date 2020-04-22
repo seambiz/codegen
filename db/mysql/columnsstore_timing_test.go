@@ -57,7 +57,7 @@ func BenchmarkColumnsUpdate(b *testing.B) {
 func BenchmarkColumnsSelectAll(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(columnsQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -82,7 +82,7 @@ func BenchmarkColumnsSelectAll(b *testing.B) {
 func BenchmarkColumnsSelectCols(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(columnsQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}

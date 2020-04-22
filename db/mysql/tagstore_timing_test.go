@@ -79,7 +79,7 @@ func BenchmarkTagDelete(b *testing.B) {
 func BenchmarkTagSelectAll(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(tagQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}
@@ -104,7 +104,7 @@ func BenchmarkTagSelectAll(b *testing.B) {
 func BenchmarkTagSelectCols(b *testing.B) {
 	b.ReportAllocs()
 
-	db, err := selectQuery()
+	db, err := selectQuery(tagQueryFieldsAll)
 	if err != nil {
 		b.Fatal(err)
 	}
