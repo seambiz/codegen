@@ -715,7 +715,7 @@ func (s *Store) OneBind(dest interface{}, args ...interface{}) error {
 		col = 0
 		err = s.mapRowToStruct(direct, values, &col)
 		if err != nil {
-			log.Error().Err(err).Msg("scan")
+			log.Error().Err(err).Msg("mapping")
 			return err
 		}
 	} else {

@@ -3,8 +3,10 @@ package mysql
 import (
 	"database/sql"
 	"database/sql/driver"
+	"fmt"
 	"testing"
 
+	codegen "bitbucket.org/codegen"
 	"github.com/brianvoe/gofakeit/v5"
 	"github.com/rs/zerolog"
 )
@@ -36,70 +38,238 @@ func selectQuery() (*sql.DB, error) {
 	return sql.Open("mimic", "bench")
 }
 
-// TODO: Query 100 rows
-
-// TODO: eager vs. store
-
 func BenchmarkOne(b *testing.B) {
-	// BenchmarkSimpleStore/newStore-8         	    3000	    358940 ns/op	   36732 B/op	     889 allocs/op
-	// BenchmarkSimpleStore/newGeneral-8       	    5000	    366262 ns/op	   38502 B/op	     922 allocs/op
-	// BenchmarkSimpleStore/codegen-8          	    5000	    361013 ns/op	   36405 B/op	     877 allocs/op
-	// b.Run("newStore", func(b *testing.B) {
-	// 	store := NewBestellungStore(DB).Where("A.id <= ?")
-	// 	for i := 0; i < b.N; i++ {
-	// 		bestellung, err := store.Query(10)
-	// 		if err != nil {
-	// 			b.Fatal(err)
-	// 		}
-	// 		if len(bestellung) != 10 {
-	// 			b.Fail()
-	// 		}
-	// 	}
-	// })
+	b.ReportAllocs()
 
-	// b.Run("newGeneral", func(b *testing.B) {
-	// 	mytest := Row{
-	// 		&Bestellung{},
-	// 		&Kunde{},
-	// 		&Lieferadresse{},
-	// 	}
+	newResultDSN("bench", QueryResult{
+		Query: &Query{
+			Cols: []string{"pet.id", "pet.person_id", "pet.tag_id", "pet.species", "person.id", "person.name", "tag.id", "tag.name"},
+			Vals: [][]driver.Value{},
+		},
+		NumInput: 1,
+	})
+	addResultRowDSN("bench", []driver.Value{1, 2, 3, "cat", 4, "name", 5, "tag"})
 
-	// 	for i := 0; i < b.N; i++ {
-	// 		retValue := &Result{}
+	db, err := sql.Open("mimic", "bench")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer db.Close()
 
-	// 		store := NewStore(DB).
-	// 			Select("").
-	// 			Fields("A", BestellungQueryFields).
-	// 			Fields("B", KundeQueryFields).
-	// 			Fields("C", LieferadresseQueryFields).
-	// 			From("bestellung A").
-	// 			LeftJoin("kunde B", "A.kundennr = B.kundennr").
-	// 			LeftJoin("lieferadresse C", "A.lieferadressnr = C.lieferadressnr").
-	// 			Where("A.id <= ?").
-	// 			BindSlice(retValue, mytest)
+	b.Run("petstore", func(b *testing.B) {
+		store := NewPetStore(db)
+		for i := 0; i < b.N; i++ {
+			_, err := store.One(1)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
 
-	// 		err := store.Query(10)
-	// 		if err != nil {
-	// 			b.Fatal(err)
-	// 		}
-	// 		if len(*retValue) != 10 {
-	// 			b.Fail()
-	// 		}
-	// 	}
-	// })
+	b.Run("store", func(b *testing.B) {
+		store := NewStore(db).
+			SelectFields("A", PetQueryFields).
+			SelectFields("B", PersonQueryFields).
+			SelectFields("C", TagQueryFields).
+			SQL("FROM fake_benchmark.pet A ").
+			SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+			SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+			SQL("WHERE A.id = ?")
+		for i := 0; i < b.N; i++ {
+			var dest struct {
+				codegen.Pet
+				codegen.Person
+				codegen.Tag
+			}
+			err := store.OneBind(&dest, 1)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
 
-	// b.Run("codegen", func(b *testing.B) {
-	// 	store := models.NewBestellungStore(models.DB).Where("A.id <= ?")
-	// 	for i := 0; i < b.N; i++ {
-	// 		bestellung, err := store.Query(10)
-	// 		if err != nil {
-	// 			b.Fatal(err)
-	// 		}
-	// 		if len(bestellung) != 10 {
-	// 			b.Fail()
-	// 		}
-	// 	}
-	// })
+	b.Run("onex", func(b *testing.B) {
+		store := NewStore(db).
+			SelectFields("A", PetQueryFields).
+			SelectFields("B", PersonQueryFields).
+			SelectFields("C", TagQueryFields).
+			SQL("FROM fake_benchmark.pet A ").
+			SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+			SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+			SQL("WHERE A.id = ?")
+		for i := 0; i < b.N; i++ {
+			var dest struct {
+				ID          int    `json:"id" db:"pet.id"`
+				PetPersonID int    `json:"pet_person_id" db:"pet.person_id"`
+				PetTagID    int    `json:"pet_tag_id" db:"pet.tag_id"`
+				Species     string `json:"species" db:"pet.species"`
+
+				PersonID   int    `json:"person_id" db:"person.id"`
+				PersonName string `json:"name" db:"person.name"`
+
+				TagID   int    `json:"tag_id" db:"tag.id"`
+				TagName string `json:"tag_name" db:"tag.name"`
+			}
+			err := store.OnexInto(&dest, 1)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+func BenchmarkEagerFetch(b *testing.B) {
+	b.ReportAllocs()
+
+	newResultDSN("bench", QueryResult{
+		Query: &Query{
+			Cols: []string{"pet.id", "pet.person_id", "pet.tag_id", "pet.species", "person.id", "person.name", "tag.id", "tag.name"},
+			Vals: [][]driver.Value{},
+		},
+	})
+	for i := 0; i < 100; i++ {
+		addResultRowDSN("bench", []driver.Value{1, 1, 3, "cat", 4, "name", 5, "tag"})
+	}
+
+	db, err := sql.Open("mimic", "bench")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer db.Close()
+
+	b.Run("petstore", func(b *testing.B) {
+		store := NewPersonStore(db)
+		for i := 0; i < b.N; i++ {
+			data, err := store.Query()
+			if err != nil {
+				b.Fatalf("SQL error '%s'", err)
+			}
+			err = store.EagerFetchPets(data)
+			if err != nil {
+				b.Fatalf("SQL error '%s'", err)
+			}
+			if len(data[0].Pets) != 100 {
+				b.Fatal("person 1 should have 100 pets")
+			}
+		}
+	})
+
+	b.Run("store", func(b *testing.B) {
+		store := NewStore(db).
+			SelectFields("A", PetQueryFields).
+			SelectFields("B", PersonQueryFields).
+			SelectFields("C", TagQueryFields).
+			SQL("FROM fake_benchmark.pet A ").
+			SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+			SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+			SQL("WHERE A.id = ?")
+		for i := 0; i < b.N; i++ {
+			var dest []struct {
+				codegen.Pet
+				codegen.Person
+				codegen.Tag
+			}
+			err := store.QueryBind(&dest)
+			if err != nil {
+				b.Fatal(err)
+			}
+		}
+	})
+}
+
+func BenchmarkQuery(b *testing.B) {
+	b.ReportAllocs()
+
+	newResultDSN("bench", QueryResult{
+		Query: &Query{
+			Cols: []string{"pet.id", "pet.person_id", "pet.tag_id", "pet.species", "person.id", "person.name", "tag.id", "tag.name"},
+			Vals: [][]driver.Value{},
+		},
+	})
+
+	db, err := sql.Open("mimic", "bench")
+	if err != nil {
+		b.Fatal(err)
+	}
+	defer db.Close()
+
+	testCases := []struct {
+		numRows int
+	}{
+		{1},
+		{10},
+		{100},
+		{1000},
+		{10000},
+	}
+
+	for _, testCase := range testCases {
+
+		for i := 0; i < testCase.numRows; i++ {
+			addResultRowDSN("bench", []driver.Value{1, 2, 3, "cat", 4, "name", 5, "tag"})
+		}
+
+		b.Run(fmt.Sprintf("petstore_%d", testCase.numRows), func(b *testing.B) {
+			store := NewPetStore(db)
+			for i := 0; i < b.N; i++ {
+				_, err := store.Query()
+				if err != nil {
+					b.Fatal(err)
+				}
+			}
+		})
+
+		b.Run(fmt.Sprintf("store_%d", testCase.numRows), func(b *testing.B) {
+			store := NewStore(db).
+				SelectFields("A", PetQueryFields).
+				SelectFields("B", PersonQueryFields).
+				SelectFields("C", TagQueryFields).
+				SQL("FROM fake_benchmark.pet A ").
+				SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+				SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+				SQL("WHERE A.id = ?")
+			for i := 0; i < b.N; i++ {
+				var dest []struct {
+					codegen.Pet
+					codegen.Person
+					codegen.Tag
+				}
+				err := store.QueryBind(&dest)
+				if err != nil {
+					b.Fatal(err)
+				}
+			}
+		})
+
+		b.Run(fmt.Sprintf("onex_%d", testCase.numRows), func(b *testing.B) {
+			store := NewStore(db).
+				SelectFields("A", PetQueryFields).
+				SelectFields("B", PersonQueryFields).
+				SelectFields("C", TagQueryFields).
+				SQL("FROM fake_benchmark.pet A ").
+				SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+				SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+				SQL("WHERE A.id = ?")
+			for i := 0; i < b.N; i++ {
+				var dest []struct {
+					ID          int    `json:"id" db:"pet.id"`
+					PetPersonID int    `json:"pet_person_id" db:"pet.person_id"`
+					PetTagID    int    `json:"pet_tag_id" db:"pet.tag_id"`
+					Species     string `json:"species" db:"pet.species"`
+
+					PersonID   int    `json:"person_id" db:"person.id"`
+					PersonName string `json:"name" db:"person.name"`
+
+					TagID   int    `json:"tag_id" db:"tag.id"`
+					TagName string `json:"tag_name" db:"tag.name"`
+				}
+				err := store.QueryxInto(&dest)
+				if err != nil {
+					b.Fatal(err)
+				}
+			}
+		})
+	}
 }
 
 // ^^ END OF GENERATED BY CODEGEN. DO NOT EDIT. ^^
