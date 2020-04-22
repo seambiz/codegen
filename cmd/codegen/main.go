@@ -11,6 +11,8 @@ import (
 	"bitbucket.org/codegen/db"
 	"bitbucket.org/codegen/updater"
 	_ "github.com/go-sql-driver/mysql"
+	"github.com/rs/zerolog"
+	"github.com/rs/zerolog/log"
 	"github.com/seambiz/seambiz/sdb"
 )
 
@@ -24,6 +26,9 @@ var (
 )
 
 func main() {
+	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
+	zerolog.SetGlobalLevel(zerolog.DebugLevel)
+
 	// Subcommands
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)
 	genCommand := flag.NewFlagSet("gen", flag.ExitOnError)

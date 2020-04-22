@@ -6,8 +6,6 @@
 	"RootPackageInclude": "bitbucket.org/codegen",
 	"DirOut": "/home/sl/gospace/codegen",
 	"SubPackage": "db",
-	"Tests": true,
-	"Benchmarks": true,
 	"FilePattern": "%s.go",
 	"Schemas": [
 		{
@@ -3086,6 +3084,7 @@
 							"Generate": true
 						}
 					],
+					"Ignores": {},
 					"ForeignKeys": [
 						{
 							"Name": "pets",
@@ -3096,11 +3095,9 @@
 							"RefTable": "pet",
 							"RefFields": [
 								"person_id"
-							],
-							"IsUnique": false
+							]
 						}
 					],
-					"Ignores": {},
 					"Generate": true
 				},
 				{
@@ -3176,6 +3173,7 @@
 							"Generate": true
 						}
 					],
+					"Ignores": {},
 					"ForeignKeys": [
 						{
 							"Name": "belongs_to",
@@ -3202,7 +3200,6 @@
 							"IsUnique": true
 						}
 					],
-					"Ignores": {},
 					"Generate": true
 				}
 			]

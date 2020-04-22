@@ -134,40 +134,34 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 		for _, table := range tables {
 			table := u.getTable(schema, table.TableName)
 
-			// TODO: implement in go
-			// sql := sdb.NewSQLStatement()
-			// sql.Append("SELECT")
-			// sql.Append("column_name AS name,")
-			// sql.Append("IF(column_type = 'tinyint(1)',column_type, IF(INSTR(data_type, 'int'), IF(RIGHT(column_type, 8) = 'unsigned', CONCAT(data_type, ' unsigned'), data_type), data_type)) AS dbtype,")
-			// // sql.Append("COALESCE(column_default, '') AS `default`,")
-			// sql.Append("IF(is_nullable = 'YES', TRUE, FALSE) AS isnullable,")
-			// sql.Append("IF(INSTR(extra, 'auto_increment'), TRUE, FALSE) as isautoincrement,")
-			// sql.Append("IF(column_key = 'PRI', TRUE, FALSE) AS isprimarykey")
-			// sql.Append("FROM")
-			// sql.Append("information_schema.columns c")
-			// sql.Append("WHERE")
-			// sql.Append("UPPER(table_schema) = UPPER(?)")
-			// sql.Append("AND UPPER(table_name) = UPPER(?)")
-			// sql.Append("AND UPPER(c.extra) not like '%VIRTUAL%'")
-			// sql.Append("ORDER BY ordinal_position")
 			cols, err := u.repoColumns.QueryBySchemaAndTable(schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
 
-			for i := 0; i < len(cols); i++ {
-				fmt.Println(cols[i].IsNullable)
-			}
+			for i := range cols {
+				fRef := u.getField(table, cols[i].ColumnName)
+				fRef.IsAutoincrement = false
+				fRef.IsNullable = false
+				fRef.IsPrimaryKey = false
 
-			var fields []codegen.Field
+				c := cols[i]
+				fNew := codegen.Field{}
+				fNew.Name = c.ColumnName
+				if c.ColumnType == "tinyint(1)" {
+					fNew.DBType = c.ColumnType
+				} else {
+					if strings.Contains(c.DataType, "int") && strings.Contains(c.ColumnType, " unsigned") {
+						fNew.DBType = c.DataType + " unsigned"
+					} else {
+						fNew.DBType = c.DataType
+					}
+				}
+				fNew.IsNullable = c.IsNullable == "YES"
+				fNew.IsAutoincrement = strings.Contains(c.Extra, "auto_increment")
+				fNew.IsPrimaryKey = c.ColumnKey == "PRI"
 
-			// TODO: map col to field
-			for i := range fields {
-				f := u.getField(table, fields[i].Name)
-				f.IsAutoincrement = false
-				f.IsNullable = false
-				f.IsPrimaryKey = false
-				mergo.MergeWithOverwrite(f, fields[i])
+				mergo.MergeWithOverwrite(fRef, fNew)
 			}
 
 			foreignKeys, err := u.repoKeyCol.QueryBySchemaAndRefSchemaAndTable(schema.Name, schema.Name, table.Name)
@@ -183,7 +177,7 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 				fk.RefFields = append(fk.RefFields, *foreignKeys[i].ReferencedColumnName)
 				fk.RefTable = *foreignKeys[i].ReferencedTableName
 				fk.RefSchema = *foreignKeys[i].ReferencedTableSchema
-				fk.IsUnique = true // TODO is always true?
+				fk.IsUnique = true
 				fk.Name = foreignKeys[i].ConstraintName
 			}
 
@@ -193,64 +187,45 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 			}
 
 			for _, indexName := range indices {
-				// TODO: implement in go
-				// sql = sdb.NewSQLStatement()
-				// sql.Append("SELECT")
-				// sql.Append("  index_name AS indexname,")
-				// sql.Append("  column_name AS colname,")
-				// sql.Append("  IF (non_unique = 0, TRUE, FALSE) as isunique")
-				// sql.Append("FROM information_schema.statistics")
-				// sql.Append("WHERE UPPER(table_schema) = UPPER(?)")
-				// sql.Append("  AND UPPER(table_name) = UPPER(?)")
-				// sql.Append("  AND UPPER(index_name) = UPPER(?)")
-				// sql.Append("ORDER BY seq_in_index")
-
 				indexFields, err := u.repoStats.QueryBySchemaAndTableAndIndex(schema.Name, table.Name, indexName.IndexName)
 				if err != nil {
 					panic(err)
 				}
 
-				var index []codegen.IndexField
-				// err = conn.Select(&index, sql.Query(), schema.Name, table.Name, indexName.IndexName)
-				// if err != nil {
-				// 	panic(err)
-				// }
-
 				tableIndex := u.getIndex(table, indexName.IndexName)
 				tableIndex.IsUnique = indexFields[0].NonUnique == 0
 				tableIndex.Fields = make([]string, 0)
-				for _, field := range index {
-					tableIndex.Fields = append(tableIndex.Fields, field.ColName)
+				for _, field := range indexFields {
+					tableIndex.Fields = append(tableIndex.Fields, field.ColumnName)
 				}
 			}
 		}
 
-		/*
-			TODO: currently dont do the inverse stuff. it pollutes the code. actually needed foreign keys for eager fetching have to be added manually
-				for _, t := range tables {
-					table := getTable(schema, t.TableName)
+		/* Attention: currently dont do the inverse stuff. it pollutes the code. actually needed foreign keys for eager fetching have to be added manually
+		for _, t := range tables {
+			table := getTable(schema, t.TableName)
 
-					for i := range table.ForeignKeys {
-						fk := getForeignKey(table, table.ForeignKeys[i].Name)
-						refTable := getTable(getSchema(conf, fk.RefSchema), fk.RefTable)
+			for i := range table.ForeignKeys {
+				fk := getForeignKey(table, table.ForeignKeys[i].Name)
+				refTable := getTable(getSchema(conf, fk.RefSchema), fk.RefTable)
 
-						fkInverse := getForeignKey(refTable, table.ForeignKeys[i].Name)
-						fkInverse.Fields = fk.RefFields
-						fkInverse.RefFields = fk.Fields
-						fkInverse.RefSchema = schema.Name
-						fkInverse.RefTable = table.Name
-						fkInverse.Name = fk.Name
+				fkInverse := getForeignKey(refTable, table.ForeignKeys[i].Name)
+				fkInverse.Fields = fk.RefFields
+				fkInverse.RefFields = fk.Fields
+				fkInverse.RefSchema = schema.Name
+				fkInverse.RefTable = table.Name
+				fkInverse.Name = fk.Name
 
-						fkInverse.IsUnique = false
-						for _, index := range table.Indices {
-							if index.IsUnique && reflect.DeepEqual(index.Fields, fkInverse.RefFields) {
-								fkInverse.IsUnique = true
-								break
-							}
-						}
-
+				fkInverse.IsUnique = false
+				for _, index := range table.Indices {
+					if index.IsUnique && reflect.DeepEqual(index.Fields, fkInverse.RefFields) {
+						fkInverse.IsUnique = true
+						break
 					}
 				}
+
+			}
+		}
 		*/
 	}
 	return *conf, nil

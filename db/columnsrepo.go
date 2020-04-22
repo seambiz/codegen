@@ -32,7 +32,7 @@ func (r ColumnsRepo) Delete(data *codegen.Columns) error {
 
 func (r ColumnsRepo) QueryBySchemaAndTable(schema, table string) ([]*codegen.Columns, error) {
 	return mysql.NewColumnsStore(r.conn).
-		Where("UPPER(table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?) AND UPPER(c.extra) not like '%VIRTUAL%'").
+		Where("UPPER(table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?) AND UPPER(extra) not like '%VIRTUAL%'").
 		OrderBy("ordinal_position").
 		Query(schema, table)
 }
