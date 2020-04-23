@@ -21,7 +21,7 @@ var GoTypeMapping = map[string]string{
 	"double":  "float64",
 	"decimal": "float64", // maybe github.com/shopspring/decimal
 	"numeric": "float64", // maybe github.com/shopspring/decimal
-	"bit":     "bool",    // could be used differntly
+	"bit":     "bool",    // could be used differently
 
 	// date types
 	"year":      "int",

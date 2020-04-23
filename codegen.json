@@ -3201,6 +3201,288 @@
 						}
 					],
 					"Generate": true
+				},
+				{
+					"Name": "extensive",
+					"Fields": [
+						{
+							"Name": "id",
+							"DBType": "int",
+							"IsAutoincrement": true,
+							"IsPrimaryKey": true
+						},
+						{
+							"Name": "tinyint",
+							"DBType": "tinyint"
+						},
+						{
+							"Name": "tinyint_unsigned",
+							"DBType": "tinyint unsigned"
+						},
+						{
+							"Name": "tinyint_null",
+							"DBType": "tinyint",
+							"IsNullable": true
+						},
+						{
+							"Name": "smallint",
+							"DBType": "smallint"
+						},
+						{
+							"Name": "smallint_unsigned",
+							"DBType": "smallint unsigned"
+						},
+						{
+							"Name": "smallint_null",
+							"DBType": "smallint",
+							"IsNullable": true
+						},
+						{
+							"Name": "int",
+							"DBType": "int"
+						},
+						{
+							"Name": "int_null",
+							"DBType": "int",
+							"IsNullable": true
+						},
+						{
+							"Name": "int_unsigned",
+							"DBType": "int unsigned"
+						},
+						{
+							"Name": "bigint",
+							"DBType": "bigint"
+						},
+						{
+							"Name": "bigint_null",
+							"DBType": "bigint",
+							"IsNullable": true
+						},
+						{
+							"Name": "bigint_unsigned",
+							"DBType": "bigint unsigned"
+						},
+						{
+							"Name": "varchar",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "varchar_null",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "float",
+							"DBType": "float"
+						},
+						{
+							"Name": "float_null",
+							"DBType": "float",
+							"IsNullable": true
+						},
+						{
+							"Name": "double",
+							"DBType": "double"
+						},
+						{
+							"Name": "double_null",
+							"DBType": "double",
+							"IsNullable": true
+						},
+						{
+							"Name": "decimal",
+							"DBType": "decimal"
+						},
+						{
+							"Name": "decimal_null",
+							"DBType": "decimal",
+							"IsNullable": true
+						},
+						{
+							"Name": "numeric",
+							"DBType": "numeric"
+						},
+						{
+							"Name": "numeric_null",
+							"DBType": "numeric",
+							"IsNullable": true
+						},
+						{
+							"Name": "created_at",
+							"DBType": "int unsigned"
+						},
+						{
+							"Name": "updated_at",
+							"DBType": "int unsigned"
+						},
+						{
+							"Name": "tinyint1",
+							"DBType": "tinyint(1)"
+						},
+						{
+							"Name": "tinyint1_null",
+							"DBType": "tinyint(1)",
+							"IsNullable": true
+						},
+						{
+							"Name": "year",
+							"DBType": "year"
+						},
+						{
+							"Name": "year_null",
+							"DBType": "year",
+							"IsNullable": true
+						},
+						{
+							"Name": "date",
+							"DBType": "date"
+						},
+						{
+							"Name": "date_null",
+							"DBType": "date",
+							"IsNullable": true
+						},
+						{
+							"Name": "time",
+							"DBType": "time"
+						},
+						{
+							"Name": "time_null",
+							"DBType": "time",
+							"IsNullable": true
+						},
+						{
+							"Name": "datetime",
+							"DBType": "datetime"
+						},
+						{
+							"Name": "datetime_null",
+							"DBType": "datetime",
+							"IsNullable": true
+						},
+						{
+							"Name": "timestamp",
+							"DBType": "timestamp"
+						},
+						{
+							"Name": "timestamp_null",
+							"DBType": "timestamp",
+							"IsNullable": true
+						},
+						{
+							"Name": "char",
+							"DBType": "char"
+						},
+						{
+							"Name": "char_null",
+							"DBType": "char",
+							"IsNullable": true
+						},
+						{
+							"Name": "tinytext",
+							"DBType": "tinytext"
+						},
+						{
+							"Name": "tinytext_null",
+							"DBType": "tinytext",
+							"IsNullable": true
+						},
+						{
+							"Name": "text",
+							"DBType": "text"
+						},
+						{
+							"Name": "text_null",
+							"DBType": "text",
+							"IsNullable": true
+						},
+						{
+							"Name": "mediumtext",
+							"DBType": "mediumtext"
+						},
+						{
+							"Name": "mediumtext_null",
+							"DBType": "mediumtext",
+							"IsNullable": true
+						},
+						{
+							"Name": "longtext",
+							"DBType": "longtext"
+						},
+						{
+							"Name": "longtext_null",
+							"DBType": "longtext",
+							"IsNullable": true
+						},
+						{
+							"Name": "binary",
+							"DBType": "binary"
+						},
+						{
+							"Name": "binary_null",
+							"DBType": "binary",
+							"IsNullable": true
+						},
+						{
+							"Name": "varbinary",
+							"DBType": "varbinary"
+						},
+						{
+							"Name": "varbinary_null",
+							"DBType": "varbinary",
+							"IsNullable": true
+						},
+						{
+							"Name": "tinyblob",
+							"DBType": "tinyblob"
+						},
+						{
+							"Name": "tinyblob_null",
+							"DBType": "tinyblob",
+							"IsNullable": true
+						},
+						{
+							"Name": "blob",
+							"DBType": "blob"
+						},
+						{
+							"Name": "blob_null",
+							"DBType": "blob",
+							"IsNullable": true
+						},
+						{
+							"Name": "mediumblob",
+							"DBType": "mediumblob"
+						},
+						{
+							"Name": "mediumblob_null",
+							"DBType": "mediumblob",
+							"IsNullable": true
+						},
+						{
+							"Name": "longblob",
+							"DBType": "longblob"
+						},
+						{
+							"Name": "longblob_null",
+							"DBType": "longblob",
+							"IsNullable": true
+						}
+					],
+					"Indices": [
+						{
+							"Name": "primary",
+							"Fields": [
+								"id"
+							],
+							"IsUnique": true,
+							"Generate": true
+						}
+					],
+					"Ignores": {},
+					"ForeignKeys": [],
+					"Generate": true
 				}
 			]
 		}

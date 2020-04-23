@@ -126,24 +126,18 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	switch f.GoType {
 	case "[]byte":
 		g.S("Bytes")
-		break
 	case "time.Time":
 		g.S("Time")
-		break
 	case "sql.NullString":
 		g.S("Str")
-		break
 	case "sql.NullInt64", "int64":
 		g.S("Int64")
-		break
 	case "sql.NullFloat64":
 		g.S("Float64")
-		break
 	case "string":
 		g.S("Str")
 	case "uint64":
 		g.S("Uint64")
-		break
 	default:
 		g.S(strings.Title(f.GoType))
 	}
@@ -154,22 +148,22 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 		switch f.GoType {
 		case "time.Time":
 			g.S("logTime(")
-			break
 		case "string":
 			g.S("logString(")
-			break
+		case "bool":
+			g.S("logBool(")
 		case "int":
 			g.S("logInt(")
-			break
 		case "float32":
 			g.S("logFloat32(")
-			break
+		case "float64":
+			g.S("logFloat64(")
 		case "uint64":
 			g.S("logUInt64(")
-			break
 		case "int64":
 			g.S("logInt64(")
-			break
+		case "[]byte":
+			g.S("logBytes(")
 		default:
 			panic("unsupported pointer type: " + f.GoType)
 		}
@@ -185,13 +179,10 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 	switch f.GoType {
 	case "sql.NullString":
 		g.S(".Str")
-		break
 	case "sql.NullInt64":
 		g.S(".Int64")
-		break
 	case "sql.NullFloat64":
 		g.S(".Float64")
-		break
 	}
 	g.S(")")
 	if f.IsNullable {
@@ -648,6 +639,7 @@ func prepareSchemaConfig(conf *Config) {
 				// }
 
 				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
+				table.Fields[i].Title = strings.ReplaceAll(table.Fields[i].Title, " ", "")
 
 				// uppercase abbreviations
 				for _, substring := range commonInitialisms {
