@@ -54,10 +54,10 @@ var goZeroMapping = map[string]string{
 	"int64":  "0",
 	"uint64": "0",
 	"bool":   "false",
-	"[]byte": "nil",
+	"[]byte": "[]byte(nil)",
 
-	"float32":   "0",
-	"float64":   "0",
+	"float32":   "0.0",
+	"float64":   "0.0",
 	"time.Time": "time.Time{}",
 
 	"string":  `""`,

@@ -44,7 +44,7 @@ func Test{{ $table.Title }}Insert(t *testing.T) {
 		WithArgs(
 			{{- range $i, $field := $table.Fields }}
     		{{- if gt $i 0 }}, {{ end -}}
-    		{{ if $field.IsNullable }}nil{{ else }}{{ $field.GoZero }}{{ end }}
+    		{{ if $field.IsNullable }}nil{{ else }}{{ if has (lower $field.Name) (list "created_at" "updated_at") }}TimeSec5{}{{ else }}{{ $field.GoZero }}{{ end }}{{ end }}
     		{{- end -}}
 		).
 		WillReturnResult(sqlmock.NewResult(1, 1))
@@ -87,7 +87,7 @@ func Test{{ $table.Title }}Update(t *testing.T) {
 		WithArgs(
 			{{- range $i, $field := $table.OtherFields }}
     		{{- if gt $i 0 }}, {{ end -}}
-    		{{ if $field.IsNullable }}nil{{ else }}{{ $field.GoZero }}{{ end }}
+    		{{ if $field.IsNullable }}nil{{ else }}{{ if has (lower $field.Name) (list "updated_at") }}TimeSec5{}{{ else }}{{ $field.GoZero }}{{ end }}{{ end }}
     		{{- end -}}
 			{{- range $i, $field := $table.PkFields -}}
     		, {{ if $field.IsNullable }}nil{{ else }}{{ $field.GoZero }}{{ end }}
@@ -514,7 +514,7 @@ func Test{{ $table.Title }}Upsert(t *testing.T) {
 	(
 		{{- range $i, $field := $table.Fields -}}
 		{{- if gt $i 0 }},{{ end -}}
-		{{` `}}{{ if $field.IsNullable }}nil{{ else }}'{{ $field.GoZero | replace "\"" "" }}'{{ end }}{{` `}}
+		{{` `}}{{ if $field.IsNullable }}NULL{{ else }}'{{ if not (has $field.GoZero (list "[]byte(nil)" "[]")) }}{{ $field.GoZero | replace "\"" "" }}{{ end }}'{{ end }}{{` `}}
 		{{- end -}}
 	)
 	{{- end -}}

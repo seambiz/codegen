@@ -9,6 +9,13 @@ func ({{ $table.StoreReceiver }}) Update(data *{{ $conf.RootPackage }}.{{ $table
     sql := sdb.NewSQLStatement()
     var prepend string
     args := []interface{}{}
+
+    {{- range $i, $f := $table.Fields -}}
+		{{- if eq $f.Title "UpdatedAt" }}
+		data.{{ $f.Title }} = stime.Now()
+		{{- end -}}
+	{{- end -}}
+
 	{{- if $schema.IsMultiTenant }}
         sql.AppendRaw("UPDATE ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} SET ")
     {{- else }}
