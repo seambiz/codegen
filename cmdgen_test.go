@@ -20,6 +20,7 @@ func Test_generateTemplatesConfig(t *testing.T) {
 	expectedTableTemplatefiles["table.package.store_test"] = []string{"table.package.store_test.tmpl"}
 	expectedTableTemplatefiles["table.package.store_timing_test"] = []string{"table.package.store_timing_test.tmpl"}
 	expectedTableTemplatefiles["table.root.repository"] = []string{"table.root.repository.tmpl"}
+	expectedTableTemplatefiles["table.subpackage.repo"] = []string{"table.subpackage.repo.tmpl"}
 
 	type args struct {
 		conf *Config

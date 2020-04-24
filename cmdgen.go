@@ -494,6 +494,8 @@ func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string,
 			prefix = strings.ReplaceAll(fileprefix, "_", "")
 		}
 		switch segments[1] {
+		case "subpackage":
+			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), conf.SubPackage)
 		case "package":
 			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), filepath.Join(conf.SubPackage, conf.Package))
 		case "root":

@@ -101,7 +101,7 @@ func main() {
 		conn := sdb.OpenDatabaseDSN(conf.Database.DSN)
 		repoTable := db.NewTablesRepo(conn)
 		repoStats := db.NewStatisticsRepo(conn)
-		repoKeyCol := db.NewKeyColUsageRepo(conn)
+		repoKeyCol := db.NewKeyColumnUsageRepo(conn)
 		repoCols := db.NewColumnsRepo(conn)
 
 		up = updater.NewMysqlUpdate(repoTable, repoCols, repoKeyCol, repoStats)

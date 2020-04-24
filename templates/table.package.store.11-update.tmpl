@@ -23,6 +23,13 @@ func ({{ $table.StoreReceiver }}) Update(data *{{ $conf.RootPackage }}.{{ $table
     {{- end }}
 
     {{- range $i, $f := $table.OtherFields }}
+		{{- if eq $f.Title "UpdatedAt" }}
+            sql.AppendRaw(prepend, "{{ lower $f.Name }} = ?")
+            {{- if ne (add $i 1) (len $table.OtherFields) }}
+                prepend = ","
+            {{- end }}
+            args = append(args, data.{{ $f.Title }})
+        {{- else }}
         if {{ $table.Initials }}.colSet == nil || {{ $table.Initials }}.colSet.Bit({{ $conf.RootPackage }}.{{ $table.Title }}_{{ $f.Title }}) == 1 {
             sql.AppendRaw(prepend, "{{ lower $f.Name }} = ?")
             {{- if ne (add $i 1) (len $table.OtherFields) }}
@@ -30,6 +37,7 @@ func ({{ $table.StoreReceiver }}) Update(data *{{ $conf.RootPackage }}.{{ $table
             {{- end }}
             args = append(args, data.{{ $f.Title }})
         }
+        {{- end }}
     {{- end }}
     sql.Append(" WHERE {{ range $i, $f := $table.PkFields -}}
 		{{- if gt $i 0 }} AND {{ end }}{{ $f.Name }} = ?

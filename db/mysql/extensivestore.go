@@ -1071,11 +1071,9 @@ func (ex *ExtensiveStore) Update(data *codegen.Extensive) (int64, error) {
 		prepend = ","
 		args = append(args, data.CreatedAt)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_UpdatedAt) == 1 {
-		sql.AppendRaw(prepend, "updated_at = ?")
-		prepend = ","
-		args = append(args, data.UpdatedAt)
-	}
+	sql.AppendRaw(prepend, "updated_at = ?")
+	prepend = ","
+	args = append(args, data.UpdatedAt)
 	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
 		sql.AppendRaw(prepend, "tinyint1 = ?")
 		prepend = ","

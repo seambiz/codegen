@@ -289,18 +289,13 @@ func (s *Store) rowToSlice(dest interface{}, values []sql.RawBytes, col *int) er
 		direct = reflect.Indirect(value)
 	}
 
-	slice, err := baseType(value.Type(), reflect.Slice)
-	if err != nil {
-		return err
-	}
-
 	if direct.Kind() != reflect.Slice {
 		panic("must pass a pointer to a slice")
 	}
 
-	slice, err = baseType(value.Type(), reflect.Slice)
+	slice, err := baseType(value.Type(), reflect.Slice)
 	if err != nil {
-		panic(err)
+		return err
 	}
 
 	base := reflectx.Deref(slice.Elem())
