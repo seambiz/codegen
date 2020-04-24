@@ -154,6 +154,8 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 			g.S("logBool(")
 		case "int":
 			g.S("logInt(")
+		case "uint":
+			g.S("logUInt(")
 		case "float32":
 			g.S("logFloat32(")
 		case "float64":
