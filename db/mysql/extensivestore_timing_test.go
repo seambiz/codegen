@@ -116,7 +116,7 @@ func BenchmarkExtensiveSelectCols(b *testing.B) {
 		addResultRowDSN("bench", []driver.Value{data.ID, *data.LongblobNull})
 	}
 
-	store := NewExtensiveStore(db).Columns(Extensive_ID, Extensive_LongblobNull)
+	store := NewExtensiveStore(db).Columns(codegen.Extensive_ID, codegen.Extensive_LongblobNull)
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()

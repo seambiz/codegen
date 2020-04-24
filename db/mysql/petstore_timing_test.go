@@ -116,7 +116,7 @@ func BenchmarkPetSelectCols(b *testing.B) {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Species})
 	}
 
-	store := NewPetStore(db).Columns(Pet_ID, Pet_Species)
+	store := NewPetStore(db).Columns(codegen.Pet_ID, codegen.Pet_Species)
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()

@@ -9,7 +9,7 @@ func Test_generateTemplatesConfig(t *testing.T) {
 	expectedSchemaTemplatefiles := map[string][]string{}
 	expectedTableTemplatefiles := map[string][]string{}
 
-	expectedSchemaTemplatefiles["once.package.constants"] = []string{"once.package.constants.tmpl"}
+	expectedSchemaTemplatefiles["once.root.dbconstants"] = []string{"once.root.dbconstants.tmpl"}
 	expectedSchemaTemplatefiles["once.package.fakedb_test"] = []string{"once.package.fakedb_test.tmpl"}
 	expectedSchemaTemplatefiles["once.package.shared"] = []string{"once.package.shared.tmpl"}
 	expectedSchemaTemplatefiles["once.package.store"] = []string{"once.package.store.tmpl"}

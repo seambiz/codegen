@@ -47,11 +47,11 @@ func PersonQueryFields(colSet *big.Int) []string {
 	}
 
 	fields := []string{}
-	if colSet.Bit(Person_ID) == 1 {
+	if colSet.Bit(codegen.Person_ID) == 1 {
 		fields = append(fields, "id")
 	}
 
-	if colSet.Bit(Person_Name) == 1 {
+	if colSet.Bit(codegen.Person_Name) == 1 {
 		fields = append(fields, "name")
 	}
 	return fields
@@ -126,11 +126,11 @@ func (pe *Person) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *
 }
 
 func BindFakeBenchmarkPerson(pe *codegen.Person, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	if colSet == nil || colSet.Bit(Person_ID) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Person_ID) == 1 {
 		pe.ID = sdb.ToInt(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Person_Name) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Person_Name) == 1 {
 		pe.Name = sdb.ToString(row[*col])
 		*col++
 	}
@@ -265,7 +265,7 @@ func (pe *PersonStore) Update(data *codegen.Person) (int64, error) {
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE fake_benchmark.person SET")
-	if pe.colSet == nil || pe.colSet.Bit(Person_Name) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_Name) == 1 {
 		sql.AppendRaw(prepend, "name = ?")
 		args = append(args, data.Name)
 	}
@@ -374,11 +374,11 @@ func (pe *PersonStore) OneByID(id int) (*codegen.Person, error) {
 // nolint[gocylco]
 func (pe *PersonStore) ToJSON(t *sdb.JsonBuffer, data *Person) {
 	prepend := "{"
-	if pe.colSet == nil || pe.colSet.Bit(Person_ID) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_ID) == 1 {
 		t.JD(prepend, "id", data.ID)
 		prepend = ","
 	}
-	if pe.colSet == nil || pe.colSet.Bit(Person_Name) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_Name) == 1 {
 		t.JS(prepend, "name", data.Name)
 	}
 	t.S(`}`)

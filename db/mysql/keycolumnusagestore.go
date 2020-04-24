@@ -46,51 +46,51 @@ func KeyColumnUsageQueryFields(colSet *big.Int) []string {
 	}
 
 	fields := []string{}
-	if colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_ConstraintCatalog) == 1 {
 		fields = append(fields, "constraint_catalog")
 	}
 
-	if colSet.Bit(KeyColumnUsage_ConstraintSchema) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_ConstraintSchema) == 1 {
 		fields = append(fields, "constraint_schema")
 	}
 
-	if colSet.Bit(KeyColumnUsage_ConstraintName) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_ConstraintName) == 1 {
 		fields = append(fields, "constraint_name")
 	}
 
-	if colSet.Bit(KeyColumnUsage_TableCatalog) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_TableCatalog) == 1 {
 		fields = append(fields, "table_catalog")
 	}
 
-	if colSet.Bit(KeyColumnUsage_TableSchema) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_TableSchema) == 1 {
 		fields = append(fields, "table_schema")
 	}
 
-	if colSet.Bit(KeyColumnUsage_TableName) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_TableName) == 1 {
 		fields = append(fields, "table_name")
 	}
 
-	if colSet.Bit(KeyColumnUsage_ColumnName) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_ColumnName) == 1 {
 		fields = append(fields, "column_name")
 	}
 
-	if colSet.Bit(KeyColumnUsage_OrdinalPosition) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_OrdinalPosition) == 1 {
 		fields = append(fields, "ordinal_position")
 	}
 
-	if colSet.Bit(KeyColumnUsage_PositionInUniqueConstraint) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_PositionInUniqueConstraint) == 1 {
 		fields = append(fields, "position_in_unique_constraint")
 	}
 
-	if colSet.Bit(KeyColumnUsage_ReferencedTableSchema) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_ReferencedTableSchema) == 1 {
 		fields = append(fields, "referenced_table_schema")
 	}
 
-	if colSet.Bit(KeyColumnUsage_ReferencedTableName) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_ReferencedTableName) == 1 {
 		fields = append(fields, "referenced_table_name")
 	}
 
-	if colSet.Bit(KeyColumnUsage_ReferencedColumnName) == 1 {
+	if colSet.Bit(codegen.KeyColumnUsage_ReferencedColumnName) == 1 {
 		fields = append(fields, "referenced_column_name")
 	}
 	return fields
@@ -165,39 +165,39 @@ func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.In
 }
 
 func BindInformationSchemaKeyColumnUsage(ke *codegen.KeyColumnUsage, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	if colSet == nil || colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ConstraintCatalog) == 1 {
 		ke.ConstraintCatalog = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_ConstraintSchema) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ConstraintSchema) == 1 {
 		ke.ConstraintSchema = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_ConstraintName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ConstraintName) == 1 {
 		ke.ConstraintName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_TableCatalog) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_TableCatalog) == 1 {
 		ke.TableCatalog = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_TableSchema) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_TableSchema) == 1 {
 		ke.TableSchema = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_TableName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_TableName) == 1 {
 		ke.TableName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_ColumnName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ColumnName) == 1 {
 		ke.ColumnName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_OrdinalPosition) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_OrdinalPosition) == 1 {
 		ke.OrdinalPosition = sdb.ToInt64(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_PositionInUniqueConstraint) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_PositionInUniqueConstraint) == 1 {
 		if row[*col] == nil {
 			ke.PositionInUniqueConstraint = nil
 		} else {
@@ -206,7 +206,7 @@ func BindInformationSchemaKeyColumnUsage(ke *codegen.KeyColumnUsage, row []sql.R
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_ReferencedTableSchema) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ReferencedTableSchema) == 1 {
 		if row[*col] == nil {
 			ke.ReferencedTableSchema = nil
 		} else {
@@ -215,7 +215,7 @@ func BindInformationSchemaKeyColumnUsage(ke *codegen.KeyColumnUsage, row []sql.R
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_ReferencedTableName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ReferencedTableName) == 1 {
 		if row[*col] == nil {
 			ke.ReferencedTableName = nil
 		} else {
@@ -224,7 +224,7 @@ func BindInformationSchemaKeyColumnUsage(ke *codegen.KeyColumnUsage, row []sql.R
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(KeyColumnUsage_ReferencedColumnName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ReferencedColumnName) == 1 {
 		if row[*col] == nil {
 			ke.ReferencedColumnName = nil
 		} else {
@@ -326,62 +326,62 @@ func (ke *KeyColumnUsageStore) Update(data *codegen.KeyColumnUsage) (int64, erro
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.KEY_COLUMN_USAGE SET")
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ConstraintCatalog) == 1 {
 		sql.AppendRaw(prepend, "constraint_catalog = ?")
 		prepend = ","
 		args = append(args, data.ConstraintCatalog)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintSchema) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ConstraintSchema) == 1 {
 		sql.AppendRaw(prepend, "constraint_schema = ?")
 		prepend = ","
 		args = append(args, data.ConstraintSchema)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ConstraintName) == 1 {
 		sql.AppendRaw(prepend, "constraint_name = ?")
 		prepend = ","
 		args = append(args, data.ConstraintName)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableCatalog) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_TableCatalog) == 1 {
 		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableSchema) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_TableSchema) == 1 {
 		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_TableName) == 1 {
 		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ColumnName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ColumnName) == 1 {
 		sql.AppendRaw(prepend, "column_name = ?")
 		prepend = ","
 		args = append(args, data.ColumnName)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_OrdinalPosition) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_OrdinalPosition) == 1 {
 		sql.AppendRaw(prepend, "ordinal_position = ?")
 		prepend = ","
 		args = append(args, data.OrdinalPosition)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_PositionInUniqueConstraint) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_PositionInUniqueConstraint) == 1 {
 		sql.AppendRaw(prepend, "position_in_unique_constraint = ?")
 		prepend = ","
 		args = append(args, data.PositionInUniqueConstraint)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableSchema) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ReferencedTableSchema) == 1 {
 		sql.AppendRaw(prepend, "referenced_table_schema = ?")
 		prepend = ","
 		args = append(args, data.ReferencedTableSchema)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ReferencedTableName) == 1 {
 		sql.AppendRaw(prepend, "referenced_table_name = ?")
 		prepend = ","
 		args = append(args, data.ReferencedTableName)
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedColumnName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ReferencedColumnName) == 1 {
 		sql.AppendRaw(prepend, "referenced_column_name = ?")
 		args = append(args, data.ReferencedColumnName)
 	}
@@ -415,51 +415,51 @@ func (ke *KeyColumnUsageStore) Truncate() error {
 // nolint[gocylco]
 func (ke *KeyColumnUsageStore) ToJSON(t *sdb.JsonBuffer, data *KeyColumnUsage) {
 	prepend := "{"
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintCatalog) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ConstraintCatalog) == 1 {
 		t.JS(prepend, "constraint_catalog", data.ConstraintCatalog)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintSchema) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ConstraintSchema) == 1 {
 		t.JS(prepend, "constraint_schema", data.ConstraintSchema)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ConstraintName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ConstraintName) == 1 {
 		t.JS(prepend, "constraint_name", data.ConstraintName)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableCatalog) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_TableCatalog) == 1 {
 		t.JS(prepend, "table_catalog", data.TableCatalog)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableSchema) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_TableSchema) == 1 {
 		t.JS(prepend, "table_schema", data.TableSchema)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_TableName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_TableName) == 1 {
 		t.JS(prepend, "table_name", data.TableName)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ColumnName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ColumnName) == 1 {
 		t.JS(prepend, "column_name", data.ColumnName)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_OrdinalPosition) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_OrdinalPosition) == 1 {
 		t.JD64(prepend, "ordinal_position", data.OrdinalPosition)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_PositionInUniqueConstraint) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_PositionInUniqueConstraint) == 1 {
 		t.JD64(prepend, "position_in_unique_constraint", *data.PositionInUniqueConstraint)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableSchema) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ReferencedTableSchema) == 1 {
 		t.JS(prepend, "referenced_table_schema", *data.ReferencedTableSchema)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedTableName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ReferencedTableName) == 1 {
 		t.JS(prepend, "referenced_table_name", *data.ReferencedTableName)
 		prepend = ","
 	}
-	if ke.colSet == nil || ke.colSet.Bit(KeyColumnUsage_ReferencedColumnName) == 1 {
+	if ke.colSet == nil || ke.colSet.Bit(codegen.KeyColumnUsage_ReferencedColumnName) == 1 {
 		t.JS(prepend, "referenced_column_name", *data.ReferencedColumnName)
 	}
 	t.S(`}`)

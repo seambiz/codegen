@@ -47,19 +47,19 @@ func PetQueryFields(colSet *big.Int) []string {
 	}
 
 	fields := []string{}
-	if colSet.Bit(Pet_ID) == 1 {
+	if colSet.Bit(codegen.Pet_ID) == 1 {
 		fields = append(fields, "id")
 	}
 
-	if colSet.Bit(Pet_PersonID) == 1 {
+	if colSet.Bit(codegen.Pet_PersonID) == 1 {
 		fields = append(fields, "person_id")
 	}
 
-	if colSet.Bit(Pet_TagID) == 1 {
+	if colSet.Bit(codegen.Pet_TagID) == 1 {
 		fields = append(fields, "tag_id")
 	}
 
-	if colSet.Bit(Pet_Species) == 1 {
+	if colSet.Bit(codegen.Pet_Species) == 1 {
 		fields = append(fields, "species")
 	}
 	return fields
@@ -134,19 +134,19 @@ func (pe *Pet) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int
 }
 
 func BindFakeBenchmarkPet(pe *codegen.Pet, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	if colSet == nil || colSet.Bit(Pet_ID) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Pet_ID) == 1 {
 		pe.ID = sdb.ToInt(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Pet_PersonID) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Pet_PersonID) == 1 {
 		pe.PersonID = sdb.ToInt(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Pet_TagID) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Pet_TagID) == 1 {
 		pe.TagID = sdb.ToInt(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Pet_Species) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Pet_Species) == 1 {
 		pe.Species = sdb.ToString(row[*col])
 		*col++
 	}
@@ -269,17 +269,17 @@ func (pe *PetStore) Update(data *codegen.Pet) (int64, error) {
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE fake_benchmark.pet SET")
-	if pe.colSet == nil || pe.colSet.Bit(Pet_PersonID) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_PersonID) == 1 {
 		sql.AppendRaw(prepend, "person_id = ?")
 		prepend = ","
 		args = append(args, data.PersonID)
 	}
-	if pe.colSet == nil || pe.colSet.Bit(Pet_TagID) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_TagID) == 1 {
 		sql.AppendRaw(prepend, "tag_id = ?")
 		prepend = ","
 		args = append(args, data.TagID)
 	}
-	if pe.colSet == nil || pe.colSet.Bit(Pet_Species) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_Species) == 1 {
 		sql.AppendRaw(prepend, "species = ?")
 		args = append(args, data.Species)
 	}
@@ -406,19 +406,19 @@ func (pe *PetStore) QueryByTagID(tagid int) ([]*codegen.Pet, error) {
 // nolint[gocylco]
 func (pe *PetStore) ToJSON(t *sdb.JsonBuffer, data *Pet) {
 	prepend := "{"
-	if pe.colSet == nil || pe.colSet.Bit(Pet_ID) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_ID) == 1 {
 		t.JD(prepend, "id", data.ID)
 		prepend = ","
 	}
-	if pe.colSet == nil || pe.colSet.Bit(Pet_PersonID) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_PersonID) == 1 {
 		t.JD(prepend, "person_id", data.PersonID)
 		prepend = ","
 	}
-	if pe.colSet == nil || pe.colSet.Bit(Pet_TagID) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_TagID) == 1 {
 		t.JD(prepend, "tag_id", data.TagID)
 		prepend = ","
 	}
-	if pe.colSet == nil || pe.colSet.Bit(Pet_Species) == 1 {
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_Species) == 1 {
 		t.JS(prepend, "species", data.Species)
 	}
 	t.S(`}`)

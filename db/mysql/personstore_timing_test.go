@@ -116,7 +116,7 @@ func BenchmarkPersonSelectCols(b *testing.B) {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Name})
 	}
 
-	store := NewPersonStore(db).Columns(Person_ID, Person_Name)
+	store := NewPersonStore(db).Columns(codegen.Person_ID, codegen.Person_Name)
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()

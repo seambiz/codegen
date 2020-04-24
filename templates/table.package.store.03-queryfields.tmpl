@@ -1,3 +1,4 @@
+{{ $conf := .Conf }}
 {{ $table := .Table }}
 // constant slice for all fields of the table "{{ .Table.Title }}".
 // nolint[gochecknoglobals]
@@ -17,7 +18,7 @@ func {{ .Table.Title }}QueryFields(colSet *big.Int) []string {
 
 	fields := []string{}
     {{- range $field := .Table.Fields }}
-    if colSet.Bit({{ $table.Title }}_{{ $field.Title }}) == 1 {
+    if colSet.Bit({{ $conf.RootPackage }}.{{ $table.Title }}_{{ $field.Title }}) == 1 {
 		fields = append(fields, "{{ lower $field.Name }}")
 	}
 	{{ end -}}

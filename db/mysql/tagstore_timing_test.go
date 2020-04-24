@@ -116,7 +116,7 @@ func BenchmarkTagSelectCols(b *testing.B) {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Name})
 	}
 
-	store := NewTagStore(db).Columns(Tag_ID, Tag_Name)
+	store := NewTagStore(db).Columns(codegen.Tag_ID, codegen.Tag_Name)
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()

@@ -32,7 +32,7 @@ func (r StatisticsRepo) Delete(data *codegen.Statistics) error {
 
 func (r StatisticsRepo) IndexNameBySchemaAndTable(schema, table string) ([]*codegen.Statistics, error) {
 	store := mysql.NewStatisticsStore(r.conn)
-	store.Columns(mysql.Statistics_IndexName)
+	store.Columns(codegen.Statistics_IndexName)
 	return store.Where("UPPER(table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?)").
 		GroupBy("index_name").
 		Query(schema, table)

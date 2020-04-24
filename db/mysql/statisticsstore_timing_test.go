@@ -94,7 +94,7 @@ func BenchmarkStatisticsSelectCols(b *testing.B) {
 		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.IndexComment})
 	}
 
-	store := NewStatisticsStore(db).Columns(Statistics_TableCatalog, Statistics_IndexComment)
+	store := NewStatisticsStore(db).Columns(codegen.Statistics_TableCatalog, codegen.Statistics_IndexComment)
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()

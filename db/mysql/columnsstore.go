@@ -46,87 +46,87 @@ func ColumnsQueryFields(colSet *big.Int) []string {
 	}
 
 	fields := []string{}
-	if colSet.Bit(Columns_TableCatalog) == 1 {
+	if colSet.Bit(codegen.Columns_TableCatalog) == 1 {
 		fields = append(fields, "table_catalog")
 	}
 
-	if colSet.Bit(Columns_TableSchema) == 1 {
+	if colSet.Bit(codegen.Columns_TableSchema) == 1 {
 		fields = append(fields, "table_schema")
 	}
 
-	if colSet.Bit(Columns_TableName) == 1 {
+	if colSet.Bit(codegen.Columns_TableName) == 1 {
 		fields = append(fields, "table_name")
 	}
 
-	if colSet.Bit(Columns_ColumnName) == 1 {
+	if colSet.Bit(codegen.Columns_ColumnName) == 1 {
 		fields = append(fields, "column_name")
 	}
 
-	if colSet.Bit(Columns_OrdinalPosition) == 1 {
+	if colSet.Bit(codegen.Columns_OrdinalPosition) == 1 {
 		fields = append(fields, "ordinal_position")
 	}
 
-	if colSet.Bit(Columns_ColumnDefault) == 1 {
+	if colSet.Bit(codegen.Columns_ColumnDefault) == 1 {
 		fields = append(fields, "column_default")
 	}
 
-	if colSet.Bit(Columns_IsNullable) == 1 {
+	if colSet.Bit(codegen.Columns_IsNullable) == 1 {
 		fields = append(fields, "is_nullable")
 	}
 
-	if colSet.Bit(Columns_DataType) == 1 {
+	if colSet.Bit(codegen.Columns_DataType) == 1 {
 		fields = append(fields, "data_type")
 	}
 
-	if colSet.Bit(Columns_CharacterMaximumLength) == 1 {
+	if colSet.Bit(codegen.Columns_CharacterMaximumLength) == 1 {
 		fields = append(fields, "character_maximum_length")
 	}
 
-	if colSet.Bit(Columns_CharacterOctetLength) == 1 {
+	if colSet.Bit(codegen.Columns_CharacterOctetLength) == 1 {
 		fields = append(fields, "character_octet_length")
 	}
 
-	if colSet.Bit(Columns_NumericPrecision) == 1 {
+	if colSet.Bit(codegen.Columns_NumericPrecision) == 1 {
 		fields = append(fields, "numeric_precision")
 	}
 
-	if colSet.Bit(Columns_NumericScale) == 1 {
+	if colSet.Bit(codegen.Columns_NumericScale) == 1 {
 		fields = append(fields, "numeric_scale")
 	}
 
-	if colSet.Bit(Columns_DatetimePrecision) == 1 {
+	if colSet.Bit(codegen.Columns_DatetimePrecision) == 1 {
 		fields = append(fields, "datetime_precision")
 	}
 
-	if colSet.Bit(Columns_CharacterSetName) == 1 {
+	if colSet.Bit(codegen.Columns_CharacterSetName) == 1 {
 		fields = append(fields, "character_set_name")
 	}
 
-	if colSet.Bit(Columns_CollationName) == 1 {
+	if colSet.Bit(codegen.Columns_CollationName) == 1 {
 		fields = append(fields, "collation_name")
 	}
 
-	if colSet.Bit(Columns_ColumnType) == 1 {
+	if colSet.Bit(codegen.Columns_ColumnType) == 1 {
 		fields = append(fields, "column_type")
 	}
 
-	if colSet.Bit(Columns_ColumnKey) == 1 {
+	if colSet.Bit(codegen.Columns_ColumnKey) == 1 {
 		fields = append(fields, "column_key")
 	}
 
-	if colSet.Bit(Columns_Extra) == 1 {
+	if colSet.Bit(codegen.Columns_Extra) == 1 {
 		fields = append(fields, "extra")
 	}
 
-	if colSet.Bit(Columns_Privileges) == 1 {
+	if colSet.Bit(codegen.Columns_Privileges) == 1 {
 		fields = append(fields, "privileges")
 	}
 
-	if colSet.Bit(Columns_ColumnComment) == 1 {
+	if colSet.Bit(codegen.Columns_ColumnComment) == 1 {
 		fields = append(fields, "column_comment")
 	}
 
-	if colSet.Bit(Columns_GenerationExpression) == 1 {
+	if colSet.Bit(codegen.Columns_GenerationExpression) == 1 {
 		fields = append(fields, "generation_expression")
 	}
 	return fields
@@ -201,27 +201,27 @@ func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col 
 }
 
 func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	if colSet == nil || colSet.Bit(Columns_TableCatalog) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_TableCatalog) == 1 {
 		co.TableCatalog = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_TableSchema) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_TableSchema) == 1 {
 		co.TableSchema = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_TableName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_TableName) == 1 {
 		co.TableName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_ColumnName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_ColumnName) == 1 {
 		co.ColumnName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_OrdinalPosition) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_OrdinalPosition) == 1 {
 		co.OrdinalPosition = sdb.ToUInt64(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_ColumnDefault) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_ColumnDefault) == 1 {
 		if row[*col] == nil {
 			co.ColumnDefault = nil
 		} else {
@@ -230,15 +230,15 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_IsNullable) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_IsNullable) == 1 {
 		co.IsNullable = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_DataType) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_DataType) == 1 {
 		co.DataType = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_CharacterMaximumLength) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_CharacterMaximumLength) == 1 {
 		if row[*col] == nil {
 			co.CharacterMaximumLength = nil
 		} else {
@@ -247,7 +247,7 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_CharacterOctetLength) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_CharacterOctetLength) == 1 {
 		if row[*col] == nil {
 			co.CharacterOctetLength = nil
 		} else {
@@ -256,7 +256,7 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_NumericPrecision) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_NumericPrecision) == 1 {
 		if row[*col] == nil {
 			co.NumericPrecision = nil
 		} else {
@@ -265,7 +265,7 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_NumericScale) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_NumericScale) == 1 {
 		if row[*col] == nil {
 			co.NumericScale = nil
 		} else {
@@ -274,7 +274,7 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_DatetimePrecision) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_DatetimePrecision) == 1 {
 		if row[*col] == nil {
 			co.DatetimePrecision = nil
 		} else {
@@ -283,7 +283,7 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_CharacterSetName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_CharacterSetName) == 1 {
 		if row[*col] == nil {
 			co.CharacterSetName = nil
 		} else {
@@ -292,7 +292,7 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_CollationName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_CollationName) == 1 {
 		if row[*col] == nil {
 			co.CollationName = nil
 		} else {
@@ -301,27 +301,27 @@ func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJ
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_ColumnType) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_ColumnType) == 1 {
 		co.ColumnType = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_ColumnKey) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_ColumnKey) == 1 {
 		co.ColumnKey = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_Extra) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_Extra) == 1 {
 		co.Extra = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_Privileges) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_Privileges) == 1 {
 		co.Privileges = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_ColumnComment) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_ColumnComment) == 1 {
 		co.ColumnComment = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Columns_GenerationExpression) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Columns_GenerationExpression) == 1 {
 		co.GenerationExpression = sdb.ToString(row[*col])
 		*col++
 	}
@@ -418,107 +418,107 @@ func (co *ColumnsStore) Update(data *codegen.Columns) (int64, error) {
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.COLUMNS SET")
-	if co.colSet == nil || co.colSet.Bit(Columns_TableCatalog) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableCatalog) == 1 {
 		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_TableSchema) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableSchema) == 1 {
 		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_TableName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableName) == 1 {
 		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnName) == 1 {
 		sql.AppendRaw(prepend, "column_name = ?")
 		prepend = ","
 		args = append(args, data.ColumnName)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_OrdinalPosition) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_OrdinalPosition) == 1 {
 		sql.AppendRaw(prepend, "ordinal_position = ?")
 		prepend = ","
 		args = append(args, data.OrdinalPosition)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnDefault) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnDefault) == 1 {
 		sql.AppendRaw(prepend, "column_default = ?")
 		prepend = ","
 		args = append(args, data.ColumnDefault)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_IsNullable) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_IsNullable) == 1 {
 		sql.AppendRaw(prepend, "is_nullable = ?")
 		prepend = ","
 		args = append(args, data.IsNullable)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_DataType) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_DataType) == 1 {
 		sql.AppendRaw(prepend, "data_type = ?")
 		prepend = ","
 		args = append(args, data.DataType)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CharacterMaximumLength) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterMaximumLength) == 1 {
 		sql.AppendRaw(prepend, "character_maximum_length = ?")
 		prepend = ","
 		args = append(args, data.CharacterMaximumLength)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CharacterOctetLength) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterOctetLength) == 1 {
 		sql.AppendRaw(prepend, "character_octet_length = ?")
 		prepend = ","
 		args = append(args, data.CharacterOctetLength)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_NumericPrecision) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_NumericPrecision) == 1 {
 		sql.AppendRaw(prepend, "numeric_precision = ?")
 		prepend = ","
 		args = append(args, data.NumericPrecision)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_NumericScale) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_NumericScale) == 1 {
 		sql.AppendRaw(prepend, "numeric_scale = ?")
 		prepend = ","
 		args = append(args, data.NumericScale)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_DatetimePrecision) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_DatetimePrecision) == 1 {
 		sql.AppendRaw(prepend, "datetime_precision = ?")
 		prepend = ","
 		args = append(args, data.DatetimePrecision)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CharacterSetName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterSetName) == 1 {
 		sql.AppendRaw(prepend, "character_set_name = ?")
 		prepend = ","
 		args = append(args, data.CharacterSetName)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CollationName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CollationName) == 1 {
 		sql.AppendRaw(prepend, "collation_name = ?")
 		prepend = ","
 		args = append(args, data.CollationName)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnType) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnType) == 1 {
 		sql.AppendRaw(prepend, "column_type = ?")
 		prepend = ","
 		args = append(args, data.ColumnType)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnKey) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnKey) == 1 {
 		sql.AppendRaw(prepend, "column_key = ?")
 		prepend = ","
 		args = append(args, data.ColumnKey)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_Extra) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_Extra) == 1 {
 		sql.AppendRaw(prepend, "extra = ?")
 		prepend = ","
 		args = append(args, data.Extra)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_Privileges) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_Privileges) == 1 {
 		sql.AppendRaw(prepend, "privileges = ?")
 		prepend = ","
 		args = append(args, data.Privileges)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnComment) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnComment) == 1 {
 		sql.AppendRaw(prepend, "column_comment = ?")
 		prepend = ","
 		args = append(args, data.ColumnComment)
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_GenerationExpression) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_GenerationExpression) == 1 {
 		sql.AppendRaw(prepend, "generation_expression = ?")
 		args = append(args, data.GenerationExpression)
 	}
@@ -552,87 +552,87 @@ func (co *ColumnsStore) Truncate() error {
 // nolint[gocylco]
 func (co *ColumnsStore) ToJSON(t *sdb.JsonBuffer, data *Columns) {
 	prepend := "{"
-	if co.colSet == nil || co.colSet.Bit(Columns_TableCatalog) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableCatalog) == 1 {
 		t.JS(prepend, "table_catalog", data.TableCatalog)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_TableSchema) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableSchema) == 1 {
 		t.JS(prepend, "table_schema", data.TableSchema)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_TableName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableName) == 1 {
 		t.JS(prepend, "table_name", data.TableName)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnName) == 1 {
 		t.JS(prepend, "column_name", data.ColumnName)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_OrdinalPosition) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_OrdinalPosition) == 1 {
 		t.JD64u(prepend, "ordinal_position", data.OrdinalPosition)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnDefault) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnDefault) == 1 {
 		t.JS(prepend, "column_default", *data.ColumnDefault)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_IsNullable) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_IsNullable) == 1 {
 		t.JS(prepend, "is_nullable", data.IsNullable)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_DataType) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_DataType) == 1 {
 		t.JS(prepend, "data_type", data.DataType)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CharacterMaximumLength) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterMaximumLength) == 1 {
 		t.JD64u(prepend, "character_maximum_length", *data.CharacterMaximumLength)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CharacterOctetLength) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterOctetLength) == 1 {
 		t.JD64u(prepend, "character_octet_length", *data.CharacterOctetLength)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_NumericPrecision) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_NumericPrecision) == 1 {
 		t.JD64u(prepend, "numeric_precision", *data.NumericPrecision)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_NumericScale) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_NumericScale) == 1 {
 		t.JD64u(prepend, "numeric_scale", *data.NumericScale)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_DatetimePrecision) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_DatetimePrecision) == 1 {
 		t.JD64u(prepend, "datetime_precision", *data.DatetimePrecision)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CharacterSetName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterSetName) == 1 {
 		t.JS(prepend, "character_set_name", *data.CharacterSetName)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_CollationName) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CollationName) == 1 {
 		t.JS(prepend, "collation_name", *data.CollationName)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnType) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnType) == 1 {
 		t.JS(prepend, "column_type", data.ColumnType)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnKey) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnKey) == 1 {
 		t.JS(prepend, "column_key", data.ColumnKey)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_Extra) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_Extra) == 1 {
 		t.JS(prepend, "extra", data.Extra)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_Privileges) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_Privileges) == 1 {
 		t.JS(prepend, "privileges", data.Privileges)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_ColumnComment) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnComment) == 1 {
 		t.JS(prepend, "column_comment", data.ColumnComment)
 		prepend = ","
 	}
-	if co.colSet == nil || co.colSet.Bit(Columns_GenerationExpression) == 1 {
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_GenerationExpression) == 1 {
 		t.JS(prepend, "generation_expression", data.GenerationExpression)
 	}
 	t.S(`}`)

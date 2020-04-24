@@ -186,7 +186,7 @@ func TestStoreRawSQL(t *testing.T) {
 	 * PetStore binding
 	**********************************************************************/
 	pet, err := NewPetStore(db).
-		Columns(Pet_ID, Pet_Species).
+		Columns(codegen.Pet_ID, codegen.Pet_Species).
 		Where("A.id = ?").
 		WithoutJoins().
 		One(1)
@@ -212,7 +212,7 @@ func TestStoreRawSQL(t *testing.T) {
 		codegen.Pet
 	}
 	err = NewStore(db).
-		SelectFields("A", PetQueryFields, Pet_ID, Pet_Species).
+		SelectFields("A", PetQueryFields, codegen.Pet_ID, codegen.Pet_Species).
 		SQL("FROM fake_benchmark.pet A ").
 		SQL("WHERE A.id = ?").
 		OneBind(&petbase, 1)

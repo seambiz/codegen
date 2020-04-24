@@ -47,87 +47,87 @@ func TablesQueryFields(colSet *big.Int) []string {
 	}
 
 	fields := []string{}
-	if colSet.Bit(Tables_TableCatalog) == 1 {
+	if colSet.Bit(codegen.Tables_TableCatalog) == 1 {
 		fields = append(fields, "table_catalog")
 	}
 
-	if colSet.Bit(Tables_TableSchema) == 1 {
+	if colSet.Bit(codegen.Tables_TableSchema) == 1 {
 		fields = append(fields, "table_schema")
 	}
 
-	if colSet.Bit(Tables_TableName) == 1 {
+	if colSet.Bit(codegen.Tables_TableName) == 1 {
 		fields = append(fields, "table_name")
 	}
 
-	if colSet.Bit(Tables_TableType) == 1 {
+	if colSet.Bit(codegen.Tables_TableType) == 1 {
 		fields = append(fields, "table_type")
 	}
 
-	if colSet.Bit(Tables_Engine) == 1 {
+	if colSet.Bit(codegen.Tables_Engine) == 1 {
 		fields = append(fields, "engine")
 	}
 
-	if colSet.Bit(Tables_Version) == 1 {
+	if colSet.Bit(codegen.Tables_Version) == 1 {
 		fields = append(fields, "version")
 	}
 
-	if colSet.Bit(Tables_RowFormat) == 1 {
+	if colSet.Bit(codegen.Tables_RowFormat) == 1 {
 		fields = append(fields, "row_format")
 	}
 
-	if colSet.Bit(Tables_TableRows) == 1 {
+	if colSet.Bit(codegen.Tables_TableRows) == 1 {
 		fields = append(fields, "table_rows")
 	}
 
-	if colSet.Bit(Tables_AvgRowLength) == 1 {
+	if colSet.Bit(codegen.Tables_AvgRowLength) == 1 {
 		fields = append(fields, "avg_row_length")
 	}
 
-	if colSet.Bit(Tables_DataLength) == 1 {
+	if colSet.Bit(codegen.Tables_DataLength) == 1 {
 		fields = append(fields, "data_length")
 	}
 
-	if colSet.Bit(Tables_MaxDataLength) == 1 {
+	if colSet.Bit(codegen.Tables_MaxDataLength) == 1 {
 		fields = append(fields, "max_data_length")
 	}
 
-	if colSet.Bit(Tables_IndexLength) == 1 {
+	if colSet.Bit(codegen.Tables_IndexLength) == 1 {
 		fields = append(fields, "index_length")
 	}
 
-	if colSet.Bit(Tables_DataFree) == 1 {
+	if colSet.Bit(codegen.Tables_DataFree) == 1 {
 		fields = append(fields, "data_free")
 	}
 
-	if colSet.Bit(Tables_AutoIncrement) == 1 {
+	if colSet.Bit(codegen.Tables_AutoIncrement) == 1 {
 		fields = append(fields, "auto_increment")
 	}
 
-	if colSet.Bit(Tables_CreateTime) == 1 {
+	if colSet.Bit(codegen.Tables_CreateTime) == 1 {
 		fields = append(fields, "create_time")
 	}
 
-	if colSet.Bit(Tables_UpdateTime) == 1 {
+	if colSet.Bit(codegen.Tables_UpdateTime) == 1 {
 		fields = append(fields, "update_time")
 	}
 
-	if colSet.Bit(Tables_CheckTime) == 1 {
+	if colSet.Bit(codegen.Tables_CheckTime) == 1 {
 		fields = append(fields, "check_time")
 	}
 
-	if colSet.Bit(Tables_TableCollation) == 1 {
+	if colSet.Bit(codegen.Tables_TableCollation) == 1 {
 		fields = append(fields, "table_collation")
 	}
 
-	if colSet.Bit(Tables_Checksum) == 1 {
+	if colSet.Bit(codegen.Tables_Checksum) == 1 {
 		fields = append(fields, "checksum")
 	}
 
-	if colSet.Bit(Tables_CreateOptions) == 1 {
+	if colSet.Bit(codegen.Tables_CreateOptions) == 1 {
 		fields = append(fields, "create_options")
 	}
 
-	if colSet.Bit(Tables_TableComment) == 1 {
+	if colSet.Bit(codegen.Tables_TableComment) == 1 {
 		fields = append(fields, "table_comment")
 	}
 	return fields
@@ -202,23 +202,23 @@ func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *
 }
 
 func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	if colSet == nil || colSet.Bit(Tables_TableCatalog) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_TableCatalog) == 1 {
 		ta.TableCatalog = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_TableSchema) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_TableSchema) == 1 {
 		ta.TableSchema = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_TableName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_TableName) == 1 {
 		ta.TableName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_TableType) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_TableType) == 1 {
 		ta.TableType = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_Engine) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_Engine) == 1 {
 		if row[*col] == nil {
 			ta.Engine = nil
 		} else {
@@ -227,7 +227,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_Version) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_Version) == 1 {
 		if row[*col] == nil {
 			ta.Version = nil
 		} else {
@@ -236,7 +236,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_RowFormat) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_RowFormat) == 1 {
 		if row[*col] == nil {
 			ta.RowFormat = nil
 		} else {
@@ -245,7 +245,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_TableRows) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_TableRows) == 1 {
 		if row[*col] == nil {
 			ta.TableRows = nil
 		} else {
@@ -254,7 +254,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_AvgRowLength) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_AvgRowLength) == 1 {
 		if row[*col] == nil {
 			ta.AvgRowLength = nil
 		} else {
@@ -263,7 +263,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_DataLength) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_DataLength) == 1 {
 		if row[*col] == nil {
 			ta.DataLength = nil
 		} else {
@@ -272,7 +272,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_MaxDataLength) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_MaxDataLength) == 1 {
 		if row[*col] == nil {
 			ta.MaxDataLength = nil
 		} else {
@@ -281,7 +281,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_IndexLength) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_IndexLength) == 1 {
 		if row[*col] == nil {
 			ta.IndexLength = nil
 		} else {
@@ -290,7 +290,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_DataFree) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_DataFree) == 1 {
 		if row[*col] == nil {
 			ta.DataFree = nil
 		} else {
@@ -299,7 +299,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_AutoIncrement) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_AutoIncrement) == 1 {
 		if row[*col] == nil {
 			ta.AutoIncrement = nil
 		} else {
@@ -308,7 +308,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_CreateTime) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_CreateTime) == 1 {
 		if row[*col] == nil {
 			ta.CreateTime = nil
 		} else {
@@ -317,7 +317,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_UpdateTime) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_UpdateTime) == 1 {
 		if row[*col] == nil {
 			ta.UpdateTime = nil
 		} else {
@@ -326,7 +326,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_CheckTime) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_CheckTime) == 1 {
 		if row[*col] == nil {
 			ta.CheckTime = nil
 		} else {
@@ -335,7 +335,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_TableCollation) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_TableCollation) == 1 {
 		if row[*col] == nil {
 			ta.TableCollation = nil
 		} else {
@@ -344,7 +344,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_Checksum) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_Checksum) == 1 {
 		if row[*col] == nil {
 			ta.Checksum = nil
 		} else {
@@ -353,7 +353,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_CreateOptions) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_CreateOptions) == 1 {
 		if row[*col] == nil {
 			ta.CreateOptions = nil
 		} else {
@@ -362,7 +362,7 @@ func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoi
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tables_TableComment) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tables_TableComment) == 1 {
 		ta.TableComment = sdb.ToString(row[*col])
 		*col++
 	}
@@ -459,107 +459,107 @@ func (ta *TablesStore) Update(data *codegen.Tables) (int64, error) {
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.TABLES SET")
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCatalog) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableCatalog) == 1 {
 		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableSchema) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableSchema) == 1 {
 		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableName) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableName) == 1 {
 		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableType) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableType) == 1 {
 		sql.AppendRaw(prepend, "table_type = ?")
 		prepend = ","
 		args = append(args, data.TableType)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_Engine) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Engine) == 1 {
 		sql.AppendRaw(prepend, "engine = ?")
 		prepend = ","
 		args = append(args, data.Engine)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_Version) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Version) == 1 {
 		sql.AppendRaw(prepend, "version = ?")
 		prepend = ","
 		args = append(args, data.Version)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_RowFormat) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_RowFormat) == 1 {
 		sql.AppendRaw(prepend, "row_format = ?")
 		prepend = ","
 		args = append(args, data.RowFormat)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableRows) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableRows) == 1 {
 		sql.AppendRaw(prepend, "table_rows = ?")
 		prepend = ","
 		args = append(args, data.TableRows)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_AvgRowLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_AvgRowLength) == 1 {
 		sql.AppendRaw(prepend, "avg_row_length = ?")
 		prepend = ","
 		args = append(args, data.AvgRowLength)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_DataLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_DataLength) == 1 {
 		sql.AppendRaw(prepend, "data_length = ?")
 		prepend = ","
 		args = append(args, data.DataLength)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_MaxDataLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_MaxDataLength) == 1 {
 		sql.AppendRaw(prepend, "max_data_length = ?")
 		prepend = ","
 		args = append(args, data.MaxDataLength)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_IndexLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_IndexLength) == 1 {
 		sql.AppendRaw(prepend, "index_length = ?")
 		prepend = ","
 		args = append(args, data.IndexLength)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_DataFree) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_DataFree) == 1 {
 		sql.AppendRaw(prepend, "data_free = ?")
 		prepend = ","
 		args = append(args, data.DataFree)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_AutoIncrement) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_AutoIncrement) == 1 {
 		sql.AppendRaw(prepend, "auto_increment = ?")
 		prepend = ","
 		args = append(args, data.AutoIncrement)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateTime) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CreateTime) == 1 {
 		sql.AppendRaw(prepend, "create_time = ?")
 		prepend = ","
 		args = append(args, data.CreateTime)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_UpdateTime) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_UpdateTime) == 1 {
 		sql.AppendRaw(prepend, "update_time = ?")
 		prepend = ","
 		args = append(args, data.UpdateTime)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_CheckTime) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CheckTime) == 1 {
 		sql.AppendRaw(prepend, "check_time = ?")
 		prepend = ","
 		args = append(args, data.CheckTime)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCollation) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableCollation) == 1 {
 		sql.AppendRaw(prepend, "table_collation = ?")
 		prepend = ","
 		args = append(args, data.TableCollation)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_Checksum) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Checksum) == 1 {
 		sql.AppendRaw(prepend, "checksum = ?")
 		prepend = ","
 		args = append(args, data.Checksum)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateOptions) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CreateOptions) == 1 {
 		sql.AppendRaw(prepend, "create_options = ?")
 		prepend = ","
 		args = append(args, data.CreateOptions)
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableComment) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableComment) == 1 {
 		sql.AppendRaw(prepend, "table_comment = ?")
 		args = append(args, data.TableComment)
 	}
@@ -593,87 +593,87 @@ func (ta *TablesStore) Truncate() error {
 // nolint[gocylco]
 func (ta *TablesStore) ToJSON(t *sdb.JsonBuffer, data *Tables) {
 	prepend := "{"
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCatalog) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableCatalog) == 1 {
 		t.JS(prepend, "table_catalog", data.TableCatalog)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableSchema) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableSchema) == 1 {
 		t.JS(prepend, "table_schema", data.TableSchema)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableName) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableName) == 1 {
 		t.JS(prepend, "table_name", data.TableName)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableType) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableType) == 1 {
 		t.JS(prepend, "table_type", data.TableType)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_Engine) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Engine) == 1 {
 		t.JS(prepend, "engine", *data.Engine)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_Version) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Version) == 1 {
 		t.JD64u(prepend, "version", *data.Version)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_RowFormat) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_RowFormat) == 1 {
 		t.JS(prepend, "row_format", *data.RowFormat)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableRows) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableRows) == 1 {
 		t.JD64u(prepend, "table_rows", *data.TableRows)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_AvgRowLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_AvgRowLength) == 1 {
 		t.JD64u(prepend, "avg_row_length", *data.AvgRowLength)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_DataLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_DataLength) == 1 {
 		t.JD64u(prepend, "data_length", *data.DataLength)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_MaxDataLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_MaxDataLength) == 1 {
 		t.JD64u(prepend, "max_data_length", *data.MaxDataLength)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_IndexLength) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_IndexLength) == 1 {
 		t.JD64u(prepend, "index_length", *data.IndexLength)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_DataFree) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_DataFree) == 1 {
 		t.JD64u(prepend, "data_free", *data.DataFree)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_AutoIncrement) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_AutoIncrement) == 1 {
 		t.JD64u(prepend, "auto_increment", *data.AutoIncrement)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateTime) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CreateTime) == 1 {
 		t.JT(prepend, "create_time", *data.CreateTime)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_UpdateTime) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_UpdateTime) == 1 {
 		t.JT(prepend, "update_time", *data.UpdateTime)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_CheckTime) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CheckTime) == 1 {
 		t.JT(prepend, "check_time", *data.CheckTime)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableCollation) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableCollation) == 1 {
 		t.JS(prepend, "table_collation", *data.TableCollation)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_Checksum) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Checksum) == 1 {
 		t.JD64u(prepend, "checksum", *data.Checksum)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_CreateOptions) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CreateOptions) == 1 {
 		t.JS(prepend, "create_options", *data.CreateOptions)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tables_TableComment) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableComment) == 1 {
 		t.JS(prepend, "table_comment", data.TableComment)
 	}
 	t.S(`}`)

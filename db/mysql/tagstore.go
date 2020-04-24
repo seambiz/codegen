@@ -47,11 +47,11 @@ func TagQueryFields(colSet *big.Int) []string {
 	}
 
 	fields := []string{}
-	if colSet.Bit(Tag_ID) == 1 {
+	if colSet.Bit(codegen.Tag_ID) == 1 {
 		fields = append(fields, "id")
 	}
 
-	if colSet.Bit(Tag_Name) == 1 {
+	if colSet.Bit(codegen.Tag_Name) == 1 {
 		fields = append(fields, "name")
 	}
 	return fields
@@ -126,11 +126,11 @@ func (ta *Tag) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int
 }
 
 func BindFakeBenchmarkTag(ta *codegen.Tag, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	if colSet == nil || colSet.Bit(Tag_ID) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tag_ID) == 1 {
 		ta.ID = sdb.ToInt(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Tag_Name) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Tag_Name) == 1 {
 		ta.Name = sdb.ToString(row[*col])
 		*col++
 	}
@@ -237,7 +237,7 @@ func (ta *TagStore) Update(data *codegen.Tag) (int64, error) {
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE fake_benchmark.tag SET")
-	if ta.colSet == nil || ta.colSet.Bit(Tag_Name) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tag_Name) == 1 {
 		sql.AppendRaw(prepend, "name = ?")
 		args = append(args, data.Name)
 	}
@@ -346,11 +346,11 @@ func (ta *TagStore) OneByID(id int) (*codegen.Tag, error) {
 // nolint[gocylco]
 func (ta *TagStore) ToJSON(t *sdb.JsonBuffer, data *Tag) {
 	prepend := "{"
-	if ta.colSet == nil || ta.colSet.Bit(Tag_ID) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tag_ID) == 1 {
 		t.JD(prepend, "id", data.ID)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(Tag_Name) == 1 {
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tag_Name) == 1 {
 		t.JS(prepend, "name", data.Name)
 	}
 	t.S(`}`)

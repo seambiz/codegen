@@ -149,7 +149,7 @@ func Benchmark{{ $table.Title }}SelectCols(b *testing.B) {
 		})
 	}
 
-	store := New{{ $table.Title }}Store(db).Columns({{ $table.Title }}_{{ $first.Title }}, {{ $table.Title }}_{{ $last.Title }})
+	store := New{{ $table.Title }}Store(db).Columns({{ $conf.RootPackage }}.{{ $table.Title }}_{{ $first.Title }}, {{ $conf.RootPackage }}.{{ $table.Title }}_{{ $last.Title }})
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()

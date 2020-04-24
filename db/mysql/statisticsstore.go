@@ -46,67 +46,67 @@ func StatisticsQueryFields(colSet *big.Int) []string {
 	}
 
 	fields := []string{}
-	if colSet.Bit(Statistics_TableCatalog) == 1 {
+	if colSet.Bit(codegen.Statistics_TableCatalog) == 1 {
 		fields = append(fields, "table_catalog")
 	}
 
-	if colSet.Bit(Statistics_TableSchema) == 1 {
+	if colSet.Bit(codegen.Statistics_TableSchema) == 1 {
 		fields = append(fields, "table_schema")
 	}
 
-	if colSet.Bit(Statistics_TableName) == 1 {
+	if colSet.Bit(codegen.Statistics_TableName) == 1 {
 		fields = append(fields, "table_name")
 	}
 
-	if colSet.Bit(Statistics_NonUnique) == 1 {
+	if colSet.Bit(codegen.Statistics_NonUnique) == 1 {
 		fields = append(fields, "non_unique")
 	}
 
-	if colSet.Bit(Statistics_IndexSchema) == 1 {
+	if colSet.Bit(codegen.Statistics_IndexSchema) == 1 {
 		fields = append(fields, "index_schema")
 	}
 
-	if colSet.Bit(Statistics_IndexName) == 1 {
+	if colSet.Bit(codegen.Statistics_IndexName) == 1 {
 		fields = append(fields, "index_name")
 	}
 
-	if colSet.Bit(Statistics_SeqInIndex) == 1 {
+	if colSet.Bit(codegen.Statistics_SeqInIndex) == 1 {
 		fields = append(fields, "seq_in_index")
 	}
 
-	if colSet.Bit(Statistics_ColumnName) == 1 {
+	if colSet.Bit(codegen.Statistics_ColumnName) == 1 {
 		fields = append(fields, "column_name")
 	}
 
-	if colSet.Bit(Statistics_Collation) == 1 {
+	if colSet.Bit(codegen.Statistics_Collation) == 1 {
 		fields = append(fields, "collation")
 	}
 
-	if colSet.Bit(Statistics_Cardinality) == 1 {
+	if colSet.Bit(codegen.Statistics_Cardinality) == 1 {
 		fields = append(fields, "cardinality")
 	}
 
-	if colSet.Bit(Statistics_SubPart) == 1 {
+	if colSet.Bit(codegen.Statistics_SubPart) == 1 {
 		fields = append(fields, "sub_part")
 	}
 
-	if colSet.Bit(Statistics_Packed) == 1 {
+	if colSet.Bit(codegen.Statistics_Packed) == 1 {
 		fields = append(fields, "packed")
 	}
 
-	if colSet.Bit(Statistics_Nullable) == 1 {
+	if colSet.Bit(codegen.Statistics_Nullable) == 1 {
 		fields = append(fields, "nullable")
 	}
 
-	if colSet.Bit(Statistics_IndexType) == 1 {
+	if colSet.Bit(codegen.Statistics_IndexType) == 1 {
 		fields = append(fields, "index_type")
 	}
 
-	if colSet.Bit(Statistics_Comment) == 1 {
+	if colSet.Bit(codegen.Statistics_Comment) == 1 {
 		fields = append(fields, "comment")
 	}
 
-	if colSet.Bit(Statistics_IndexComment) == 1 {
+	if colSet.Bit(codegen.Statistics_IndexComment) == 1 {
 		fields = append(fields, "index_comment")
 	}
 	return fields
@@ -181,39 +181,39 @@ func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, c
 }
 
 func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	if colSet == nil || colSet.Bit(Statistics_TableCatalog) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_TableCatalog) == 1 {
 		st.TableCatalog = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_TableSchema) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_TableSchema) == 1 {
 		st.TableSchema = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_TableName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_TableName) == 1 {
 		st.TableName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_NonUnique) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_NonUnique) == 1 {
 		st.NonUnique = sdb.ToInt64(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_IndexSchema) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_IndexSchema) == 1 {
 		st.IndexSchema = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_IndexName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_IndexName) == 1 {
 		st.IndexName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_SeqInIndex) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_SeqInIndex) == 1 {
 		st.SeqInIndex = sdb.ToInt64(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_ColumnName) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_ColumnName) == 1 {
 		st.ColumnName = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_Collation) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_Collation) == 1 {
 		if row[*col] == nil {
 			st.Collation = nil
 		} else {
@@ -222,7 +222,7 @@ func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes,
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_Cardinality) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_Cardinality) == 1 {
 		if row[*col] == nil {
 			st.Cardinality = nil
 		} else {
@@ -231,7 +231,7 @@ func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes,
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_SubPart) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_SubPart) == 1 {
 		if row[*col] == nil {
 			st.SubPart = nil
 		} else {
@@ -240,7 +240,7 @@ func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes,
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_Packed) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_Packed) == 1 {
 		if row[*col] == nil {
 			st.Packed = nil
 		} else {
@@ -249,15 +249,15 @@ func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes,
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_Nullable) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_Nullable) == 1 {
 		st.Nullable = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_IndexType) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_IndexType) == 1 {
 		st.IndexType = sdb.ToString(row[*col])
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_Comment) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_Comment) == 1 {
 		if row[*col] == nil {
 			st.Comment = nil
 		} else {
@@ -266,7 +266,7 @@ func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes,
 		}
 		*col++
 	}
-	if colSet == nil || colSet.Bit(Statistics_IndexComment) == 1 {
+	if colSet == nil || colSet.Bit(codegen.Statistics_IndexComment) == 1 {
 		st.IndexComment = sdb.ToString(row[*col])
 		*col++
 	}
@@ -363,82 +363,82 @@ func (st *StatisticsStore) Update(data *codegen.Statistics) (int64, error) {
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE information_schema.STATISTICS SET")
-	if st.colSet == nil || st.colSet.Bit(Statistics_TableCatalog) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableCatalog) == 1 {
 		sql.AppendRaw(prepend, "table_catalog = ?")
 		prepend = ","
 		args = append(args, data.TableCatalog)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_TableSchema) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableSchema) == 1 {
 		sql.AppendRaw(prepend, "table_schema = ?")
 		prepend = ","
 		args = append(args, data.TableSchema)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_TableName) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableName) == 1 {
 		sql.AppendRaw(prepend, "table_name = ?")
 		prepend = ","
 		args = append(args, data.TableName)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_NonUnique) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_NonUnique) == 1 {
 		sql.AppendRaw(prepend, "non_unique = ?")
 		prepend = ","
 		args = append(args, data.NonUnique)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexSchema) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexSchema) == 1 {
 		sql.AppendRaw(prepend, "index_schema = ?")
 		prepend = ","
 		args = append(args, data.IndexSchema)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexName) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexName) == 1 {
 		sql.AppendRaw(prepend, "index_name = ?")
 		prepend = ","
 		args = append(args, data.IndexName)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_SeqInIndex) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_SeqInIndex) == 1 {
 		sql.AppendRaw(prepend, "seq_in_index = ?")
 		prepend = ","
 		args = append(args, data.SeqInIndex)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_ColumnName) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_ColumnName) == 1 {
 		sql.AppendRaw(prepend, "column_name = ?")
 		prepend = ","
 		args = append(args, data.ColumnName)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Collation) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Collation) == 1 {
 		sql.AppendRaw(prepend, "collation = ?")
 		prepend = ","
 		args = append(args, data.Collation)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Cardinality) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Cardinality) == 1 {
 		sql.AppendRaw(prepend, "cardinality = ?")
 		prepend = ","
 		args = append(args, data.Cardinality)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_SubPart) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_SubPart) == 1 {
 		sql.AppendRaw(prepend, "sub_part = ?")
 		prepend = ","
 		args = append(args, data.SubPart)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Packed) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Packed) == 1 {
 		sql.AppendRaw(prepend, "packed = ?")
 		prepend = ","
 		args = append(args, data.Packed)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Nullable) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Nullable) == 1 {
 		sql.AppendRaw(prepend, "nullable = ?")
 		prepend = ","
 		args = append(args, data.Nullable)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexType) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexType) == 1 {
 		sql.AppendRaw(prepend, "index_type = ?")
 		prepend = ","
 		args = append(args, data.IndexType)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Comment) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Comment) == 1 {
 		sql.AppendRaw(prepend, "comment = ?")
 		prepend = ","
 		args = append(args, data.Comment)
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexComment) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexComment) == 1 {
 		sql.AppendRaw(prepend, "index_comment = ?")
 		args = append(args, data.IndexComment)
 	}
@@ -472,67 +472,67 @@ func (st *StatisticsStore) Truncate() error {
 // nolint[gocylco]
 func (st *StatisticsStore) ToJSON(t *sdb.JsonBuffer, data *Statistics) {
 	prepend := "{"
-	if st.colSet == nil || st.colSet.Bit(Statistics_TableCatalog) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableCatalog) == 1 {
 		t.JS(prepend, "table_catalog", data.TableCatalog)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_TableSchema) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableSchema) == 1 {
 		t.JS(prepend, "table_schema", data.TableSchema)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_TableName) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableName) == 1 {
 		t.JS(prepend, "table_name", data.TableName)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_NonUnique) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_NonUnique) == 1 {
 		t.JD64(prepend, "non_unique", data.NonUnique)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexSchema) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexSchema) == 1 {
 		t.JS(prepend, "index_schema", data.IndexSchema)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexName) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexName) == 1 {
 		t.JS(prepend, "index_name", data.IndexName)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_SeqInIndex) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_SeqInIndex) == 1 {
 		t.JD64(prepend, "seq_in_index", data.SeqInIndex)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_ColumnName) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_ColumnName) == 1 {
 		t.JS(prepend, "column_name", data.ColumnName)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Collation) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Collation) == 1 {
 		t.JS(prepend, "collation", *data.Collation)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Cardinality) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Cardinality) == 1 {
 		t.JD64(prepend, "cardinality", *data.Cardinality)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_SubPart) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_SubPart) == 1 {
 		t.JD64(prepend, "sub_part", *data.SubPart)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Packed) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Packed) == 1 {
 		t.JS(prepend, "packed", *data.Packed)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Nullable) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Nullable) == 1 {
 		t.JS(prepend, "nullable", data.Nullable)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexType) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexType) == 1 {
 		t.JS(prepend, "index_type", data.IndexType)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_Comment) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Comment) == 1 {
 		t.JS(prepend, "comment", *data.Comment)
 		prepend = ","
 	}
-	if st.colSet == nil || st.colSet.Bit(Statistics_IndexComment) == 1 {
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexComment) == 1 {
 		t.JS(prepend, "index_comment", data.IndexComment)
 	}
 	t.S(`}`)

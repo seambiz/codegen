@@ -94,7 +94,7 @@ func BenchmarkKeyColumnUsageSelectCols(b *testing.B) {
 		addResultRowDSN("bench", []driver.Value{data.ConstraintCatalog, *data.ReferencedColumnName})
 	}
 
-	store := NewKeyColumnUsageStore(db).Columns(KeyColumnUsage_ConstraintCatalog, KeyColumnUsage_ReferencedColumnName)
+	store := NewKeyColumnUsageStore(db).Columns(codegen.KeyColumnUsage_ConstraintCatalog, codegen.KeyColumnUsage_ReferencedColumnName)
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()
