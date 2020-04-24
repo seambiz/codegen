@@ -159,6 +159,12 @@ func (ke *KeyColumnUsageStore) Columns(cols ...int) *KeyColumnUsageStore {
 	return ke
 }
 
+// SetBits sets complete BitSet for use in UpdatePartial.
+func (ke *KeyColumnUsageStore) SetBits(colSet *big.Int) *KeyColumnUsageStore {
+	ke.colSet = colSet
+	return ke
+}
+
 // nolint[gocyclo]
 func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaKeyColumnUsage(&ke.KeyColumnUsage, row, withJoin, colSet, col)

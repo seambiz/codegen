@@ -7,6 +7,7 @@ package codegen
 type PersonRepository interface {
 	Create(data *Person) error
 	Update(data *Person) error
+	UpdatePartial(data *PersonPartial) error
 	Delete(data *Person) error
 	OneByID(id int) (*Person, error)
 

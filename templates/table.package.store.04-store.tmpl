@@ -68,3 +68,9 @@ func ({{ .Table.Initials }} *{{ .Table.Title }}Store) Columns(cols ...int) *{{ .
 	{{ .Table.Initials }}.Store.Columns(cols...)
 	return {{ .Table.Initials }}
 }
+
+// SetBits sets complete BitSet for use in UpdatePartial.
+func ({{ $table.StoreReceiver }}) SetBits(colSet *big.Int) *{{ .Table.Title }}Store {
+	{{ $table.Initials }}.colSet = colSet
+	return {{ $table.Initials }}
+}

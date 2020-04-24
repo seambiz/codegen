@@ -196,6 +196,12 @@ func (ta *TablesStore) Columns(cols ...int) *TablesStore {
 	return ta
 }
 
+// SetBits sets complete BitSet for use in UpdatePartial.
+func (ta *TablesStore) SetBits(colSet *big.Int) *TablesStore {
+	ta.colSet = colSet
+	return ta
+}
+
 // nolint[gocyclo]
 func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaTables(&ta.Tables, row, withJoin, colSet, col)

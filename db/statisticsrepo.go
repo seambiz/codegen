@@ -26,6 +26,10 @@ func (r StatisticsRepo) Update(data *codegen.Statistics) error {
 	panic("not implemented") // TODO: Implement
 }
 
+func (r StatisticsRepo) UpdatePartial(data *codegen.StatisticsPartial) error {
+	panic("not implemented") // TODO: Implement
+}
+
 func (r StatisticsRepo) Delete(data *codegen.Statistics) error {
 	panic("not implemented") // TODO: Implement
 }

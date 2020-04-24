@@ -175,6 +175,12 @@ func (st *StatisticsStore) Columns(cols ...int) *StatisticsStore {
 	return st
 }
 
+// SetBits sets complete BitSet for use in UpdatePartial.
+func (st *StatisticsStore) SetBits(colSet *big.Int) *StatisticsStore {
+	st.colSet = colSet
+	return st
+}
+
 // nolint[gocyclo]
 func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaStatistics(&st.Statistics, row, withJoin, colSet, col)

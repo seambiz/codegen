@@ -26,6 +26,10 @@ func (r TablesRepo) Update(data *codegen.Tables) error {
 	panic("not implemented") // TODO: Implement
 }
 
+func (r TablesRepo) UpdatePartial(data *codegen.TablesPartial) error {
+	panic("not implemented") // TODO: Implement
+}
+
 func (r TablesRepo) Delete(data *codegen.Tables) error {
 	panic("not implemented") // TODO: Implement
 }

@@ -26,6 +26,10 @@ func (r KeyColUsageRepo) Update(data *codegen.KeyColumnUsage) error {
 	panic("not implemented") // TODO: Implement
 }
 
+func (r KeyColUsageRepo) UpdatePartial(data *codegen.KeyColumnUsagePartial) error {
+	panic("not implemented") // TODO: Implement
+}
+
 func (r KeyColUsageRepo) Delete(data *codegen.KeyColumnUsage) error {
 	panic("not implemented") // TODO: Implement
 }

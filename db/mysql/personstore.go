@@ -120,6 +120,12 @@ func (pe *PersonStore) Columns(cols ...int) *PersonStore {
 	return pe
 }
 
+// SetBits sets complete BitSet for use in UpdatePartial.
+func (pe *PersonStore) SetBits(colSet *big.Int) *PersonStore {
+	pe.colSet = colSet
+	return pe
+}
+
 // nolint[gocyclo]
 func (pe *Person) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkPerson(&pe.Person, row, withJoin, colSet, col)

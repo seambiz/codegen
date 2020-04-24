@@ -120,6 +120,12 @@ func (ta *TagStore) Columns(cols ...int) *TagStore {
 	return ta
 }
 
+// SetBits sets complete BitSet for use in UpdatePartial.
+func (ta *TagStore) SetBits(colSet *big.Int) *TagStore {
+	ta.colSet = colSet
+	return ta
+}
+
 // nolint[gocyclo]
 func (ta *Tag) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkTag(&ta.Tag, row, withJoin, colSet, col)

@@ -472,6 +472,12 @@ func (ex *ExtensiveStore) Columns(cols ...int) *ExtensiveStore {
 	return ex
 }
 
+// SetBits sets complete BitSet for use in UpdatePartial.
+func (ex *ExtensiveStore) SetBits(colSet *big.Int) *ExtensiveStore {
+	ex.colSet = colSet
+	return ex
+}
+
 // nolint[gocyclo]
 func (ex *Extensive) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkExtensive(&ex.Extensive, row, withJoin, colSet, col)

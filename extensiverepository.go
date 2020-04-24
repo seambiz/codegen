@@ -7,6 +7,7 @@ package codegen
 type ExtensiveRepository interface {
 	Create(data *Extensive) error
 	Update(data *Extensive) error
+	UpdatePartial(data *ExtensivePartial) error
 	Delete(data *Extensive) error
 	OneByID(id int) (*Extensive, error)
 
