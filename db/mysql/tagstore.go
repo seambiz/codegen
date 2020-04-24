@@ -193,45 +193,6 @@ func (ta *TagStore) Query(args ...interface{}) ([]*codegen.Tag, error) {
 	return ta.QueryCustom(stmt.Query(), args...)
 }
 
-// tagUpsertStmt helper for generating Upsert statement.
-// nolint[gocyclo]
-func (ta *TagStore) tagUpsertStmt() *sdb.UpsertStatement {
-	upsert := []string{}
-	if ta.colSet == nil || ta.colSet.Bit(Tag_Name) == 1 {
-		upsert = append(upsert, "name = VALUES(name)")
-	}
-	sql := &sdb.UpsertStatement{}
-	sql.InsertInto("fake_benchmark.tag")
-	sql.Columns("id", "name")
-	sql.OnDuplicateKeyUpdate(upsert)
-	return sql
-}
-
-// Upsert executes upsert for array of Tag
-func (ta *TagStore) Upsert(data ...*codegen.Tag) (int64, error) {
-	sql := ta.tagUpsertStmt()
-
-	for _, d := range data {
-		sql.Record(d)
-	}
-
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "TagUpsert").Str("stmt", sql.String()).Msg("sql")
-	}
-	res, err := ta.db.Exec(sql.Query())
-	if err != nil {
-		log.Error().Err(err).Msg("exec")
-		return -1, err
-	}
-	affected, err := res.RowsAffected()
-	if err != nil {
-		log.Error().Err(err).Msg("rowsaffected")
-		return -1, err
-	}
-
-	return affected, nil
-}
-
 // Insert inserts the Tag to the database.
 func (ta *TagStore) Insert(data *codegen.Tag) error {
 	var err error
