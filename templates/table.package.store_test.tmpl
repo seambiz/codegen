@@ -27,11 +27,11 @@ func Test{{ $table.Title }}Insert(t *testing.T) {
 
 	{{- if $schema.IsMultiTenant }}
 	mock.
-		ExpectExec("INSERT INTO ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} (
+		ExpectExec("INSERT INTO " + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }} (
 	{{- else }}
 	mock.
 		ExpectExec("INSERT INTO {{ $schema.Name }}.{{ $table.Name }} (
-	{{- end }}{{` `}}
+	{{- end }}
 	{{- range $i, $field := $table.Fields }}
     {{- if gt $i 0 }}, {{ end -}}
     {{ lower $field.Name }}
@@ -50,7 +50,11 @@ func Test{{ $table.Title }}Insert(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(1, 1))
 
 
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 	err = store.Insert(&{{ .Conf.RootPackage }}.{{  $table.Title }}{})
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
@@ -71,7 +75,7 @@ func Test{{ $table.Title }}Update(t *testing.T) {
 
 	{{- if $schema.IsMultiTenant }}
 	mock.
-		ExpectExec("UPDATE ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }}
+		ExpectExec("UPDATE "  + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }}
 	{{- else }}
 	mock.
 		ExpectExec("UPDATE {{ $schema.Name }}.{{ $table.Name }}
@@ -95,8 +99,11 @@ func Test{{ $table.Title }}Update(t *testing.T) {
 		).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
-
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 	aff, err := store.Update(&{{ .Conf.RootPackage }}.{{  $table.Title }}{})
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
@@ -144,15 +151,19 @@ func Test{{ $table.Title }}SelectWithoutJoin(t *testing.T) {
 	{{` FROM `}}
 	
 	{{- if $schema.IsMultiTenant -}}
-		TODO
-		{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A
+		" + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }} A
 	{{- else -}}
 		{{ $schema.Name }}.{{ $table.Name }} A
 	{{- end -}}
 	").
 		WillReturnRows(rows)
 
-	store := New{{ $table.Title }}Store(db).WithoutJoins()
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
+	store := New{{ $table.Title }}Store(db)
+	{{- end -}}
+	.WithoutJoins()
 	data, err := store.Query()
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
@@ -221,15 +232,14 @@ func Test{{ $table.Title }}SelectJoin(t *testing.T) {
 	{{` FROM `}}
 	
 	{{- if $schema.IsMultiTenant -}}
-		TODO
-		{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A
+		" + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }} A
 	{{- else -}}
 		{{ $schema.Name }}.{{ $table.Name }} A
 	{{- end -}}
 
 	{{- range $join := $table.Joins }}
 		{{- if $schema.IsMultiTenant -}}
-			TODO
+			{{` `}}LEFT JOIN " + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $join.Name }} {{ $join.Alias }} ON (
 		{{- else -}}
 			{{` `}}LEFT JOIN {{ $join.Schema }}.{{ $join.Name }} {{ $join.Alias }} ON (
 		{{- end -}}
@@ -242,7 +252,11 @@ func Test{{ $table.Title }}SelectJoin(t *testing.T) {
 	").
 		WillReturnRows(rows)
 
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 	data, err := store.Query()
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
@@ -258,7 +272,7 @@ func Test{{ $table.Title }}SelectJoin(t *testing.T) {
 	{{/* joined tables */}}
 	{{ range $fk := .Table.ForeignKeys }}
 		{{ if $fk.IsUnique }}
-			if data[0].{{ $fk.CustomName }}.ID != 1 {
+			if data[0].{{ $fk.CustomName }} == nil {
 				t.Errorf("join did not work: %v", data[0].{{ $fk.CustomName }})
 			}
 		{{- end -}}
@@ -307,8 +321,7 @@ func Test{{ $table.Title }}{{ $fk.CustomName }}EagerFetch(t *testing.T) {
 	{{` FROM `}}
 	
 	{{- if $schema.IsMultiTenant -}}
-		TODO
-		{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A
+		" + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }} A
 	{{- else -}}
 		{{ $schema.Name }}.{{ $table.Name }} A
 	{{- end -}}
@@ -363,15 +376,14 @@ func Test{{ $table.Title }}{{ $fk.CustomName }}EagerFetch(t *testing.T) {
 	{{` FROM `}}
 	
 	{{- if $schema.IsMultiTenant -}}
-		TODO
-		{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A
+		" + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $fk.GenTable.name }} A
 	{{- else -}}
 		{{ $schema.Name }}.{{ $fk.GenTable.Name }} A
 	{{- end -}}
 
 	{{- range $join := $fk.GenTable.Joins }}
 		{{- if $schema.IsMultiTenant -}}
-			TODO
+			{{` `}}LEFT JOIN " + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $join.Name }} {{ $join.Alias }} ON (
 		{{- else -}}
 			{{` `}}LEFT JOIN {{ $join.Schema }}.{{ $join.Name }} {{ $join.Alias }} ON (
 		{{- end -}}
@@ -384,7 +396,11 @@ func Test{{ $table.Title }}{{ $fk.CustomName }}EagerFetch(t *testing.T) {
 	{{` WHERE `}}{{ index $fk.RefFields 0 }} IN (0) ORDER BY A.{{ index $fk.RefFields 0 }} DESC, A.{{ index $fk.Fields 0 }} DESC").
 		WillReturnRows(rows)
 
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 	data, err := store.Query()
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
@@ -420,7 +436,7 @@ func Test{{ $table.Title }}Delete(t *testing.T) {
 
 	{{- if $schema.IsMultiTenant }}
 	mock.
-		ExpectExec("DELETE FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }}
+		ExpectExec("DELETE FROM " + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }}
 	{{- else }}
 	mock.
 		ExpectExec("DELETE FROM {{ $schema.Name }}.{{ $table.Name }}
@@ -437,7 +453,11 @@ func Test{{ $table.Title }}Delete(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 1))
 
 
+	{{- if $schema.IsMultiTenant }}
+	aff, err := New{{ $table.Title }}Store(0, db).Delete(&{{ .Conf.RootPackage }}.{{  $table.Title }}{})
+	{{- else }}
 	aff, err := New{{ $table.Title }}Store(db).Delete(&{{ .Conf.RootPackage }}.{{  $table.Title }}{})
+	{{- end }}
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
 	}
@@ -451,6 +471,9 @@ func Test{{ $table.Title }}Delete(t *testing.T) {
 	}
 }
 
+
+{{- $tmp := (index $table.PkFields 0) -}}
+{{ if and (eq (len $table.PkFields) 1) (eq $tmp.GoType "int") }}
 func Test{{ $table.Title }}DeleteSlice(t *testing.T) {
    	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
@@ -460,7 +483,7 @@ func Test{{ $table.Title }}DeleteSlice(t *testing.T) {
 
 	{{- if $schema.IsMultiTenant }}
 	mock.
-		ExpectExec("DELETE FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }}
+		ExpectExec("DELETE FROM " + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }}
 	{{- else }}
 	mock.
 		ExpectExec("DELETE FROM {{ $schema.Name }}.{{ $table.Name }}
@@ -470,7 +493,12 @@ func Test{{ $table.Title }}DeleteSlice(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 2))
 
 
+
+	{{- if $schema.IsMultiTenant }}
+	aff, err := New{{ $table.Title }}Store(0, db).DeleteSlice([]*{{ .Conf.RootPackage }}.{{  $table.Title }}{{`{{},{}}`}})
+		{{- else }}
 	aff, err := New{{ $table.Title }}Store(db).DeleteSlice([]*{{ .Conf.RootPackage }}.{{  $table.Title }}{{`{{},{}}`}})
+	{{- end }}
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
 	}
@@ -483,6 +511,7 @@ func Test{{ $table.Title }}DeleteSlice(t *testing.T) {
 		t.Errorf("two rows should be affected: %d", aff)
 	}
 }
+{{ end }}
 {{ end }}
 
 {{/**************************************************************************
@@ -498,7 +527,7 @@ func Test{{ $table.Title }}Upsert(t *testing.T) {
 
 	{{- if $schema.IsMultiTenant }}
 	mock.
-		ExpectExec("INSERT INTO ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} (
+		ExpectExec("INSERT INTO " + fmt.Sprintf("{{ $schema.MTSchemaFmt }}", 0) + ".{{ $table.Name }} (
 	{{- else }}
 	mock.
 		ExpectExec("INSERT INTO {{ $schema.Name }}.{{ $table.Name }} (
@@ -529,7 +558,11 @@ func Test{{ $table.Title }}Upsert(t *testing.T) {
 		WillReturnResult(sqlmock.NewResult(0, 2))
 
 
+	{{- if $schema.IsMultiTenant }}
+	aff, err := New{{ $table.Title }}Store(0, db).Upsert([]*{{ .Conf.RootPackage }}.{{  $table.Title }}{{`{{},{}}`}}...)
+	{{- else }}
 	aff, err := New{{ $table.Title }}Store(db).Upsert([]*{{ .Conf.RootPackage }}.{{  $table.Title }}{{`{{},{}}`}}...)
+	{{- end }}
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
 	}

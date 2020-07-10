@@ -12,7 +12,7 @@ func ({{ $table.Receiver }}Store) selectStatement() *sdb.SQLStatement {
 			{{- if $schema.IsMultiTenant }}
 				sql.AppendRaw(" FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
 			{{- else }}
-				sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A")
+				sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A ")
 			{{- end }}
             {{- range $join := $table.Joins }}
 				{{- if $schema.IsMultiTenant }}
@@ -24,20 +24,20 @@ func ({{ $table.Receiver }}Store) selectStatement() *sdb.SQLStatement {
                         {{- if gt $i 0 }} AND {{ end -}} 
                         {{ $fk.Alias }}.{{ $fk.Name}} = {{ $fk.RefAlias }}.{{ $fk.RefName }}
                     {{- end -}}
-                )")
+                ) ")
             {{- end }}
 		} else {
 			{{- if $schema.IsMultiTenant }}
 				sql.AppendRaw(" FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
 			{{- else }}
-				sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A")
+				sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A ")
 			{{- end }}
         }
     {{- else }}
 		{{- if $schema.IsMultiTenant }}
 			sql.AppendRaw(" FROM ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} A ")
 		{{- else }}
-			sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A")
+			sql.Append(" FROM {{ $schema.Name }}.{{ $table.Name }} A ")
 		{{- end }}
     {{- end }}	
 	if {{ $table.Initials }}.where != "" {

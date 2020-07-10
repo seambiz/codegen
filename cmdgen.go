@@ -589,7 +589,9 @@ func prepareSchemaConfig(conf *Config) {
 		if err != nil {
 			tablesCase = varcaser.LowerSnakeCase
 		}
-		schema.Title = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(schema.Name)
+		if schema.Title == "" {
+			schema.Title = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(schema.Name)
+		}
 
 		for _, table := range schema.Tables {
 			if !table.Generate {

@@ -18,7 +18,7 @@ func ({{ $table.StoreReceiver }}) Insert(data *{{ $conf.RootPackage }}.{{ $table
 	{{- if $schema.IsMultiTenant }}
 		sql.AppendRaw("INSERT INTO ", fmt.Sprintf("{{ $schema.MTSchemaFmt }}", {{ $table.Initials }}.{{ $schema.MTVarName }}), ".{{ $table.Name }} (")
 	{{- else }}
-		sql.Append("INSERT INTO {{ $schema.Name }}.{{ $table.Name }} (")
+		sql.AppendRaw("INSERT INTO {{ $schema.Name }}.{{ $table.Name }} (")
 	{{- end }}
 	fields := {{ $table.Title }}QueryFields({{ $table.Initials }}.colSet)
 	sql.Fields("", "", fields)

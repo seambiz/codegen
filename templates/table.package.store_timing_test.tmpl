@@ -28,7 +28,11 @@ func Benchmark{{ $table.Title }}Insert(b *testing.B) {
 	defer db.Close()
 
 	data := &{{ .Conf.RootPackage }}.{{  $table.Title }}{}
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -50,7 +54,11 @@ func Benchmark{{ $table.Title }}Update(b *testing.B) {
 	defer db.Close()
 
 	data := &{{ .Conf.RootPackage }}.{{  $table.Title }}{}
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -73,7 +81,11 @@ func Benchmark{{ $table.Title }}Delete(b *testing.B) {
 	defer db.Close()
 
 	data := &{{ .Conf.RootPackage }}.{{  $table.Title }}{}
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 
 	b.RunParallel(func(pb *testing.PB) {
 		for pb.Next() {
@@ -110,7 +122,11 @@ func Benchmark{{ $table.Title }}SelectAll(b *testing.B) {
 		})
 	}
 
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
 	store := New{{ $table.Title }}Store(db)
+	{{- end }}
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()
@@ -149,7 +165,12 @@ func Benchmark{{ $table.Title }}SelectCols(b *testing.B) {
 		})
 	}
 
-	store := New{{ $table.Title }}Store(db).Columns({{ $conf.RootPackage }}.{{ $table.Title }}_{{ $first.Title }}, {{ $conf.RootPackage }}.{{ $table.Title }}_{{ $last.Title }})
+	{{- if $schema.IsMultiTenant }}
+	store := New{{ $table.Title }}Store(0, db)
+	{{- else }}
+	store := New{{ $table.Title }}Store(db)
+	{{- end -}}
+	.Columns({{ $conf.RootPackage }}.{{ $table.Title }}_{{ $first.Title }}, {{ $conf.RootPackage }}.{{ $table.Title }}_{{ $last.Title }})
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()
