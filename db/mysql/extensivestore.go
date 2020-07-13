@@ -477,12 +477,11 @@ func (ex *ExtensiveStore) SetBits(colSet *big.Int) *ExtensiveStore {
 	ex.colSet = colSet
 	return ex
 }
-
-// nolint[gocyclo]
 func (ex *Extensive) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkExtensive(&ex.Extensive, row, withJoin, colSet, col)
 }
 
+// nolint:gocyclo
 func BindFakeBenchmarkExtensive(ex *codegen.Extensive, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Extensive_ID) == 1 {
 		ex.ID = sdb.ToInt(row[*col])
@@ -907,6 +906,216 @@ func (ex *ExtensiveStore) One(args ...interface{}) (*codegen.Extensive, error) {
 func (ex *ExtensiveStore) Query(args ...interface{}) ([]*codegen.Extensive, error) {
 	stmt := ex.selectStatement()
 	return ex.QueryCustom(stmt.Query(), args...)
+}
+
+// extensiveUpsertStmt helper for generating Upsert statement.
+// nolint:gocyclo
+func (ex *ExtensiveStore) extensiveUpsertStmt() *sdb.UpsertStatement {
+	upsert := []string{}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint) == 1 {
+		upsert = append(upsert, "tinyint = VALUES(tinyint)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
+		upsert = append(upsert, "tinyint_unsigned = VALUES(tinyint_unsigned)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
+		upsert = append(upsert, "tinyint_null = VALUES(tinyint_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Smallint) == 1 {
+		upsert = append(upsert, "smallint = VALUES(smallint)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
+		upsert = append(upsert, "smallint_unsigned = VALUES(smallint_unsigned)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
+		upsert = append(upsert, "smallint_null = VALUES(smallint_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Int) == 1 {
+		upsert = append(upsert, "int = VALUES(int)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntNull) == 1 {
+		upsert = append(upsert, "int_null = VALUES(int_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
+		upsert = append(upsert, "int_unsigned = VALUES(int_unsigned)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Bigint) == 1 {
+		upsert = append(upsert, "bigint = VALUES(bigint)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintNull) == 1 {
+		upsert = append(upsert, "bigint_null = VALUES(bigint_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
+		upsert = append(upsert, "bigint_unsigned = VALUES(bigint_unsigned)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varchar) == 1 {
+		upsert = append(upsert, "varchar = VALUES(varchar)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
+		upsert = append(upsert, "varchar_null = VALUES(varchar_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Float) == 1 {
+		upsert = append(upsert, "float = VALUES(float)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_FloatNull) == 1 {
+		upsert = append(upsert, "float_null = VALUES(float_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Double) == 1 {
+		upsert = append(upsert, "double = VALUES(double)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
+		upsert = append(upsert, "double_null = VALUES(double_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Decimal) == 1 {
+		upsert = append(upsert, "decimal = VALUES(decimal)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
+		upsert = append(upsert, "decimal_null = VALUES(decimal_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Numeric) == 1 {
+		upsert = append(upsert, "numeric = VALUES(numeric)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_NumericNull) == 1 {
+		upsert = append(upsert, "numeric_null = VALUES(numeric_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
+		upsert = append(upsert, "created_at = VALUES(created_at)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_UpdatedAt) == 1 {
+		upsert = append(upsert, "updated_at = VALUES(updated_at)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
+		upsert = append(upsert, "tinyint1 = VALUES(tinyint1)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
+		upsert = append(upsert, "tinyint1_null = VALUES(tinyint1_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Year) == 1 {
+		upsert = append(upsert, "year = VALUES(year)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_YearNull) == 1 {
+		upsert = append(upsert, "year_null = VALUES(year_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Date) == 1 {
+		upsert = append(upsert, "date = VALUES(date)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DateNull) == 1 {
+		upsert = append(upsert, "date_null = VALUES(date_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Time) == 1 {
+		upsert = append(upsert, "time = VALUES(time)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimeNull) == 1 {
+		upsert = append(upsert, "time_null = VALUES(time_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Datetime) == 1 {
+		upsert = append(upsert, "datetime = VALUES(datetime)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
+		upsert = append(upsert, "datetime_null = VALUES(datetime_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Timestamp) == 1 {
+		upsert = append(upsert, "timestamp = VALUES(timestamp)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
+		upsert = append(upsert, "timestamp_null = VALUES(timestamp_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Char) == 1 {
+		upsert = append(upsert, "char = VALUES(char)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CharNull) == 1 {
+		upsert = append(upsert, "char_null = VALUES(char_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinytext) == 1 {
+		upsert = append(upsert, "tinytext = VALUES(tinytext)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
+		upsert = append(upsert, "tinytext_null = VALUES(tinytext_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Text) == 1 {
+		upsert = append(upsert, "text = VALUES(text)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TextNull) == 1 {
+		upsert = append(upsert, "text_null = VALUES(text_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
+		upsert = append(upsert, "mediumtext = VALUES(mediumtext)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
+		upsert = append(upsert, "mediumtext_null = VALUES(mediumtext_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longtext) == 1 {
+		upsert = append(upsert, "longtext = VALUES(longtext)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
+		upsert = append(upsert, "longtext_null = VALUES(longtext_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Binary) == 1 {
+		upsert = append(upsert, "binary = VALUES(binary)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
+		upsert = append(upsert, "binary_null = VALUES(binary_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varbinary) == 1 {
+		upsert = append(upsert, "varbinary = VALUES(varbinary)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
+		upsert = append(upsert, "varbinary_null = VALUES(varbinary_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
+		upsert = append(upsert, "tinyblob = VALUES(tinyblob)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
+		upsert = append(upsert, "tinyblob_null = VALUES(tinyblob_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Blob) == 1 {
+		upsert = append(upsert, "blob = VALUES(blob)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BlobNull) == 1 {
+		upsert = append(upsert, "blob_null = VALUES(blob_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
+		upsert = append(upsert, "mediumblob = VALUES(mediumblob)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
+		upsert = append(upsert, "mediumblob_null = VALUES(mediumblob_null)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longblob) == 1 {
+		upsert = append(upsert, "longblob = VALUES(longblob)")
+	}
+	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
+		upsert = append(upsert, "longblob_null = VALUES(longblob_null)")
+	}
+	sql := &sdb.UpsertStatement{}
+	sql.InsertInto("fake_benchmark.extensive")
+	sql.Columns("id", "tinyint", "tinyint_unsigned", "tinyint_null", "smallint", "smallint_unsigned", "smallint_null", "int", "int_null", "int_unsigned", "bigint", "bigint_null", "bigint_unsigned", "varchar", "varchar_null", "float", "float_null", "double", "double_null", "decimal", "decimal_null", "numeric", "numeric_null", "created_at", "updated_at", "tinyint1", "tinyint1_null", "year", "year_null", "date", "date_null", "time", "time_null", "datetime", "datetime_null", "timestamp", "timestamp_null", "char", "char_null", "tinytext", "tinytext_null", "text", "text_null", "mediumtext", "mediumtext_null", "longtext", "longtext_null", "binary", "binary_null", "varbinary", "varbinary_null", "tinyblob", "tinyblob_null", "blob", "blob_null", "mediumblob", "mediumblob_null", "longblob", "longblob_null")
+	sql.OnDuplicateKeyUpdate(upsert)
+	return sql
+}
+
+// Upsert executes upsert for array of Extensive
+func (ex *ExtensiveStore) Upsert(data ...*codegen.Extensive) (int64, error) {
+	sql := ex.extensiveUpsertStmt()
+
+	for _, d := range data {
+		sql.Record(d)
+	}
+
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "ExtensiveUpsert").Str("stmt", sql.String()).Msg("sql")
+	}
+	res, err := ex.db.Exec(sql.Query())
+	if err != nil {
+		log.Error().Err(err).Msg("exec")
+		return -1, err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		log.Error().Err(err).Msg("rowsaffected")
+		return -1, err
+	}
+
+	return affected, nil
 }
 
 // Insert inserts the Extensive to the database.

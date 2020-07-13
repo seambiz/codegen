@@ -125,12 +125,11 @@ func (pe *PersonStore) SetBits(colSet *big.Int) *PersonStore {
 	pe.colSet = colSet
 	return pe
 }
-
-// nolint[gocyclo]
 func (pe *Person) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkPerson(&pe.Person, row, withJoin, colSet, col)
 }
 
+// nolint:gocyclo
 func BindFakeBenchmarkPerson(pe *codegen.Person, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Person_ID) == 1 {
 		pe.ID = sdb.ToInt(row[*col])
@@ -225,6 +224,45 @@ func (pe *PersonStore) EagerFetchPets(data []*codegen.Person) error {
 		}
 	}
 	return nil
+}
+
+// personUpsertStmt helper for generating Upsert statement.
+// nolint:gocyclo
+func (pe *PersonStore) personUpsertStmt() *sdb.UpsertStatement {
+	upsert := []string{}
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_Name) == 1 {
+		upsert = append(upsert, "name = VALUES(name)")
+	}
+	sql := &sdb.UpsertStatement{}
+	sql.InsertInto("fake_benchmark.person")
+	sql.Columns("id", "name")
+	sql.OnDuplicateKeyUpdate(upsert)
+	return sql
+}
+
+// Upsert executes upsert for array of Person
+func (pe *PersonStore) Upsert(data ...*codegen.Person) (int64, error) {
+	sql := pe.personUpsertStmt()
+
+	for _, d := range data {
+		sql.Record(d)
+	}
+
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "PersonUpsert").Str("stmt", sql.String()).Msg("sql")
+	}
+	res, err := pe.db.Exec(sql.Query())
+	if err != nil {
+		log.Error().Err(err).Msg("exec")
+		return -1, err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		log.Error().Err(err).Msg("rowsaffected")
+		return -1, err
+	}
+
+	return affected, nil
 }
 
 // Insert inserts the Person to the database.

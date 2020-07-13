@@ -201,12 +201,11 @@ func (ta *TablesStore) SetBits(colSet *big.Int) *TablesStore {
 	ta.colSet = colSet
 	return ta
 }
-
-// nolint[gocyclo]
 func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaTables(&ta.Tables, row, withJoin, colSet, col)
 }
 
+// nolint:gocyclo
 func BindInformationSchemaTables(ta *codegen.Tables, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Tables_TableCatalog) == 1 {
 		ta.TableCatalog = sdb.ToString(row[*col])
@@ -429,6 +428,105 @@ func (ta *TablesStore) One(args ...interface{}) (*codegen.Tables, error) {
 func (ta *TablesStore) Query(args ...interface{}) ([]*codegen.Tables, error) {
 	stmt := ta.selectStatement()
 	return ta.QueryCustom(stmt.Query(), args...)
+}
+
+// tablesUpsertStmt helper for generating Upsert statement.
+// nolint:gocyclo
+func (ta *TablesStore) tablesUpsertStmt() *sdb.UpsertStatement {
+	upsert := []string{}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableCatalog) == 1 {
+		upsert = append(upsert, "table_catalog = VALUES(table_catalog)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableSchema) == 1 {
+		upsert = append(upsert, "table_schema = VALUES(table_schema)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableName) == 1 {
+		upsert = append(upsert, "table_name = VALUES(table_name)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableType) == 1 {
+		upsert = append(upsert, "table_type = VALUES(table_type)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Engine) == 1 {
+		upsert = append(upsert, "engine = VALUES(engine)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Version) == 1 {
+		upsert = append(upsert, "version = VALUES(version)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_RowFormat) == 1 {
+		upsert = append(upsert, "row_format = VALUES(row_format)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableRows) == 1 {
+		upsert = append(upsert, "table_rows = VALUES(table_rows)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_AvgRowLength) == 1 {
+		upsert = append(upsert, "avg_row_length = VALUES(avg_row_length)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_DataLength) == 1 {
+		upsert = append(upsert, "data_length = VALUES(data_length)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_MaxDataLength) == 1 {
+		upsert = append(upsert, "max_data_length = VALUES(max_data_length)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_IndexLength) == 1 {
+		upsert = append(upsert, "index_length = VALUES(index_length)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_DataFree) == 1 {
+		upsert = append(upsert, "data_free = VALUES(data_free)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_AutoIncrement) == 1 {
+		upsert = append(upsert, "auto_increment = VALUES(auto_increment)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CreateTime) == 1 {
+		upsert = append(upsert, "create_time = VALUES(create_time)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_UpdateTime) == 1 {
+		upsert = append(upsert, "update_time = VALUES(update_time)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CheckTime) == 1 {
+		upsert = append(upsert, "check_time = VALUES(check_time)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableCollation) == 1 {
+		upsert = append(upsert, "table_collation = VALUES(table_collation)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_Checksum) == 1 {
+		upsert = append(upsert, "checksum = VALUES(checksum)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_CreateOptions) == 1 {
+		upsert = append(upsert, "create_options = VALUES(create_options)")
+	}
+	if ta.colSet == nil || ta.colSet.Bit(codegen.Tables_TableComment) == 1 {
+		upsert = append(upsert, "table_comment = VALUES(table_comment)")
+	}
+	sql := &sdb.UpsertStatement{}
+	sql.InsertInto("information_schema.TABLES")
+	sql.Columns("table_catalog", "table_schema", "table_name", "table_type", "engine", "version", "row_format", "table_rows", "avg_row_length", "data_length", "max_data_length", "index_length", "data_free", "auto_increment", "create_time", "update_time", "check_time", "table_collation", "checksum", "create_options", "table_comment")
+	sql.OnDuplicateKeyUpdate(upsert)
+	return sql
+}
+
+// Upsert executes upsert for array of Tables
+func (ta *TablesStore) Upsert(data ...*codegen.Tables) (int64, error) {
+	sql := ta.tablesUpsertStmt()
+
+	for _, d := range data {
+		sql.Record(d)
+	}
+
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "TablesUpsert").Str("stmt", sql.String()).Msg("sql")
+	}
+	res, err := ta.db.Exec(sql.Query())
+	if err != nil {
+		log.Error().Err(err).Msg("exec")
+		return -1, err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		log.Error().Err(err).Msg("rowsaffected")
+		return -1, err
+	}
+
+	return affected, nil
 }
 
 // Insert inserts the Tables to the database.

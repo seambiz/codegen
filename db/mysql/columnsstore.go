@@ -200,12 +200,11 @@ func (co *ColumnsStore) SetBits(colSet *big.Int) *ColumnsStore {
 	co.colSet = colSet
 	return co
 }
-
-// nolint[gocyclo]
 func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaColumns(&co.Columns, row, withJoin, colSet, col)
 }
 
+// nolint:gocyclo
 func BindInformationSchemaColumns(co *codegen.Columns, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Columns_TableCatalog) == 1 {
 		co.TableCatalog = sdb.ToString(row[*col])
@@ -388,6 +387,105 @@ func (co *ColumnsStore) One(args ...interface{}) (*codegen.Columns, error) {
 func (co *ColumnsStore) Query(args ...interface{}) ([]*codegen.Columns, error) {
 	stmt := co.selectStatement()
 	return co.QueryCustom(stmt.Query(), args...)
+}
+
+// columnsUpsertStmt helper for generating Upsert statement.
+// nolint:gocyclo
+func (co *ColumnsStore) columnsUpsertStmt() *sdb.UpsertStatement {
+	upsert := []string{}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableCatalog) == 1 {
+		upsert = append(upsert, "table_catalog = VALUES(table_catalog)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableSchema) == 1 {
+		upsert = append(upsert, "table_schema = VALUES(table_schema)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_TableName) == 1 {
+		upsert = append(upsert, "table_name = VALUES(table_name)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnName) == 1 {
+		upsert = append(upsert, "column_name = VALUES(column_name)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_OrdinalPosition) == 1 {
+		upsert = append(upsert, "ordinal_position = VALUES(ordinal_position)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnDefault) == 1 {
+		upsert = append(upsert, "column_default = VALUES(column_default)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_IsNullable) == 1 {
+		upsert = append(upsert, "is_nullable = VALUES(is_nullable)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_DataType) == 1 {
+		upsert = append(upsert, "data_type = VALUES(data_type)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterMaximumLength) == 1 {
+		upsert = append(upsert, "character_maximum_length = VALUES(character_maximum_length)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterOctetLength) == 1 {
+		upsert = append(upsert, "character_octet_length = VALUES(character_octet_length)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_NumericPrecision) == 1 {
+		upsert = append(upsert, "numeric_precision = VALUES(numeric_precision)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_NumericScale) == 1 {
+		upsert = append(upsert, "numeric_scale = VALUES(numeric_scale)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_DatetimePrecision) == 1 {
+		upsert = append(upsert, "datetime_precision = VALUES(datetime_precision)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CharacterSetName) == 1 {
+		upsert = append(upsert, "character_set_name = VALUES(character_set_name)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_CollationName) == 1 {
+		upsert = append(upsert, "collation_name = VALUES(collation_name)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnType) == 1 {
+		upsert = append(upsert, "column_type = VALUES(column_type)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnKey) == 1 {
+		upsert = append(upsert, "column_key = VALUES(column_key)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_Extra) == 1 {
+		upsert = append(upsert, "extra = VALUES(extra)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_Privileges) == 1 {
+		upsert = append(upsert, "privileges = VALUES(privileges)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_ColumnComment) == 1 {
+		upsert = append(upsert, "column_comment = VALUES(column_comment)")
+	}
+	if co.colSet == nil || co.colSet.Bit(codegen.Columns_GenerationExpression) == 1 {
+		upsert = append(upsert, "generation_expression = VALUES(generation_expression)")
+	}
+	sql := &sdb.UpsertStatement{}
+	sql.InsertInto("information_schema.COLUMNS")
+	sql.Columns("table_catalog", "table_schema", "table_name", "column_name", "ordinal_position", "column_default", "is_nullable", "data_type", "character_maximum_length", "character_octet_length", "numeric_precision", "numeric_scale", "datetime_precision", "character_set_name", "collation_name", "column_type", "column_key", "extra", "privileges", "column_comment", "generation_expression")
+	sql.OnDuplicateKeyUpdate(upsert)
+	return sql
+}
+
+// Upsert executes upsert for array of Columns
+func (co *ColumnsStore) Upsert(data ...*codegen.Columns) (int64, error) {
+	sql := co.columnsUpsertStmt()
+
+	for _, d := range data {
+		sql.Record(d)
+	}
+
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "ColumnsUpsert").Str("stmt", sql.String()).Msg("sql")
+	}
+	res, err := co.db.Exec(sql.Query())
+	if err != nil {
+		log.Error().Err(err).Msg("exec")
+		return -1, err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		log.Error().Err(err).Msg("rowsaffected")
+		return -1, err
+	}
+
+	return affected, nil
 }
 
 // Insert inserts the Columns to the database.

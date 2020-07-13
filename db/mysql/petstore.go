@@ -133,12 +133,11 @@ func (pe *PetStore) SetBits(colSet *big.Int) *PetStore {
 	pe.colSet = colSet
 	return pe
 }
-
-// nolint[gocyclo]
 func (pe *Pet) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkPet(&pe.Pet, row, withJoin, colSet, col)
 }
 
+// nolint:gocyclo
 func BindFakeBenchmarkPet(pe *codegen.Pet, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Pet_ID) == 1 {
 		pe.ID = sdb.ToInt(row[*col])
@@ -229,6 +228,51 @@ func (pe *PetStore) One(args ...interface{}) (*codegen.Pet, error) {
 func (pe *PetStore) Query(args ...interface{}) ([]*codegen.Pet, error) {
 	stmt := pe.selectStatement()
 	return pe.QueryCustom(stmt.Query(), args...)
+}
+
+// petUpsertStmt helper for generating Upsert statement.
+// nolint:gocyclo
+func (pe *PetStore) petUpsertStmt() *sdb.UpsertStatement {
+	upsert := []string{}
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_PersonID) == 1 {
+		upsert = append(upsert, "person_id = VALUES(person_id)")
+	}
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_TagID) == 1 {
+		upsert = append(upsert, "tag_id = VALUES(tag_id)")
+	}
+	if pe.colSet == nil || pe.colSet.Bit(codegen.Pet_Species) == 1 {
+		upsert = append(upsert, "species = VALUES(species)")
+	}
+	sql := &sdb.UpsertStatement{}
+	sql.InsertInto("fake_benchmark.pet")
+	sql.Columns("id", "person_id", "tag_id", "species")
+	sql.OnDuplicateKeyUpdate(upsert)
+	return sql
+}
+
+// Upsert executes upsert for array of Pet
+func (pe *PetStore) Upsert(data ...*codegen.Pet) (int64, error) {
+	sql := pe.petUpsertStmt()
+
+	for _, d := range data {
+		sql.Record(d)
+	}
+
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "PetUpsert").Str("stmt", sql.String()).Msg("sql")
+	}
+	res, err := pe.db.Exec(sql.Query())
+	if err != nil {
+		log.Error().Err(err).Msg("exec")
+		return -1, err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		log.Error().Err(err).Msg("rowsaffected")
+		return -1, err
+	}
+
+	return affected, nil
 }
 
 // Insert inserts the Pet to the database.

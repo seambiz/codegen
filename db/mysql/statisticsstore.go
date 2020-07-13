@@ -180,12 +180,11 @@ func (st *StatisticsStore) SetBits(colSet *big.Int) *StatisticsStore {
 	st.colSet = colSet
 	return st
 }
-
-// nolint[gocyclo]
 func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaStatistics(&st.Statistics, row, withJoin, colSet, col)
 }
 
+// nolint:gocyclo
 func BindInformationSchemaStatistics(st *codegen.Statistics, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Statistics_TableCatalog) == 1 {
 		st.TableCatalog = sdb.ToString(row[*col])
@@ -333,6 +332,90 @@ func (st *StatisticsStore) One(args ...interface{}) (*codegen.Statistics, error)
 func (st *StatisticsStore) Query(args ...interface{}) ([]*codegen.Statistics, error) {
 	stmt := st.selectStatement()
 	return st.QueryCustom(stmt.Query(), args...)
+}
+
+// statisticsUpsertStmt helper for generating Upsert statement.
+// nolint:gocyclo
+func (st *StatisticsStore) statisticsUpsertStmt() *sdb.UpsertStatement {
+	upsert := []string{}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableCatalog) == 1 {
+		upsert = append(upsert, "table_catalog = VALUES(table_catalog)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableSchema) == 1 {
+		upsert = append(upsert, "table_schema = VALUES(table_schema)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_TableName) == 1 {
+		upsert = append(upsert, "table_name = VALUES(table_name)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_NonUnique) == 1 {
+		upsert = append(upsert, "non_unique = VALUES(non_unique)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexSchema) == 1 {
+		upsert = append(upsert, "index_schema = VALUES(index_schema)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexName) == 1 {
+		upsert = append(upsert, "index_name = VALUES(index_name)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_SeqInIndex) == 1 {
+		upsert = append(upsert, "seq_in_index = VALUES(seq_in_index)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_ColumnName) == 1 {
+		upsert = append(upsert, "column_name = VALUES(column_name)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Collation) == 1 {
+		upsert = append(upsert, "collation = VALUES(collation)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Cardinality) == 1 {
+		upsert = append(upsert, "cardinality = VALUES(cardinality)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_SubPart) == 1 {
+		upsert = append(upsert, "sub_part = VALUES(sub_part)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Packed) == 1 {
+		upsert = append(upsert, "packed = VALUES(packed)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Nullable) == 1 {
+		upsert = append(upsert, "nullable = VALUES(nullable)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexType) == 1 {
+		upsert = append(upsert, "index_type = VALUES(index_type)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_Comment) == 1 {
+		upsert = append(upsert, "comment = VALUES(comment)")
+	}
+	if st.colSet == nil || st.colSet.Bit(codegen.Statistics_IndexComment) == 1 {
+		upsert = append(upsert, "index_comment = VALUES(index_comment)")
+	}
+	sql := &sdb.UpsertStatement{}
+	sql.InsertInto("information_schema.STATISTICS")
+	sql.Columns("table_catalog", "table_schema", "table_name", "non_unique", "index_schema", "index_name", "seq_in_index", "column_name", "collation", "cardinality", "sub_part", "packed", "nullable", "index_type", "comment", "index_comment")
+	sql.OnDuplicateKeyUpdate(upsert)
+	return sql
+}
+
+// Upsert executes upsert for array of Statistics
+func (st *StatisticsStore) Upsert(data ...*codegen.Statistics) (int64, error) {
+	sql := st.statisticsUpsertStmt()
+
+	for _, d := range data {
+		sql.Record(d)
+	}
+
+	if zerolog.GlobalLevel() == zerolog.DebugLevel {
+		log.Debug().Str("fn", "StatisticsUpsert").Str("stmt", sql.String()).Msg("sql")
+	}
+	res, err := st.db.Exec(sql.Query())
+	if err != nil {
+		log.Error().Err(err).Msg("exec")
+		return -1, err
+	}
+	affected, err := res.RowsAffected()
+	if err != nil {
+		log.Error().Err(err).Msg("rowsaffected")
+		return -1, err
+	}
+
+	return affected, nil
 }
 
 // Insert inserts the Statistics to the database.
