@@ -173,11 +173,11 @@ func (pe *PetStore) selectStatement() *sdb.SQLStatement {
 	if pe.withJoin {
 		sql.Fields(", ", "B", PersonQueryFields(pe.colSet))
 		sql.Fields(", ", "C", TagQueryFields(pe.colSet))
-		sql.Append(" FROM fake_benchmark.pet A")
-		sql.Append(pe.joinType, " JOIN fake_benchmark.person B ON (A.person_id = B.id)")
-		sql.Append(pe.joinType, " JOIN fake_benchmark.tag C ON (A.tag_id = C.id)")
+		sql.Append(" FROM fake_benchmark.pet A ")
+		sql.Append(pe.joinType, " JOIN fake_benchmark.person B ON (A.person_id = B.id) ")
+		sql.Append(pe.joinType, " JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ")
 	} else {
-		sql.Append(" FROM fake_benchmark.pet A")
+		sql.Append(" FROM fake_benchmark.pet A ")
 	}
 	if pe.where != "" {
 		sql.Append("WHERE", pe.where)
@@ -235,7 +235,7 @@ func (pe *PetStore) Query(args ...interface{}) ([]*codegen.Pet, error) {
 func (pe *PetStore) Insert(data *codegen.Pet) error {
 	var err error
 	sql := sdb.NewSQLStatement()
-	sql.Append("INSERT INTO fake_benchmark.pet (")
+	sql.AppendRaw("INSERT INTO fake_benchmark.pet (")
 	fields := PetQueryFields(pe.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

@@ -18,10 +18,9 @@ func TestTagInsert(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("INSERT INTO fake_benchmark.tag ( id, name) VALUES ( ? , ? )").
+		ExpectExec("INSERT INTO fake_benchmark.tag (id, name) VALUES ( ? , ? )").
 		WithArgs(0, "").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-
 	store := NewTagStore(db)
 	err = store.Insert(&codegen.Tag{})
 	if err != nil {
@@ -44,7 +43,6 @@ func TestTagUpdate(t *testing.T) {
 		ExpectExec("UPDATE fake_benchmark.tag SET name = ? WHERE id = ?").
 		WithArgs("", 0).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-
 	store := NewTagStore(db)
 	aff, err := store.Update(&codegen.Tag{})
 	if err != nil {
@@ -72,7 +70,6 @@ func TestTagSelectWithoutJoin(t *testing.T) {
 
 	mock.ExpectQuery("SELECT A.id, A.name FROM fake_benchmark.tag A").
 		WillReturnRows(rows)
-
 	store := NewTagStore(db).WithoutJoins()
 	data, err := store.Query()
 	if err != nil {
@@ -98,7 +95,6 @@ func TestTagDelete(t *testing.T) {
 		ExpectExec("DELETE FROM fake_benchmark.tag WHERE id = ?").
 		WithArgs(0).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-
 	aff, err := NewTagStore(db).Delete(&codegen.Tag{})
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
@@ -112,7 +108,6 @@ func TestTagDelete(t *testing.T) {
 		t.Errorf("a single row should be affected: %d", aff)
 	}
 }
-
 func TestTagDeleteSlice(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
@@ -122,7 +117,6 @@ func TestTagDeleteSlice(t *testing.T) {
 	mock.
 		ExpectExec("DELETE FROM fake_benchmark.tag WHERE id IN (0,0)").
 		WillReturnResult(sqlmock.NewResult(0, 2))
-
 	aff, err := NewTagStore(db).DeleteSlice([]*codegen.Tag{{}, {}})
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)

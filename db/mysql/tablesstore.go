@@ -378,7 +378,7 @@ func (ta *TablesStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", TablesQueryFields(ta.colSet))
-	sql.Append(" FROM information_schema.TABLES A")
+	sql.Append(" FROM information_schema.TABLES A ")
 	if ta.where != "" {
 		sql.Append("WHERE", ta.where)
 	}
@@ -435,7 +435,7 @@ func (ta *TablesStore) Query(args ...interface{}) ([]*codegen.Tables, error) {
 func (ta *TablesStore) Insert(data *codegen.Tables) error {
 	var err error
 	sql := sdb.NewSQLStatement()
-	sql.Append("INSERT INTO information_schema.TABLES (")
+	sql.AppendRaw("INSERT INTO information_schema.TABLES (")
 	fields := TablesQueryFields(ta.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

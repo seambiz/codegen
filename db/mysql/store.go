@@ -43,6 +43,9 @@ func NewStore(conn Execer) *Store {
 }
 
 func (s *Store) SQL(stmt string) *Store {
+	if s.stmt == nil {
+		s.stmt = sdb.NewSQLStatement()
+	}
 	s.stmt.Append(stmt)
 	return s
 }

@@ -337,7 +337,7 @@ func (co *ColumnsStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", ColumnsQueryFields(co.colSet))
-	sql.Append(" FROM information_schema.COLUMNS A")
+	sql.Append(" FROM information_schema.COLUMNS A ")
 	if co.where != "" {
 		sql.Append("WHERE", co.where)
 	}
@@ -394,7 +394,7 @@ func (co *ColumnsStore) Query(args ...interface{}) ([]*codegen.Columns, error) {
 func (co *ColumnsStore) Insert(data *codegen.Columns) error {
 	var err error
 	sql := sdb.NewSQLStatement()
-	sql.Append("INSERT INTO information_schema.COLUMNS (")
+	sql.AppendRaw("INSERT INTO information_schema.COLUMNS (")
 	fields := ColumnsQueryFields(co.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

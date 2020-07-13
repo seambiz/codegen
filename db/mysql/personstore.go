@@ -146,7 +146,7 @@ func (pe *PersonStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", PersonQueryFields(pe.colSet))
-	sql.Append(" FROM fake_benchmark.person A")
+	sql.Append(" FROM fake_benchmark.person A ")
 	if pe.where != "" {
 		sql.Append("WHERE", pe.where)
 	}
@@ -231,7 +231,7 @@ func (pe *PersonStore) EagerFetchPets(data []*codegen.Person) error {
 func (pe *PersonStore) Insert(data *codegen.Person) error {
 	var err error
 	sql := sdb.NewSQLStatement()
-	sql.Append("INSERT INTO fake_benchmark.person (")
+	sql.AppendRaw("INSERT INTO fake_benchmark.person (")
 	fields := PersonQueryFields(pe.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

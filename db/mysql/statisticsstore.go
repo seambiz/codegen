@@ -282,7 +282,7 @@ func (st *StatisticsStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", StatisticsQueryFields(st.colSet))
-	sql.Append(" FROM information_schema.STATISTICS A")
+	sql.Append(" FROM information_schema.STATISTICS A ")
 	if st.where != "" {
 		sql.Append("WHERE", st.where)
 	}
@@ -339,7 +339,7 @@ func (st *StatisticsStore) Query(args ...interface{}) ([]*codegen.Statistics, er
 func (st *StatisticsStore) Insert(data *codegen.Statistics) error {
 	var err error
 	sql := sdb.NewSQLStatement()
-	sql.Append("INSERT INTO information_schema.STATISTICS (")
+	sql.AppendRaw("INSERT INTO information_schema.STATISTICS (")
 	fields := StatisticsQueryFields(st.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

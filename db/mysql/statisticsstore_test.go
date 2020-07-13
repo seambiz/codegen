@@ -17,10 +17,9 @@ func TestStatisticsInsert(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("INSERT INTO information_schema.STATISTICS ( table_catalog, table_schema, table_name, non_unique, index_schema, index_name, seq_in_index, column_name, collation, cardinality, sub_part, packed, nullable, index_type, comment, index_comment) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
+		ExpectExec("INSERT INTO information_schema.STATISTICS (table_catalog, table_schema, table_name, non_unique, index_schema, index_name, seq_in_index, column_name, collation, cardinality, sub_part, packed, nullable, index_type, comment, index_comment) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
 		WithArgs("", "", "", 0, "", "", 0, "", nil, nil, nil, nil, "", "", nil, "").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-
 	store := NewStatisticsStore(db)
 	err = store.Insert(&codegen.Statistics{})
 	if err != nil {
@@ -43,7 +42,6 @@ func TestStatisticsUpdate(t *testing.T) {
 		ExpectExec("UPDATE information_schema.STATISTICS SET table_catalog = ?,table_schema = ?,table_name = ?,non_unique = ?,index_schema = ?,index_name = ?,seq_in_index = ?,column_name = ?,collation = ?,cardinality = ?,sub_part = ?,packed = ?,nullable = ?,index_type = ?,comment = ?,index_comment = ? WHERE ").
 		WithArgs("", "", "", 0, "", "", 0, "", nil, nil, nil, nil, "", "", nil, "").
 		WillReturnResult(sqlmock.NewResult(0, 1))
-
 	store := NewStatisticsStore(db)
 	aff, err := store.Update(&codegen.Statistics{})
 	if err != nil {
@@ -71,7 +69,6 @@ func TestStatisticsSelectWithoutJoin(t *testing.T) {
 
 	mock.ExpectQuery("SELECT A.table_catalog, A.table_schema, A.table_name, A.non_unique, A.index_schema, A.index_name, A.seq_in_index, A.column_name, A.collation, A.cardinality, A.sub_part, A.packed, A.nullable, A.index_type, A.comment, A.index_comment FROM information_schema.STATISTICS A").
 		WillReturnRows(rows)
-
 	store := NewStatisticsStore(db).WithoutJoins()
 	data, err := store.Query()
 	if err != nil {

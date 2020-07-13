@@ -18,10 +18,9 @@ func TestPetInsert(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("INSERT INTO fake_benchmark.pet ( id, person_id, tag_id, species) VALUES ( ? , ? , ? , ? )").
+		ExpectExec("INSERT INTO fake_benchmark.pet (id, person_id, tag_id, species) VALUES ( ? , ? , ? , ? )").
 		WithArgs(0, 0, 0, "").
 		WillReturnResult(sqlmock.NewResult(1, 1))
-
 	store := NewPetStore(db)
 	err = store.Insert(&codegen.Pet{})
 	if err != nil {
@@ -44,7 +43,6 @@ func TestPetUpdate(t *testing.T) {
 		ExpectExec("UPDATE fake_benchmark.pet SET person_id = ?,tag_id = ?,species = ? WHERE id = ?").
 		WithArgs(0, 0, "", 0).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-
 	store := NewPetStore(db)
 	aff, err := store.Update(&codegen.Pet{})
 	if err != nil {
@@ -72,7 +70,6 @@ func TestPetSelectWithoutJoin(t *testing.T) {
 
 	mock.ExpectQuery("SELECT A.id, A.person_id, A.tag_id, A.species FROM fake_benchmark.pet A").
 		WillReturnRows(rows)
-
 	store := NewPetStore(db).WithoutJoins()
 	data, err := store.Query()
 	if err != nil {
@@ -100,7 +97,6 @@ func TestPetSelectJoin(t *testing.T) {
 
 	mock.ExpectQuery("SELECT A.id, A.person_id, A.tag_id, A.species, B.id, B.name, C.id, C.name FROM fake_benchmark.pet A LEFT JOIN fake_benchmark.person B ON (A.person_id = B.id) LEFT JOIN fake_benchmark.tag C ON (A.tag_id = C.id)").
 		WillReturnRows(rows)
-
 	store := NewPetStore(db)
 	data, err := store.Query()
 	if err != nil {
@@ -115,11 +111,11 @@ func TestPetSelectJoin(t *testing.T) {
 		t.Errorf("number of rows != 2: %d", len(data))
 	}
 
-	if data[0].BelongsTo.ID != 1 {
+	if data[0].BelongsTo == nil {
 		t.Errorf("join did not work: %v", data[0].BelongsTo)
 	}
 
-	if data[0].HasTag.ID != 1 {
+	if data[0].HasTag == nil {
 		t.Errorf("join did not work: %v", data[0].HasTag)
 	}
 }
@@ -134,7 +130,6 @@ func TestPetDelete(t *testing.T) {
 		ExpectExec("DELETE FROM fake_benchmark.pet WHERE id = ?").
 		WithArgs(0).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-
 	aff, err := NewPetStore(db).Delete(&codegen.Pet{})
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
@@ -148,7 +143,6 @@ func TestPetDelete(t *testing.T) {
 		t.Errorf("a single row should be affected: %d", aff)
 	}
 }
-
 func TestPetDeleteSlice(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
@@ -158,7 +152,6 @@ func TestPetDeleteSlice(t *testing.T) {
 	mock.
 		ExpectExec("DELETE FROM fake_benchmark.pet WHERE id IN (0,0)").
 		WillReturnResult(sqlmock.NewResult(0, 2))
-
 	aff, err := NewPetStore(db).DeleteSlice([]*codegen.Pet{{}, {}})
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)

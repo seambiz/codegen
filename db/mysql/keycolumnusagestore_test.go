@@ -17,10 +17,9 @@ func TestKeyColumnUsageInsert(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("INSERT INTO information_schema.KEY_COLUMN_USAGE ( constraint_catalog, constraint_schema, constraint_name, table_catalog, table_schema, table_name, column_name, ordinal_position, position_in_unique_constraint, referenced_table_schema, referenced_table_name, referenced_column_name) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
+		ExpectExec("INSERT INTO information_schema.KEY_COLUMN_USAGE (constraint_catalog, constraint_schema, constraint_name, table_catalog, table_schema, table_name, column_name, ordinal_position, position_in_unique_constraint, referenced_table_schema, referenced_table_name, referenced_column_name) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
 		WithArgs("", "", "", "", "", "", "", 0, nil, nil, nil, nil).
 		WillReturnResult(sqlmock.NewResult(1, 1))
-
 	store := NewKeyColumnUsageStore(db)
 	err = store.Insert(&codegen.KeyColumnUsage{})
 	if err != nil {
@@ -43,7 +42,6 @@ func TestKeyColumnUsageUpdate(t *testing.T) {
 		ExpectExec("UPDATE information_schema.KEY_COLUMN_USAGE SET constraint_catalog = ?,constraint_schema = ?,constraint_name = ?,table_catalog = ?,table_schema = ?,table_name = ?,column_name = ?,ordinal_position = ?,position_in_unique_constraint = ?,referenced_table_schema = ?,referenced_table_name = ?,referenced_column_name = ? WHERE ").
 		WithArgs("", "", "", "", "", "", "", 0, nil, nil, nil, nil).
 		WillReturnResult(sqlmock.NewResult(0, 1))
-
 	store := NewKeyColumnUsageStore(db)
 	aff, err := store.Update(&codegen.KeyColumnUsage{})
 	if err != nil {
@@ -71,7 +69,6 @@ func TestKeyColumnUsageSelectWithoutJoin(t *testing.T) {
 
 	mock.ExpectQuery("SELECT A.constraint_catalog, A.constraint_schema, A.constraint_name, A.table_catalog, A.table_schema, A.table_name, A.column_name, A.ordinal_position, A.position_in_unique_constraint, A.referenced_table_schema, A.referenced_table_name, A.referenced_column_name FROM information_schema.KEY_COLUMN_USAGE A").
 		WillReturnRows(rows)
-
 	store := NewKeyColumnUsageStore(db).WithoutJoins()
 	data, err := store.Query()
 	if err != nil {

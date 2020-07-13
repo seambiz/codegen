@@ -68,7 +68,6 @@ func BenchmarkStatisticsSelectAll(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.TableSchema, data.TableName, data.NonUnique, data.IndexSchema, data.IndexName, data.SeqInIndex, data.ColumnName, *data.Collation, *data.Cardinality, *data.SubPart, *data.Packed, data.Nullable, data.IndexType, *data.Comment, data.IndexComment})
 	}
-
 	store := NewStatisticsStore(db)
 
 	for i := 0; i < b.N; i++ {
@@ -93,7 +92,6 @@ func BenchmarkStatisticsSelectCols(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.IndexComment})
 	}
-
 	store := NewStatisticsStore(db).Columns(codegen.Statistics_TableCatalog, codegen.Statistics_IndexComment)
 
 	for i := 0; i < b.N; i++ {

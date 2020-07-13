@@ -68,7 +68,6 @@ func BenchmarkColumnsSelectAll(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.TableSchema, data.TableName, data.ColumnName, data.OrdinalPosition, *data.ColumnDefault, data.IsNullable, data.DataType, *data.CharacterMaximumLength, *data.CharacterOctetLength, *data.NumericPrecision, *data.NumericScale, *data.DatetimePrecision, *data.CharacterSetName, *data.CollationName, data.ColumnType, data.ColumnKey, data.Extra, data.Privileges, data.ColumnComment, data.GenerationExpression})
 	}
-
 	store := NewColumnsStore(db)
 
 	for i := 0; i < b.N; i++ {
@@ -93,7 +92,6 @@ func BenchmarkColumnsSelectCols(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.GenerationExpression})
 	}
-
 	store := NewColumnsStore(db).Columns(codegen.Columns_TableCatalog, codegen.Columns_GenerationExpression)
 
 	for i := 0; i < b.N; i++ {

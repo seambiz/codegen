@@ -245,7 +245,7 @@ func (ke *KeyColumnUsageStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", KeyColumnUsageQueryFields(ke.colSet))
-	sql.Append(" FROM information_schema.KEY_COLUMN_USAGE A")
+	sql.Append(" FROM information_schema.KEY_COLUMN_USAGE A ")
 	if ke.where != "" {
 		sql.Append("WHERE", ke.where)
 	}
@@ -302,7 +302,7 @@ func (ke *KeyColumnUsageStore) Query(args ...interface{}) ([]*codegen.KeyColumnU
 func (ke *KeyColumnUsageStore) Insert(data *codegen.KeyColumnUsage) error {
 	var err error
 	sql := sdb.NewSQLStatement()
-	sql.Append("INSERT INTO information_schema.KEY_COLUMN_USAGE (")
+	sql.AppendRaw("INSERT INTO information_schema.KEY_COLUMN_USAGE (")
 	fields := KeyColumnUsageQueryFields(ke.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

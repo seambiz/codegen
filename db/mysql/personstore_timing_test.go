@@ -90,7 +90,6 @@ func BenchmarkPersonSelectAll(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Name})
 	}
-
 	store := NewPersonStore(db)
 
 	for i := 0; i < b.N; i++ {
@@ -115,7 +114,6 @@ func BenchmarkPersonSelectCols(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Name})
 	}
-
 	store := NewPersonStore(db).Columns(codegen.Person_ID, codegen.Person_Name)
 
 	for i := 0; i < b.N; i++ {

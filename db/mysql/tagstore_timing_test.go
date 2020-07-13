@@ -90,7 +90,6 @@ func BenchmarkTagSelectAll(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Name})
 	}
-
 	store := NewTagStore(db)
 
 	for i := 0; i < b.N; i++ {
@@ -115,7 +114,6 @@ func BenchmarkTagSelectCols(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Name})
 	}
-
 	store := NewTagStore(db).Columns(codegen.Tag_ID, codegen.Tag_Name)
 
 	for i := 0; i < b.N; i++ {

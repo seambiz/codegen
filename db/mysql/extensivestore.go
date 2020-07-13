@@ -856,7 +856,7 @@ func (ex *ExtensiveStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", ExtensiveQueryFields(ex.colSet))
-	sql.Append(" FROM fake_benchmark.extensive A")
+	sql.Append(" FROM fake_benchmark.extensive A ")
 	if ex.where != "" {
 		sql.Append("WHERE", ex.where)
 	}
@@ -915,7 +915,7 @@ func (ex *ExtensiveStore) Insert(data *codegen.Extensive) error {
 	sql := sdb.NewSQLStatement()
 	data.CreatedAt = stime.Now()
 	data.UpdatedAt = stime.Now()
-	sql.Append("INSERT INTO fake_benchmark.extensive (")
+	sql.AppendRaw("INSERT INTO fake_benchmark.extensive (")
 	fields := ExtensiveQueryFields(ex.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

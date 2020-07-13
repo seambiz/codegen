@@ -146,7 +146,7 @@ func (ta *TagStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
 	sql.Fields("", "A", TagQueryFields(ta.colSet))
-	sql.Append(" FROM fake_benchmark.tag A")
+	sql.Append(" FROM fake_benchmark.tag A ")
 	if ta.where != "" {
 		sql.Append("WHERE", ta.where)
 	}
@@ -203,7 +203,7 @@ func (ta *TagStore) Query(args ...interface{}) ([]*codegen.Tag, error) {
 func (ta *TagStore) Insert(data *codegen.Tag) error {
 	var err error
 	sql := sdb.NewSQLStatement()
-	sql.Append("INSERT INTO fake_benchmark.tag (")
+	sql.AppendRaw("INSERT INTO fake_benchmark.tag (")
 	fields := TagQueryFields(ta.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")

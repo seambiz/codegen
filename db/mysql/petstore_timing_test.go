@@ -90,7 +90,6 @@ func BenchmarkPetSelectAll(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.PersonID, data.TagID, data.Species})
 	}
-
 	store := NewPetStore(db)
 
 	for i := 0; i < b.N; i++ {
@@ -115,7 +114,6 @@ func BenchmarkPetSelectCols(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Species})
 	}
-
 	store := NewPetStore(db).Columns(codegen.Pet_ID, codegen.Pet_Species)
 
 	for i := 0; i < b.N; i++ {

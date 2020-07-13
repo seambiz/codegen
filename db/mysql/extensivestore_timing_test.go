@@ -90,7 +90,6 @@ func BenchmarkExtensiveSelectAll(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, data.Tinyint, data.TinyintUnsigned, *data.TinyintNull, data.Smallint, data.SmallintUnsigned, *data.SmallintNull, data.Int, *data.IntNull, data.IntUnsigned, data.Bigint, *data.BigintNull, data.BigintUnsigned, data.Varchar, *data.VarcharNull, data.Float, *data.FloatNull, data.Double, *data.DoubleNull, data.Decimal, *data.DecimalNull, data.Numeric, *data.NumericNull, data.CreatedAt, data.UpdatedAt, data.Tinyint1, *data.Tinyint1Null, data.Year, *data.YearNull, data.Date, *data.DateNull, data.Time, *data.TimeNull, data.Datetime, *data.DatetimeNull, data.Timestamp, *data.TimestampNull, data.Char, *data.CharNull, data.Tinytext, *data.TinytextNull, data.Text, *data.TextNull, data.Mediumtext, *data.MediumtextNull, data.Longtext, *data.LongtextNull, data.Binary, *data.BinaryNull, data.Varbinary, *data.VarbinaryNull, data.Tinyblob, *data.TinyblobNull, data.Blob, *data.BlobNull, data.Mediumblob, *data.MediumblobNull, data.Longblob, *data.LongblobNull})
 	}
-
 	store := NewExtensiveStore(db)
 
 	for i := 0; i < b.N; i++ {
@@ -115,7 +114,6 @@ func BenchmarkExtensiveSelectCols(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ID, *data.LongblobNull})
 	}
-
 	store := NewExtensiveStore(db).Columns(codegen.Extensive_ID, codegen.Extensive_LongblobNull)
 
 	for i := 0; i < b.N; i++ {

@@ -68,7 +68,6 @@ func BenchmarkKeyColumnUsageSelectAll(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ConstraintCatalog, data.ConstraintSchema, data.ConstraintName, data.TableCatalog, data.TableSchema, data.TableName, data.ColumnName, data.OrdinalPosition, *data.PositionInUniqueConstraint, *data.ReferencedTableSchema, *data.ReferencedTableName, *data.ReferencedColumnName})
 	}
-
 	store := NewKeyColumnUsageStore(db)
 
 	for i := 0; i < b.N; i++ {
@@ -93,7 +92,6 @@ func BenchmarkKeyColumnUsageSelectCols(b *testing.B) {
 	for i := 0; i < 100; i++ {
 		addResultRowDSN("bench", []driver.Value{data.ConstraintCatalog, *data.ReferencedColumnName})
 	}
-
 	store := NewKeyColumnUsageStore(db).Columns(codegen.KeyColumnUsage_ConstraintCatalog, codegen.KeyColumnUsage_ReferencedColumnName)
 
 	for i := 0; i < b.N; i++ {
