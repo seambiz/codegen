@@ -37,6 +37,10 @@ func (r KeyColumnUsageRepo) Delete(data *codegen.KeyColumnUsage) error {
 	panic("not implemented")
 }
 
+func (r KeyColumnUsageRepo) Upsert(data []*codegen.KeyColumnUsage) error {
+	panic("not implemented")
+}
+
 func (r KeyColumnUsageRepo) QueryBySchemaAndRefSchemaAndTable(schema, refschema, table string) ([]*codegen.KeyColumnUsage, error) {
 	return mysql.NewKeyColumnUsageStore(r.conn).
 		Where("UPPER(table_schema) = UPPER(?) AND UPPER(referenced_table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?)").

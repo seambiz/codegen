@@ -8,6 +8,7 @@ type PetRepository interface {
 	Create(data *Pet) error
 	Update(data *Pet) error
 	UpdatePartial(data *PetPartial) error
+	Upsert(data []*Pet) error
 	Delete(data *Pet) error
 	OneByID(id int) (*Pet, error)
 

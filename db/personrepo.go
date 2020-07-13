@@ -35,6 +35,10 @@ func (r PersonRepo) Delete(data *codegen.Person) error {
 	panic("not implemented")
 }
 
+func (r PersonRepo) Upsert(data []*codegen.Person) error {
+	panic("not implemented")
+}
+
 func (r PersonRepo) OneByID(id int) (*codegen.Person, error) {
 	panic("not implemented")
 }

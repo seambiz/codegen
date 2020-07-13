@@ -8,6 +8,7 @@ type ExtensiveRepository interface {
 	Create(data *Extensive) error
 	Update(data *Extensive) error
 	UpdatePartial(data *ExtensivePartial) error
+	Upsert(data []*Extensive) error
 	Delete(data *Extensive) error
 	OneByID(id int) (*Extensive, error)
 

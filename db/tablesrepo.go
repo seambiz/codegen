@@ -37,6 +37,10 @@ func (r TablesRepo) Delete(data *codegen.Tables) error {
 	panic("not implemented")
 }
 
+func (r TablesRepo) Upsert(data []*codegen.Tables) error {
+	panic("not implemented")
+}
+
 func (r TablesRepo) QueryBySchema(schema string) ([]*codegen.Tables, error) {
 	return mysql.NewTablesStore(r.conn).
 		Where("UPPER(table_schema) = UPPER(?) AND table_type IN (UPPER('base table'), UPPER('system view'))").

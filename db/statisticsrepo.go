@@ -37,6 +37,10 @@ func (r StatisticsRepo) Delete(data *codegen.Statistics) error {
 	panic("not implemented")
 }
 
+func (r StatisticsRepo) Upsert(data []*codegen.Statistics) error {
+	panic("not implemented")
+}
+
 func (r StatisticsRepo) IndexNameBySchemaAndTable(schema, table string) ([]*codegen.Statistics, error) {
 	store := mysql.NewStatisticsStore(r.conn)
 	store.Columns(codegen.Statistics_IndexName)

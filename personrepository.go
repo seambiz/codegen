@@ -8,6 +8,7 @@ type PersonRepository interface {
 	Create(data *Person) error
 	Update(data *Person) error
 	UpdatePartial(data *PersonPartial) error
+	Upsert(data []*Person) error
 	Delete(data *Person) error
 	OneByID(id int) (*Person, error)
 

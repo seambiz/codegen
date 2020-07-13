@@ -8,6 +8,7 @@ type TagRepository interface {
 	Create(data *Tag) error
 	Update(data *Tag) error
 	UpdatePartial(data *TagPartial) error
+	Upsert(data []*Tag) error
 	Delete(data *Tag) error
 	OneByID(id int) (*Tag, error)
 

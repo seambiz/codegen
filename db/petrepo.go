@@ -35,6 +35,10 @@ func (r PetRepo) Delete(data *codegen.Pet) error {
 	panic("not implemented")
 }
 
+func (r PetRepo) Upsert(data []*codegen.Pet) error {
+	panic("not implemented")
+}
+
 func (r PetRepo) OneByID(id int) (*codegen.Pet, error) {
 	panic("not implemented")
 }

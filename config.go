@@ -87,6 +87,7 @@ type Table struct {
 	NoCreate      bool     `json:",omitempty"`
 	NoUpdate      bool     `json:",omitempty"`
 	NoDelete      bool     `json:",omitempty"`
+	NoUpsert      bool     `json:",omitempty"`
 	Audit         bool     `json:",omitempty"`
 	TemplateFiles []string `json:",omitempty"`
 

@@ -34,6 +34,9 @@ func (r ExtensiveRepo) UpdatePartial(data *codegen.ExtensivePartial) error {
 func (r ExtensiveRepo) Delete(data *codegen.Extensive) error {
 	panic("not implemented")
 }
+func (r ExtensiveRepo) Upsert(data []*codegen.Extensive) error {
+	panic("not implemented")
+}
 
 func (r ExtensiveRepo) OneByID(id int) (*codegen.Extensive, error) {
 	panic("not implemented")

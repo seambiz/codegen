@@ -37,6 +37,10 @@ func (r ColumnsRepo) Delete(data *codegen.Columns) error {
 	panic("not implemented")
 }
 
+func (r ColumnsRepo) Upsert(data []*codegen.Columns) error {
+	panic("not implemented")
+}
+
 func (r ColumnsRepo) QueryBySchemaAndTable(schema, table string) ([]*codegen.Columns, error) {
 	return mysql.NewColumnsStore(r.conn).
 		Where("UPPER(table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?) AND UPPER(extra) not like '%VIRTUAL%'").

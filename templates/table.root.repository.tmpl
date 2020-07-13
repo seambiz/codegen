@@ -11,11 +11,13 @@ type {{ .Table.Title }}Repository interface {
 		{{ if not .Table.NoCreate }}Create({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
 		{{ if not .Table.NoUpdate }}Update({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
 		{{ if not .Table.NoUpdate }}UpdatePartial({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}Partial) error{{ end }}
+		Upsert({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data []*{{ .Table.Title }}) error
 		{{ if not .Table.NoDelete }}Delete({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error{{ end }}
 	{{ else }}
 		{{ if not .Table.NoCreate }}Create({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Table.Title }}) error{{ end }}
 		{{ if not .Table.NoUpdate }}Update({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Table.Title }}) error{{ end }}
 		{{ if not .Table.NoUpdate }}UpdatePartial({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Table.Title }}Partial) error{{ end }}
+		Upsert({{ if .Table.Audit }}userID int, {{ end }}data []*{{ .Table.Title }}) error
 		{{ if not .Table.NoDelete }}Delete({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Table.Title }}) error{{ end }}
 	{{- end }}
 	

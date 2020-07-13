@@ -35,6 +35,10 @@ func (r TagRepo) Delete(data *codegen.Tag) error {
 	panic("not implemented")
 }
 
+func (r TagRepo) Upsert(data []*codegen.Tag) error {
+	panic("not implemented")
+}
+
 func (r TagRepo) OneByID(id int) (*codegen.Tag, error) {
 	panic("not implemented")
 }

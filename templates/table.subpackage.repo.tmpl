@@ -21,6 +21,7 @@ func New{{ $table.Title }}Repo(conn *sql.DB) {{ .Conf.RootPackage }}.{{ $table.T
 	{{ if not .Table.NoCreate }}func (r {{ $table.Title }}Repo) Create({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error { panic("not implemented") }{{ end }}
 	{{ if not .Table.NoUpdate }}func (r {{ $table.Title }}Repo) Update({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error { panic("not implemented") }{{ end }}
 	{{ if not .Table.NoUpdate }}func (r {{ $table.Title }}Repo) UpdatePartial({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}Partial) error { panic("not implemented") }{{ end }}
+	{{ if not .Table.NoUpsert }}func (r {{ $table.Title }}Repo) Upsert({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data []*{{ .Table.Title }}) error { panic("not implemented") }{{ end }}
 	{{ if not .Table.NoDelete }}func (r {{ $table.Title }}Repo) Delete({{ if .Table.Audit }}userID int, {{ end }}{{ $schema.MTVarName }} {{ $schema.MTVarType }}, data *{{ .Table.Title }}) error { panic("not implemented") }{{ end }}
 {{ else }}
 	{{ if not $table.NoCreate -}}
@@ -41,6 +42,8 @@ func New{{ $table.Title }}Repo(conn *sql.DB) {{ .Conf.RootPackage }}.{{ $table.T
 		panic("not implemented")
 	}
 	{{ end }}
+
+	{{ if not .Table.NoUpsert }}func (r {{ $table.Title }}Repo) Upsert({{ if .Table.Audit }}userID int, {{ end }}data []*{{ .Table.Title }}) error { panic("not implemented") }{{ end }}
 		
 	{{ if not $table.NoDelete -}}
 	func (r {{ $table.Title }}Repo) Delete({{ if .Table.Audit }}userID int, {{ end }}data *{{ .Conf.RootPackage }}.{{ $table.Title }}) error {
