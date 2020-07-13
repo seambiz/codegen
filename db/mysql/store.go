@@ -47,12 +47,6 @@ func (s *Store) SQL(stmt string) *Store {
 	return s
 }
 
-func (s *Store) Select(columns string) *Store {
-	s.stmt.Append("SELECT", columns)
-	s.selectCalled = true
-	return s
-}
-
 // QueryxInto uses sqlx.Select for raw SQL querying. Mapping uses tag (db) or field name.
 func (s *Store) QueryxInto(dest interface{}, args ...interface{}) error {
 	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")

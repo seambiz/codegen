@@ -39,13 +39,10 @@ func NewStore(conn Execer) *Store {
 }
 
 func (s *Store) SQL(stmt string) *Store {
+	if s.stmt == nil {
+		s.stmt = sdb.NewSQLStatement()
+	}
 	s.stmt.Append(stmt)
-	return s
-}
-
-func (s *Store) Select(columns string) *Store {
-	s.stmt.Append("SELECT", columns)
-	s.selectCalled = true
 	return s
 }
 
