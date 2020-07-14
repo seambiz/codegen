@@ -54,6 +54,7 @@ func BenchmarkPetUpdate(b *testing.B) {
 		}
 	})
 }
+
 func BenchmarkPetDelete(b *testing.B) {
 	b.ReportAllocs()
 

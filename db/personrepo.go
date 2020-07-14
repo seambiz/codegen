@@ -19,6 +19,7 @@ func NewPersonRepo(conn *sql.DB) *PersonRepo {
 		conn: conn,
 	}
 }
+
 func (r PersonRepo) Create(data *codegen.Person) error {
 	panic("not implemented")
 }

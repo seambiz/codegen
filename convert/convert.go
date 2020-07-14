@@ -143,7 +143,6 @@ func ToFloat64(b []byte) float64 {
 		return 0
 	}
 	return f
-
 }
 
 // ToTime conversion from sql.RawBytes

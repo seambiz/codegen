@@ -180,6 +180,7 @@ func (st *StatisticsStore) SetBits(colSet *big.Int) *StatisticsStore {
 	st.colSet = colSet
 	return st
 }
+
 func (st *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaStatistics(&st.Statistics, row, withJoin, colSet, col)
 }

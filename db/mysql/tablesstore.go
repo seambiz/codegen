@@ -201,6 +201,7 @@ func (ta *TablesStore) SetBits(colSet *big.Int) *TablesStore {
 	ta.colSet = colSet
 	return ta
 }
+
 func (ta *Tables) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaTables(&ta.Tables, row, withJoin, colSet, col)
 }

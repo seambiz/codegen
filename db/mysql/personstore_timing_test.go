@@ -54,6 +54,7 @@ func BenchmarkPersonUpdate(b *testing.B) {
 		}
 	})
 }
+
 func BenchmarkPersonDelete(b *testing.B) {
 	b.ReportAllocs()
 

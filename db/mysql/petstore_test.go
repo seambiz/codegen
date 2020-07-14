@@ -143,6 +143,7 @@ func TestPetDelete(t *testing.T) {
 		t.Errorf("a single row should be affected: %d", aff)
 	}
 }
+
 func TestPetDeleteSlice(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {

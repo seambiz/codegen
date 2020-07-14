@@ -164,6 +164,7 @@ func (ke *KeyColumnUsageStore) SetBits(colSet *big.Int) *KeyColumnUsageStore {
 	ke.colSet = colSet
 	return ke
 }
+
 func (ke *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaKeyColumnUsage(&ke.KeyColumnUsage, row, withJoin, colSet, col)
 }

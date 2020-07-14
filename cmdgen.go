@@ -515,7 +515,9 @@ func generateCode(conf *Config) {
 		}
 	}
 
-	execCommand("goimports -w " + conf.DirOut)
+	if conf.GoFmtCmd != "" {
+		execCommand(conf.GoFmtCmd + " " + conf.DirOut)
+	}
 	if conf.LintPackage != "" {
 		execCommand("go vet " + conf.LintPackage)
 	}

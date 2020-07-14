@@ -4,6 +4,7 @@ package codegen
 type Config struct {
 	MetaLinter         string   `json:",omitempty"`
 	LintPackage        string   `json:",omitempty"`
+	GoFmtCmd           string   `json:",omitempty"`
 	Package            string   `json:",omitempty"`
 	RootPackage        string   `json:",omitempty"`
 	RootPackageInclude string   `json:",omitempty"`

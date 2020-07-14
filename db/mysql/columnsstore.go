@@ -200,6 +200,7 @@ func (co *ColumnsStore) SetBits(colSet *big.Int) *ColumnsStore {
 	co.colSet = colSet
 	return co
 }
+
 func (co *Columns) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindInformationSchemaColumns(&co.Columns, row, withJoin, colSet, col)
 }

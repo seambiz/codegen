@@ -125,6 +125,7 @@ func TestPersonPetsEagerFetch(t *testing.T) {
 		t.Errorf("should have 2 associated rows: %v", data)
 	}
 }
+
 func TestPersonDelete(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
@@ -148,6 +149,7 @@ func TestPersonDelete(t *testing.T) {
 		t.Errorf("a single row should be affected: %d", aff)
 	}
 }
+
 func TestPersonDeleteSlice(t *testing.T) {
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {

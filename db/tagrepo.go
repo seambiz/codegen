@@ -19,6 +19,7 @@ func NewTagRepo(conn *sql.DB) *TagRepo {
 		conn: conn,
 	}
 }
+
 func (r TagRepo) Create(data *codegen.Tag) error {
 	panic("not implemented")
 }

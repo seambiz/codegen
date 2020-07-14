@@ -125,6 +125,7 @@ func (pe *PersonStore) SetBits(colSet *big.Int) *PersonStore {
 	pe.colSet = colSet
 	return pe
 }
+
 func (pe *Person) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkPerson(&pe.Person, row, withJoin, colSet, col)
 }

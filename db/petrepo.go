@@ -19,6 +19,7 @@ func NewPetRepo(conn *sql.DB) *PetRepo {
 		conn: conn,
 	}
 }
+
 func (r PetRepo) Create(data *codegen.Pet) error {
 	panic("not implemented")
 }

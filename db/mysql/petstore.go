@@ -133,6 +133,7 @@ func (pe *PetStore) SetBits(colSet *big.Int) *PetStore {
 	pe.colSet = colSet
 	return pe
 }
+
 func (pe *Pet) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	BindFakeBenchmarkPet(&pe.Pet, row, withJoin, colSet, col)
 }

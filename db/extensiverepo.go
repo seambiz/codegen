@@ -19,6 +19,7 @@ func NewExtensiveRepo(conn *sql.DB) *ExtensiveRepo {
 		conn: conn,
 	}
 }
+
 func (r ExtensiveRepo) Create(data *codegen.Extensive) error {
 	panic("not implemented")
 }
@@ -34,6 +35,7 @@ func (r ExtensiveRepo) UpdatePartial(data *codegen.ExtensivePartial) error {
 func (r ExtensiveRepo) Delete(data *codegen.Extensive) error {
 	panic("not implemented")
 }
+
 func (r ExtensiveRepo) Upsert(data []*codegen.Extensive) error {
 	panic("not implemented")
 }

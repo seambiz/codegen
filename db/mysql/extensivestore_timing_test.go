@@ -54,6 +54,7 @@ func BenchmarkExtensiveUpdate(b *testing.B) {
 		}
 	})
 }
+
 func BenchmarkExtensiveDelete(b *testing.B) {
 	b.ReportAllocs()
 

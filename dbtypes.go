@@ -191,82 +191,102 @@ func (p *ColumnsPartial) SetTableCatalog(param string) {
 	p.TableCatalog = param
 	p.Touched.SetBit(&p.Touched, Columns_TableCatalog, 1)
 }
+
 func (p *ColumnsPartial) SetTableSchema(param string) {
 	p.TableSchema = param
 	p.Touched.SetBit(&p.Touched, Columns_TableSchema, 1)
 }
+
 func (p *ColumnsPartial) SetTableName(param string) {
 	p.TableName = param
 	p.Touched.SetBit(&p.Touched, Columns_TableName, 1)
 }
+
 func (p *ColumnsPartial) SetColumnName(param string) {
 	p.ColumnName = param
 	p.Touched.SetBit(&p.Touched, Columns_ColumnName, 1)
 }
+
 func (p *ColumnsPartial) SetOrdinalPosition(param uint64) {
 	p.OrdinalPosition = param
 	p.Touched.SetBit(&p.Touched, Columns_OrdinalPosition, 1)
 }
+
 func (p *ColumnsPartial) SetColumnDefault(param *string) {
 	p.ColumnDefault = param
 	p.Touched.SetBit(&p.Touched, Columns_ColumnDefault, 1)
 }
+
 func (p *ColumnsPartial) SetIsNullable(param string) {
 	p.IsNullable = param
 	p.Touched.SetBit(&p.Touched, Columns_IsNullable, 1)
 }
+
 func (p *ColumnsPartial) SetDataType(param string) {
 	p.DataType = param
 	p.Touched.SetBit(&p.Touched, Columns_DataType, 1)
 }
+
 func (p *ColumnsPartial) SetCharacterMaximumLength(param *uint64) {
 	p.CharacterMaximumLength = param
 	p.Touched.SetBit(&p.Touched, Columns_CharacterMaximumLength, 1)
 }
+
 func (p *ColumnsPartial) SetCharacterOctetLength(param *uint64) {
 	p.CharacterOctetLength = param
 	p.Touched.SetBit(&p.Touched, Columns_CharacterOctetLength, 1)
 }
+
 func (p *ColumnsPartial) SetNumericPrecision(param *uint64) {
 	p.NumericPrecision = param
 	p.Touched.SetBit(&p.Touched, Columns_NumericPrecision, 1)
 }
+
 func (p *ColumnsPartial) SetNumericScale(param *uint64) {
 	p.NumericScale = param
 	p.Touched.SetBit(&p.Touched, Columns_NumericScale, 1)
 }
+
 func (p *ColumnsPartial) SetDatetimePrecision(param *uint64) {
 	p.DatetimePrecision = param
 	p.Touched.SetBit(&p.Touched, Columns_DatetimePrecision, 1)
 }
+
 func (p *ColumnsPartial) SetCharacterSetName(param *string) {
 	p.CharacterSetName = param
 	p.Touched.SetBit(&p.Touched, Columns_CharacterSetName, 1)
 }
+
 func (p *ColumnsPartial) SetCollationName(param *string) {
 	p.CollationName = param
 	p.Touched.SetBit(&p.Touched, Columns_CollationName, 1)
 }
+
 func (p *ColumnsPartial) SetColumnType(param string) {
 	p.ColumnType = param
 	p.Touched.SetBit(&p.Touched, Columns_ColumnType, 1)
 }
+
 func (p *ColumnsPartial) SetColumnKey(param string) {
 	p.ColumnKey = param
 	p.Touched.SetBit(&p.Touched, Columns_ColumnKey, 1)
 }
+
 func (p *ColumnsPartial) SetExtra(param string) {
 	p.Extra = param
 	p.Touched.SetBit(&p.Touched, Columns_Extra, 1)
 }
+
 func (p *ColumnsPartial) SetPrivileges(param string) {
 	p.Privileges = param
 	p.Touched.SetBit(&p.Touched, Columns_Privileges, 1)
 }
+
 func (p *ColumnsPartial) SetColumnComment(param string) {
 	p.ColumnComment = param
 	p.Touched.SetBit(&p.Touched, Columns_ColumnComment, 1)
 }
+
 func (p *ColumnsPartial) SetGenerationExpression(param string) {
 	p.GenerationExpression = param
 	p.Touched.SetBit(&p.Touched, Columns_GenerationExpression, 1)
@@ -282,46 +302,57 @@ func (p *KeyColumnUsagePartial) SetConstraintCatalog(param string) {
 	p.ConstraintCatalog = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ConstraintCatalog, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetConstraintSchema(param string) {
 	p.ConstraintSchema = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ConstraintSchema, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetConstraintName(param string) {
 	p.ConstraintName = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ConstraintName, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetTableCatalog(param string) {
 	p.TableCatalog = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_TableCatalog, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetTableSchema(param string) {
 	p.TableSchema = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_TableSchema, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetTableName(param string) {
 	p.TableName = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_TableName, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetColumnName(param string) {
 	p.ColumnName = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ColumnName, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetOrdinalPosition(param int64) {
 	p.OrdinalPosition = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_OrdinalPosition, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetPositionInUniqueConstraint(param *int64) {
 	p.PositionInUniqueConstraint = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_PositionInUniqueConstraint, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetReferencedTableSchema(param *string) {
 	p.ReferencedTableSchema = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ReferencedTableSchema, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetReferencedTableName(param *string) {
 	p.ReferencedTableName = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ReferencedTableName, 1)
 }
+
 func (p *KeyColumnUsagePartial) SetReferencedColumnName(param *string) {
 	p.ReferencedColumnName = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ReferencedColumnName, 1)
@@ -337,62 +368,77 @@ func (p *StatisticsPartial) SetTableCatalog(param string) {
 	p.TableCatalog = param
 	p.Touched.SetBit(&p.Touched, Statistics_TableCatalog, 1)
 }
+
 func (p *StatisticsPartial) SetTableSchema(param string) {
 	p.TableSchema = param
 	p.Touched.SetBit(&p.Touched, Statistics_TableSchema, 1)
 }
+
 func (p *StatisticsPartial) SetTableName(param string) {
 	p.TableName = param
 	p.Touched.SetBit(&p.Touched, Statistics_TableName, 1)
 }
+
 func (p *StatisticsPartial) SetNonUnique(param int64) {
 	p.NonUnique = param
 	p.Touched.SetBit(&p.Touched, Statistics_NonUnique, 1)
 }
+
 func (p *StatisticsPartial) SetIndexSchema(param string) {
 	p.IndexSchema = param
 	p.Touched.SetBit(&p.Touched, Statistics_IndexSchema, 1)
 }
+
 func (p *StatisticsPartial) SetIndexName(param string) {
 	p.IndexName = param
 	p.Touched.SetBit(&p.Touched, Statistics_IndexName, 1)
 }
+
 func (p *StatisticsPartial) SetSeqInIndex(param int64) {
 	p.SeqInIndex = param
 	p.Touched.SetBit(&p.Touched, Statistics_SeqInIndex, 1)
 }
+
 func (p *StatisticsPartial) SetColumnName(param string) {
 	p.ColumnName = param
 	p.Touched.SetBit(&p.Touched, Statistics_ColumnName, 1)
 }
+
 func (p *StatisticsPartial) SetCollation(param *string) {
 	p.Collation = param
 	p.Touched.SetBit(&p.Touched, Statistics_Collation, 1)
 }
+
 func (p *StatisticsPartial) SetCardinality(param *int64) {
 	p.Cardinality = param
 	p.Touched.SetBit(&p.Touched, Statistics_Cardinality, 1)
 }
+
 func (p *StatisticsPartial) SetSubPart(param *int64) {
 	p.SubPart = param
 	p.Touched.SetBit(&p.Touched, Statistics_SubPart, 1)
 }
+
 func (p *StatisticsPartial) SetPacked(param *string) {
 	p.Packed = param
 	p.Touched.SetBit(&p.Touched, Statistics_Packed, 1)
 }
+
 func (p *StatisticsPartial) SetNullable(param string) {
 	p.Nullable = param
 	p.Touched.SetBit(&p.Touched, Statistics_Nullable, 1)
 }
+
 func (p *StatisticsPartial) SetIndexType(param string) {
 	p.IndexType = param
 	p.Touched.SetBit(&p.Touched, Statistics_IndexType, 1)
 }
+
 func (p *StatisticsPartial) SetComment(param *string) {
 	p.Comment = param
 	p.Touched.SetBit(&p.Touched, Statistics_Comment, 1)
 }
+
 func (p *StatisticsPartial) SetIndexComment(param string) {
 	p.IndexComment = param
 	p.Touched.SetBit(&p.Touched, Statistics_IndexComment, 1)
@@ -408,82 +454,102 @@ func (p *TablesPartial) SetTableCatalog(param string) {
 	p.TableCatalog = param
 	p.Touched.SetBit(&p.Touched, Tables_TableCatalog, 1)
 }
+
 func (p *TablesPartial) SetTableSchema(param string) {
 	p.TableSchema = param
 	p.Touched.SetBit(&p.Touched, Tables_TableSchema, 1)
 }
+
 func (p *TablesPartial) SetTableName(param string) {
 	p.TableName = param
 	p.Touched.SetBit(&p.Touched, Tables_TableName, 1)
 }
+
 func (p *TablesPartial) SetTableType(param string) {
 	p.TableType = param
 	p.Touched.SetBit(&p.Touched, Tables_TableType, 1)
 }
+
 func (p *TablesPartial) SetEngine(param *string) {
 	p.Engine = param
 	p.Touched.SetBit(&p.Touched, Tables_Engine, 1)
 }
+
 func (p *TablesPartial) SetVersion(param *uint64) {
 	p.Version = param
 	p.Touched.SetBit(&p.Touched, Tables_Version, 1)
 }
+
 func (p *TablesPartial) SetRowFormat(param *string) {
 	p.RowFormat = param
 	p.Touched.SetBit(&p.Touched, Tables_RowFormat, 1)
 }
+
 func (p *TablesPartial) SetTableRows(param *uint64) {
 	p.TableRows = param
 	p.Touched.SetBit(&p.Touched, Tables_TableRows, 1)
 }
+
 func (p *TablesPartial) SetAvgRowLength(param *uint64) {
 	p.AvgRowLength = param
 	p.Touched.SetBit(&p.Touched, Tables_AvgRowLength, 1)
 }
+
 func (p *TablesPartial) SetDataLength(param *uint64) {
 	p.DataLength = param
 	p.Touched.SetBit(&p.Touched, Tables_DataLength, 1)
 }
+
 func (p *TablesPartial) SetMaxDataLength(param *uint64) {
 	p.MaxDataLength = param
 	p.Touched.SetBit(&p.Touched, Tables_MaxDataLength, 1)
 }
+
 func (p *TablesPartial) SetIndexLength(param *uint64) {
 	p.IndexLength = param
 	p.Touched.SetBit(&p.Touched, Tables_IndexLength, 1)
 }
+
 func (p *TablesPartial) SetDataFree(param *uint64) {
 	p.DataFree = param
 	p.Touched.SetBit(&p.Touched, Tables_DataFree, 1)
 }
+
 func (p *TablesPartial) SetAutoIncrement(param *uint64) {
 	p.AutoIncrement = param
 	p.Touched.SetBit(&p.Touched, Tables_AutoIncrement, 1)
 }
+
 func (p *TablesPartial) SetCreateTime(param *time.Time) {
 	p.CreateTime = param
 	p.Touched.SetBit(&p.Touched, Tables_CreateTime, 1)
 }
+
 func (p *TablesPartial) SetUpdateTime(param *time.Time) {
 	p.UpdateTime = param
 	p.Touched.SetBit(&p.Touched, Tables_UpdateTime, 1)
 }
+
 func (p *TablesPartial) SetCheckTime(param *time.Time) {
 	p.CheckTime = param
 	p.Touched.SetBit(&p.Touched, Tables_CheckTime, 1)
 }
+
 func (p *TablesPartial) SetTableCollation(param *string) {
 	p.TableCollation = param
 	p.Touched.SetBit(&p.Touched, Tables_TableCollation, 1)
 }
+
 func (p *TablesPartial) SetChecksum(param *uint64) {
 	p.Checksum = param
 	p.Touched.SetBit(&p.Touched, Tables_Checksum, 1)
 }
+
 func (p *TablesPartial) SetCreateOptions(param *string) {
 	p.CreateOptions = param
 	p.Touched.SetBit(&p.Touched, Tables_CreateOptions, 1)
 }
+
 func (p *TablesPartial) SetTableComment(param string) {
 	p.TableComment = param
 	p.Touched.SetBit(&p.Touched, Tables_TableComment, 1)
@@ -499,6 +565,7 @@ func (p *PersonPartial) SetID(param int) {
 	p.ID = param
 	p.Touched.SetBit(&p.Touched, Person_ID, 1)
 }
+
 func (p *PersonPartial) SetName(param string) {
 	p.Name = param
 	p.Touched.SetBit(&p.Touched, Person_Name, 1)
@@ -514,6 +581,7 @@ func (p *TagPartial) SetID(param int) {
 	p.ID = param
 	p.Touched.SetBit(&p.Touched, Tag_ID, 1)
 }
+
 func (p *TagPartial) SetName(param string) {
 	p.Name = param
 	p.Touched.SetBit(&p.Touched, Tag_Name, 1)
@@ -529,14 +597,17 @@ func (p *PetPartial) SetID(param int) {
 	p.ID = param
 	p.Touched.SetBit(&p.Touched, Pet_ID, 1)
 }
+
 func (p *PetPartial) SetPersonID(param int) {
 	p.PersonID = param
 	p.Touched.SetBit(&p.Touched, Pet_PersonID, 1)
 }
+
 func (p *PetPartial) SetTagID(param int) {
 	p.TagID = param
 	p.Touched.SetBit(&p.Touched, Pet_TagID, 1)
 }
+
 func (p *PetPartial) SetSpecies(param string) {
 	p.Species = param
 	p.Touched.SetBit(&p.Touched, Pet_Species, 1)
@@ -552,234 +623,292 @@ func (p *ExtensivePartial) SetID(param int) {
 	p.ID = param
 	p.Touched.SetBit(&p.Touched, Extensive_ID, 1)
 }
+
 func (p *ExtensivePartial) SetTinyint(param int) {
 	p.Tinyint = param
 	p.Touched.SetBit(&p.Touched, Extensive_Tinyint, 1)
 }
+
 func (p *ExtensivePartial) SetTinyintUnsigned(param uint) {
 	p.TinyintUnsigned = param
 	p.Touched.SetBit(&p.Touched, Extensive_TinyintUnsigned, 1)
 }
+
 func (p *ExtensivePartial) SetTinyintNull(param *int) {
 	p.TinyintNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_TinyintNull, 1)
 }
+
 func (p *ExtensivePartial) SetSmallint(param int) {
 	p.Smallint = param
 	p.Touched.SetBit(&p.Touched, Extensive_Smallint, 1)
 }
+
 func (p *ExtensivePartial) SetSmallintUnsigned(param uint) {
 	p.SmallintUnsigned = param
 	p.Touched.SetBit(&p.Touched, Extensive_SmallintUnsigned, 1)
 }
+
 func (p *ExtensivePartial) SetSmallintNull(param *int) {
 	p.SmallintNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_SmallintNull, 1)
 }
+
 func (p *ExtensivePartial) SetInt(param int) {
 	p.Int = param
 	p.Touched.SetBit(&p.Touched, Extensive_Int, 1)
 }
+
 func (p *ExtensivePartial) SetIntNull(param *int) {
 	p.IntNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_IntNull, 1)
 }
+
 func (p *ExtensivePartial) SetIntUnsigned(param uint) {
 	p.IntUnsigned = param
 	p.Touched.SetBit(&p.Touched, Extensive_IntUnsigned, 1)
 }
+
 func (p *ExtensivePartial) SetBigint(param int64) {
 	p.Bigint = param
 	p.Touched.SetBit(&p.Touched, Extensive_Bigint, 1)
 }
+
 func (p *ExtensivePartial) SetBigintNull(param *int64) {
 	p.BigintNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_BigintNull, 1)
 }
+
 func (p *ExtensivePartial) SetBigintUnsigned(param uint64) {
 	p.BigintUnsigned = param
 	p.Touched.SetBit(&p.Touched, Extensive_BigintUnsigned, 1)
 }
+
 func (p *ExtensivePartial) SetVarchar(param string) {
 	p.Varchar = param
 	p.Touched.SetBit(&p.Touched, Extensive_Varchar, 1)
 }
+
 func (p *ExtensivePartial) SetVarcharNull(param *string) {
 	p.VarcharNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_VarcharNull, 1)
 }
+
 func (p *ExtensivePartial) SetFloat(param float32) {
 	p.Float = param
 	p.Touched.SetBit(&p.Touched, Extensive_Float, 1)
 }
+
 func (p *ExtensivePartial) SetFloatNull(param *float32) {
 	p.FloatNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_FloatNull, 1)
 }
+
 func (p *ExtensivePartial) SetDouble(param float64) {
 	p.Double = param
 	p.Touched.SetBit(&p.Touched, Extensive_Double, 1)
 }
+
 func (p *ExtensivePartial) SetDoubleNull(param *float64) {
 	p.DoubleNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_DoubleNull, 1)
 }
+
 func (p *ExtensivePartial) SetDecimal(param float64) {
 	p.Decimal = param
 	p.Touched.SetBit(&p.Touched, Extensive_Decimal, 1)
 }
+
 func (p *ExtensivePartial) SetDecimalNull(param *float64) {
 	p.DecimalNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_DecimalNull, 1)
 }
+
 func (p *ExtensivePartial) SetNumeric(param float64) {
 	p.Numeric = param
 	p.Touched.SetBit(&p.Touched, Extensive_Numeric, 1)
 }
+
 func (p *ExtensivePartial) SetNumericNull(param *float64) {
 	p.NumericNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_NumericNull, 1)
 }
+
 func (p *ExtensivePartial) SetCreatedAt(param uint) {
 	p.CreatedAt = param
 	p.Touched.SetBit(&p.Touched, Extensive_CreatedAt, 1)
 }
+
 func (p *ExtensivePartial) SetUpdatedAt(param uint) {
 	p.UpdatedAt = param
 	p.Touched.SetBit(&p.Touched, Extensive_UpdatedAt, 1)
 }
+
 func (p *ExtensivePartial) SetTinyint1(param bool) {
 	p.Tinyint1 = param
 	p.Touched.SetBit(&p.Touched, Extensive_Tinyint1, 1)
 }
+
 func (p *ExtensivePartial) SetTinyint1Null(param *bool) {
 	p.Tinyint1Null = param
 	p.Touched.SetBit(&p.Touched, Extensive_Tinyint1Null, 1)
 }
+
 func (p *ExtensivePartial) SetYear(param int) {
 	p.Year = param
 	p.Touched.SetBit(&p.Touched, Extensive_Year, 1)
 }
+
 func (p *ExtensivePartial) SetYearNull(param *int) {
 	p.YearNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_YearNull, 1)
 }
+
 func (p *ExtensivePartial) SetDate(param time.Time) {
 	p.Date = param
 	p.Touched.SetBit(&p.Touched, Extensive_Date, 1)
 }
+
 func (p *ExtensivePartial) SetDateNull(param *time.Time) {
 	p.DateNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_DateNull, 1)
 }
+
 func (p *ExtensivePartial) SetTime(param time.Time) {
 	p.Time = param
 	p.Touched.SetBit(&p.Touched, Extensive_Time, 1)
 }
+
 func (p *ExtensivePartial) SetTimeNull(param *time.Time) {
 	p.TimeNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_TimeNull, 1)
 }
+
 func (p *ExtensivePartial) SetDatetime(param time.Time) {
 	p.Datetime = param
 	p.Touched.SetBit(&p.Touched, Extensive_Datetime, 1)
 }
+
 func (p *ExtensivePartial) SetDatetimeNull(param *time.Time) {
 	p.DatetimeNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_DatetimeNull, 1)
 }
+
 func (p *ExtensivePartial) SetTimestamp(param time.Time) {
 	p.Timestamp = param
 	p.Touched.SetBit(&p.Touched, Extensive_Timestamp, 1)
 }
+
 func (p *ExtensivePartial) SetTimestampNull(param *time.Time) {
 	p.TimestampNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_TimestampNull, 1)
 }
+
 func (p *ExtensivePartial) SetChar(param string) {
 	p.Char = param
 	p.Touched.SetBit(&p.Touched, Extensive_Char, 1)
 }
+
 func (p *ExtensivePartial) SetCharNull(param *string) {
 	p.CharNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_CharNull, 1)
 }
+
 func (p *ExtensivePartial) SetTinytext(param string) {
 	p.Tinytext = param
 	p.Touched.SetBit(&p.Touched, Extensive_Tinytext, 1)
 }
+
 func (p *ExtensivePartial) SetTinytextNull(param *string) {
 	p.TinytextNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_TinytextNull, 1)
 }
+
 func (p *ExtensivePartial) SetText(param string) {
 	p.Text = param
 	p.Touched.SetBit(&p.Touched, Extensive_Text, 1)
 }
+
 func (p *ExtensivePartial) SetTextNull(param *string) {
 	p.TextNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_TextNull, 1)
 }
+
 func (p *ExtensivePartial) SetMediumtext(param string) {
 	p.Mediumtext = param
 	p.Touched.SetBit(&p.Touched, Extensive_Mediumtext, 1)
 }
+
 func (p *ExtensivePartial) SetMediumtextNull(param *string) {
 	p.MediumtextNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_MediumtextNull, 1)
 }
+
 func (p *ExtensivePartial) SetLongtext(param string) {
 	p.Longtext = param
 	p.Touched.SetBit(&p.Touched, Extensive_Longtext, 1)
 }
+
 func (p *ExtensivePartial) SetLongtextNull(param *string) {
 	p.LongtextNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_LongtextNull, 1)
 }
+
 func (p *ExtensivePartial) SetBinary(param []byte) {
 	p.Binary = param
 	p.Touched.SetBit(&p.Touched, Extensive_Binary, 1)
 }
+
 func (p *ExtensivePartial) SetBinaryNull(param *[]byte) {
 	p.BinaryNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_BinaryNull, 1)
 }
+
 func (p *ExtensivePartial) SetVarbinary(param []byte) {
 	p.Varbinary = param
 	p.Touched.SetBit(&p.Touched, Extensive_Varbinary, 1)
 }
+
 func (p *ExtensivePartial) SetVarbinaryNull(param *[]byte) {
 	p.VarbinaryNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_VarbinaryNull, 1)
 }
+
 func (p *ExtensivePartial) SetTinyblob(param []byte) {
 	p.Tinyblob = param
 	p.Touched.SetBit(&p.Touched, Extensive_Tinyblob, 1)
 }
+
 func (p *ExtensivePartial) SetTinyblobNull(param *[]byte) {
 	p.TinyblobNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_TinyblobNull, 1)
 }
+
 func (p *ExtensivePartial) SetBlob(param []byte) {
 	p.Blob = param
 	p.Touched.SetBit(&p.Touched, Extensive_Blob, 1)
 }
+
 func (p *ExtensivePartial) SetBlobNull(param *[]byte) {
 	p.BlobNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_BlobNull, 1)
 }
+
 func (p *ExtensivePartial) SetMediumblob(param []byte) {
 	p.Mediumblob = param
 	p.Touched.SetBit(&p.Touched, Extensive_Mediumblob, 1)
 }
+
 func (p *ExtensivePartial) SetMediumblobNull(param *[]byte) {
 	p.MediumblobNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_MediumblobNull, 1)
 }
+
 func (p *ExtensivePartial) SetLongblob(param []byte) {
 	p.Longblob = param
 	p.Touched.SetBit(&p.Touched, Extensive_Longblob, 1)
 }
+
 func (p *ExtensivePartial) SetLongblobNull(param *[]byte) {
 	p.LongblobNull = param
 	p.Touched.SetBit(&p.Touched, Extensive_LongblobNull, 1)

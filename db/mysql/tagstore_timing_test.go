@@ -54,6 +54,7 @@ func BenchmarkTagUpdate(b *testing.B) {
 		}
 	})
 }
+
 func BenchmarkTagDelete(b *testing.B) {
 	b.ReportAllocs()
 
