@@ -87,7 +87,7 @@ func (s *Store) Fields(prefix string, fieldFunc func(*big.Int) []string) *Store 
 // queryBegin is a helper for other querying funcs.
 func (s *Store) queryBegin(stmt string, args ...interface{}) (*sql.Rows, []sql.RawBytes, []interface{}, error) {
 	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "Store.One").Str("stmt", stmt).Interface("args", args).Msg("sql")
+		log.Debug().Str("fn", "queryBegin").Str("stmt", stmt).Interface("args", args).Msg("sql")
 	}
 	rows, err := s.db.Query(stmt, args...)
 	if err != nil {

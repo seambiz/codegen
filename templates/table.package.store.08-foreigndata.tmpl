@@ -30,11 +30,14 @@
 {{ end }}
 */}}
 
-{{ if not $schema.IsMultiTenant }}
 {{ range $fk := .Table.ForeignKeys }}
 	{{ if not $fk.IsUnique }}
 		// EagerFetch {{ $fk.CustomName }} eagerly fetches N records from referenced table '{{ $fk.RefTable }}'.
 		func ({{ $table.StoreReceiver }}) EagerFetch{{ $fk.CustomName}}(data []*{{ $conf.RootPackage }}.{{ $table.Title }}) error {
+			if len(data) == 0 {
+				return nil
+			}
+			
 			where := sdb.NewSQLStatement()
 			where.AppendRaw("{{ index $fk.RefFields 0 }} IN (")
 			for i, d := range data {
@@ -61,5 +64,4 @@
 			return nil
 		}
 	{{ end }}
-{{ end }}
 {{ end }}
