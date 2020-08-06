@@ -613,9 +613,10 @@ func prepareSchemaConfig(conf *Config) {
 			// }
 			table.Title = prefix + varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(table.Name)
 			table.lower = lowerFirst(table.Title)
-			table.Initials = Initials(table.Name)
-			table.Initials += Initials(table.Name[1:])
-			table.Initials = strings.ToLower(table.Initials)
+			// table.Initials = Initials(table.Name)
+			// table.Initials += Initials(table.Name[1:])
+			// table.Initials = strings.ToLower(table.Initials)
+			table.Initials = "s"
 			table.Receiver = table.Initials + " *" + table.Title
 			table.store = table.Title + "Store"
 			table.StoreReceiver = table.Initials + " *" + table.store
