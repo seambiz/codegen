@@ -8,7 +8,7 @@ func ({{ $table.StoreReceiver }}) QueryCustom(stmt string, args ...interface{}) 
     data := &{{ $table.Title }}Slice{}
     err := {{ $table.Initials }}.queryCustom(data, dto, stmt, args...)
     if err != nil {
-        log.Error().Err(err).Msg("querycustom")
+        {{ $table.Initials }}.log.Error().Err(err).Msg("querycustom")
         return nil, err
     }
     retValues := make([]*{{ $conf.RootPackage }}.{{ $table.Title }}, len(data.data))

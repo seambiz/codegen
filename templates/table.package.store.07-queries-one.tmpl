@@ -7,7 +7,7 @@ func ({{ $table.StoreReceiver }}) One(args ...interface{}) (*{{ $conf.RootPackag
 
  	err := {{ $table.Initials }}.one(data, {{ $table.Initials }}.selectStatement(), args...)
 	if err != nil {
-        log.Error().Err(err).Msg("query one")
+        {{ $table.Initials }}.log.Error().Err(err).Msg("query one")
         return nil, err
 	}
 	return &data.{{ $table.Title }}, nil

@@ -47,12 +47,12 @@ func ({{ $table.StoreReceiver }}) Update(data *{{ $conf.RootPackage }}.{{ $table
     {{- range $f := $table.PkFields }}
 		args = append(args, data.{{ $f.Title }})
 	{{- end }}
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	if {{ $table.Initials }}.log.Debug().Enabled() {
+		{{ $table.Initials }}.log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
 	res, err := {{ $table.Initials }}.db.Exec(sql.Query(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		{{ $table.Initials }}.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()

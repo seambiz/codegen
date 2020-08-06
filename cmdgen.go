@@ -615,10 +615,10 @@ func prepareSchemaConfig(conf *Config) {
 			table.lower = lowerFirst(table.Title)
 			table.Initials = Initials(table.Name)
 			table.Initials += Initials(table.Name[1:])
-			table.Initials = strings.ToLower(table.Initials)
+			table.Initials = "s"
 			table.Receiver = table.Initials + " *" + table.Title
 			table.store = table.Title + "Store"
-			table.StoreReceiver = table.Initials + " *" + table.store
+			table.StoreReceiver = "s *" + table.store
 
 			fieldNames := make([]string, len(table.Fields))
 			for i := range table.Fields {

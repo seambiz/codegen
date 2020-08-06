@@ -18,8 +18,8 @@ func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.
 	{{- end -}}
     ")
 	
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Delete").Str("stmt", sql.String()).
+	if {{ $table.Initials }}.log.Debug().Enabled() {
+		{{ $table.Initials }}.log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Delete").Str("stmt", sql.String()).
         {{- zerologFields $table.PkFields "data" }}.Msg("sql")
     }
 	res, err := {{ $table.Initials }}.db.Exec(sql.Query(),
@@ -28,7 +28,7 @@ func ({{ $table.StoreReceiver }}) Delete(data *{{ $conf.RootPackage}}.{{ $table.
 	{{- end -}}
 	)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		{{ $table.Initials }}.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
@@ -56,12 +56,12 @@ func ({{ $table.StoreReceiver }}) DeleteSlice(data []*{{ $conf.RootPackage}}.{{ 
 		sql.AppendInt(data[i].{{ $tmp.Title }})
 	}
 	sql.Append(")")
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
+	if {{ $table.Initials }}.log.Debug().Enabled() {
+		{{ $table.Initials }}.log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
 	}
     res, err := {{ $table.Initials }}.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		{{ $table.Initials }}.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
@@ -82,13 +82,13 @@ func ({{ $table.StoreReceiver }}) DeleteByQuery(args ...interface{}) (int64, err
 	    return 0, errors.New("no where condition set")
 	}
 	sql.Append("WHERE", {{ $table.Initials }}.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	if {{ $table.Initials }}.log.Debug().Enabled() {
+		{{ $table.Initials }}.log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
 	
     res, err := {{ $table.Initials }}.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		{{ $table.Initials }}.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()

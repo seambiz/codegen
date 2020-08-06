@@ -9,12 +9,12 @@ func ({{ $table.StoreReceiver }}) Truncate() error {
 	{{- else }}
 		sql.Append("TRUNCATE {{ $schema.Name }}.{{ $table.Name }}")
 	{{- end }}
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Truncate").Str("stmt", sql.String()).Msg("sql")
+	if {{ $table.Initials }}.log.Debug().Enabled() {
+		{{ $table.Initials }}.log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Truncate").Str("stmt", sql.String()).Msg("sql")
 	}
 	_, err := {{ $table.Initials }}.db.Exec(sql.Query())
 	if err != nil {
-	    log.Error().Err(err).Msg("exec")
+	    {{ $table.Initials }}.log.Error().Err(err).Msg("exec")
 	}
 	return err
 }
