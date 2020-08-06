@@ -6,15 +6,16 @@ type {{ .Table.Title }}Store struct {
 
 // New{{ .Table.Title }}Store return DAO Store for {{ .Table.Title }}
 {{- if $schema.IsMultiTenant }}
-func New{{ .Table.Title }}Store({{ $schema.MTVarName }} {{ $schema.MTVarType }}, conn Execer) *{{ .Table.Title }}Store {
+func New{{ .Table.Title }}Store(ctx *kanban.BaseContext, {{ $schema.MTVarName }} {{ $schema.MTVarType }}, conn Execer) *{{ .Table.Title }}Store {
 {{- else }}
-func New{{ .Table.Title }}Store(conn Execer) *{{ .Table.Title }}Store {
+func New{{ .Table.Title }}Store(ctx *kanban.BaseContext, conn Execer) *{{ .Table.Title }}Store {
 {{- end }}
 	{{ .Table.Initials }} := &{{ .Table.Title }}Store{}
 	{{ .Table.Initials }}.db = conn
 	{{ .Table.Initials }}.withJoin = true
 	{{ .Table.Initials }}.joinType = sdb.LEFT
 	{{ .Table.Initials }}.batch = 1000
+	{{ .Table.Initials }}.log = ctx.Log
 	{{- if $schema.IsMultiTenant }}
 		{{ .Table.Initials }}.{{ $schema.MTVarName }} = {{ $schema.MTVarName }}
 	{{- end }}
