@@ -48,7 +48,7 @@
 			}
 			where.Append(")")
 
-			details, err := New{{ $fk.GenTableName }}Store({{ $table.Initials }}.db).Where(where.Query()).OrderBy("A.{{ index $fk.RefFields 0 }} DESC, A.{{ index $fk.Fields 0 }} DESC").Query()
+			details, err := New{{ $fk.GenTableName }}Store({{- if $schema.IsMultiTenant }}{{ $table.Initials }}.{{ $schema.MTVarName }}, {{ end }}{{ $table.Initials }}.db).Where(where.Query()).OrderBy("A.{{ index $fk.RefFields 0 }} DESC, A.{{ index $fk.Fields 0 }} DESC").Query()
 			if err != nil {
 				{{ $table.Initials }}.log.Error().Err(err).Msg("fetch details")
 				return err

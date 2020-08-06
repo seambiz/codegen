@@ -34,6 +34,7 @@ type Store struct {
 func NewStore(conn Execer, logger *zerolog.Logger) *Store {
 	s := &Store{}
 	s.db = conn
+	s.stmt = sdb.NewSQLStatement()
 	s.log = logger
 
 	return s
