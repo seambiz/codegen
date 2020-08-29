@@ -123,4 +123,4 @@ daogen:
 	codegen -config codegen.json gen
 
 install:
-	cd dist && cp codegen ~/gocode/bin/ && cd ..
+	cd dist && cp codegen ~/.bin/ && cd ..

@@ -175,6 +175,7 @@ func (s *Store) MapScan(dest map[string]sql.RawBytes, args ...interface{}) error
 // OneValue retrieves a single column from the first row as generic interface{}.
 // Specify the bindFunc to map the DB return value to the correct type.
 func (s *Store) OneValue(bindFunc func([]byte) interface{}, args ...interface{}) (interface{}, error) {
+	s.log.Debug().Str("fn", "Store.OneValue").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
 	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
 	if err != nil {
 		return false, err
@@ -385,6 +386,7 @@ func (s *Store) OneBind(dest interface{}, args ...interface{}) error {
 	}
 	direct := reflect.Indirect(value)
 
+	s.log.Debug().Str("fn", "Store.OneBind").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
 	rows, values, valuePointers, err := s.queryBegin(s.stmt.Query(), args...)
 	if err != nil {
 		return err
