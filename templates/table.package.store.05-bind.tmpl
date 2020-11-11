@@ -34,21 +34,20 @@ func Bind{{ .Schema.Title }}{{ $table.Title }}({{ $table.Initials }} *{{ .Conf.R
 		{{- if $fk.IsUnique }}
 			{{- if eq (len $fk.Fields) 1 -}}
 				{{- $tmp := (index $table.Fields (index $table.FieldMapping (index $fk.Fields 0))) -}}
-                {{- if $tmp.IsNullable }}
+                {{- if $tmp.IsNullable -}}
 					if {{ $table.Initials }}.{{ $tmp.Title }} != nil {
 				{{ end -}}
-			{{- end -}}
+			{{ end -}}
 
 			{{ lower $fk.CustomName }} := &{{ $fk.RefTableTitle }}{}
 			{{ $table.Initials }}.{{ $fk.CustomName }} = &{{ lower $fk.CustomName }}.{{ $fk.RefTableTitle }}
 			{{ lower $fk.CustomName }}.bind(row, false, colSet, col)
-			
-			{{- if eq (len $fk.Fields) 1 -}}
+			{{ if eq (len $fk.Fields) 1 -}}
 				{{- $tmp := (index $table.Fields (index $table.FieldMapping (index $fk.Fields 0))) -}}
-                {{- if $tmp.IsNullable }}
+                {{- if $tmp.IsNullable -}}
 					}
 				{{ end -}}
-			{{- end -}}
+			{{ end -}}
 		{{- end -}}
 	{{ end -}}
 {{ end }}
