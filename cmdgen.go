@@ -780,6 +780,12 @@ func writeBufferToCodgenFile(bb *GenBuffer, conf *Config, filename string) {
 	fileName := filepath.Join(conf.DirOut, fmt.Sprintf(conf.FilePattern, strings.ToLower(strings.Replace(filename, "_", "", -1))))
 	fmt.Println("Writing to", fileName)
 
+	if conf.GenTests == false {
+		if strings.Contains(fileName, "_test") {
+			return
+		}
+	}
+
 	// check if file exists and if it already has codegen comments
 	// if not, just write everything to the file
 	if _, err := os.Stat(fileName); os.IsNotExist(err) {

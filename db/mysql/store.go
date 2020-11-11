@@ -313,43 +313,37 @@ func (s *Store) rowToSlice(dest interface{}, values []sql.RawBytes, col *int) er
 }
 
 func (s *Store) mapRowToStruct(pStruct reflect.Value, values []sql.RawBytes, col *int) error {
-	baseType := pStruct.Type()
 
 	for i := 0; i < pStruct.NumField(); i++ {
 		field := pStruct.Field(i)
 
 		switch field.Kind() {
 		case reflect.Struct:
-			fType := baseType.Field(i)
-			if fType.Anonymous {
-				switch data := field.Interface().(type) {
-				case codegen.Columns:
-					BindInformationSchemaColumns(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.KeyColumnUsage:
-					BindInformationSchemaKeyColumnUsage(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Statistics:
-					BindInformationSchemaStatistics(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Tables:
-					BindInformationSchemaTables(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Person:
-					BindFakeBenchmarkPerson(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Tag:
-					BindFakeBenchmarkTag(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Pet:
-					BindFakeBenchmarkPet(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Extensive:
-					BindFakeBenchmarkExtensive(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				}
-			} else {
-				s.mapRowToStruct(field, values, col)
+			switch data := field.Interface().(type) {
+			case codegen.Columns:
+				BindInformationSchemaColumns(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
+			case codegen.KeyColumnUsage:
+				BindInformationSchemaKeyColumnUsage(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
+			case codegen.Statistics:
+				BindInformationSchemaStatistics(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
+			case codegen.Tables:
+				BindInformationSchemaTables(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
+			case codegen.Person:
+				BindFakeBenchmarkPerson(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
+			case codegen.Tag:
+				BindFakeBenchmarkTag(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
+			case codegen.Pet:
+				BindFakeBenchmarkPet(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
+			case codegen.Extensive:
+				BindFakeBenchmarkExtensive(&data, values, false, s.colSet, col)
+				field.Set(reflect.ValueOf(data))
 			}
 		case reflect.Slice:
 

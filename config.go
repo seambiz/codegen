@@ -14,6 +14,7 @@ type Config struct {
 	Templates          []string `json:",omitempty"`
 	TemplateFolder     string   `json:",omitempty"`
 	Prefix             string   `json:",omitempty"`
+	GenTests           bool     `json:",omitempty"`
 
 	Schemas  []*Schema `json:",omitempty"`
 	Database db

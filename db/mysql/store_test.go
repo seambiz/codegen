@@ -419,9 +419,7 @@ func TestScanToSlice(t *testing.T) {
 		var dest []struct {
 			codegen.Person
 
-			Pet struct {
-				codegen.Pet
-			}
+			Pet codegen.Pet
 			Tag struct {
 				codegen.Tag
 			}
@@ -435,15 +433,15 @@ func TestScanToSlice(t *testing.T) {
 		assert.Equal(t, 3, len(dest))
 
 		assert.Equal(t, person1, dest[0].Person)
-		assert.Equal(t, pet1, dest[0].Pet.Pet)
+		assert.Equal(t, pet1, dest[0].Pet)
 		assert.Equal(t, tag1, dest[0].Tag.Tag)
 
 		assert.Equal(t, person2, dest[1].Person)
-		assert.Equal(t, pet2, dest[1].Pet.Pet)
+		assert.Equal(t, pet2, dest[1].Pet)
 		assert.Equal(t, tag2, dest[1].Tag.Tag)
 
 		assert.Equal(t, person3, dest[2].Person)
-		assert.Equal(t, pet3, dest[2].Pet.Pet)
+		assert.Equal(t, pet3, dest[2].Pet)
 		assert.Equal(t, tag2, dest[2].Tag.Tag)
 	})
 
