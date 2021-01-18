@@ -134,11 +134,12 @@ type ForeignKey struct {
 
 // Field type
 type Field struct {
-	Name            string `json:",omitempty"`
-	DBType          string `json:",omitempty"`
-	IsNullable      bool   `json:",omitempty"`
-	IsAutoincrement bool   `json:",omitempty"`
-	IsPrimaryKey    bool   `json:",omitempty"`
+	Name            string   `json:",omitempty"`
+	DBType          string   `json:",omitempty"`
+	IsNullable      bool     `json:",omitempty"`
+	IsAutoincrement bool     `json:",omitempty"`
+	IsPrimaryKey    bool     `json:",omitempty"`
+	EnumValues      []string `json:",omitempty"`
 
 	// generated Contents
 	Alias       string `json:"-"`

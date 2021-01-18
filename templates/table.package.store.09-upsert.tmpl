@@ -35,8 +35,8 @@ func ({{ $table.StoreReceiver }}) Upsert(data ...*{{ $conf.RootPackage }}.{{ $ta
 		sql.Record(d)
 	}
 
-	if {{ $table.Initials }}.log.Debug().Enabled() {
-		{{ $table.Initials }}.log.Debug().Str("fn", "{{ $table.Title }}Upsert").Str("stmt", sql.String()).Msg("sql")
+	if {{ $table.Initials }}.log.Trace().Enabled() {
+		{{ $table.Initials }}.log.Trace().Str("fn", "{{ $table.Title }}Upsert").Str("stmt", sql.String()).Msg("sql")
 	}
 	res, err := {{ $table.Initials }}.db.Exec(sql.Query())
 	if err != nil {

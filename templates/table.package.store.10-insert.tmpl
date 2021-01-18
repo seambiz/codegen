@@ -31,8 +31,8 @@ func ({{ $table.StoreReceiver }}) Insert(data *{{ $conf.RootPackage }}.{{ $table
 	}
 	sql.Append(")")
 	
-	if {{ $table.Initials }}.log.Debug().Enabled() {
-	    {{ $table.Initials }}.log.Debug().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Insert").Str("stmt", sql.String()).
+	if {{ $table.Initials }}.log.Trace().Enabled() {
+	    {{ $table.Initials }}.log.Trace().Str("fn", "{{ $schema.Name }}.{{ $table.Name }}.Insert").Str("stmt", sql.String()).
 	    {{- zerologFields $table.Fields "data" -}}
 	    .Msg("sql")
     }

@@ -4,11 +4,14 @@ import (
 	"database/sql"
 	"database/sql/driver"
 	"fmt"
+	"strconv"
 	"testing"
+	"unsafe"
 
 	codegen "bitbucket.org/codegen"
 	"github.com/brianvoe/gofakeit/v5"
 	"github.com/rs/zerolog"
+	"github.com/seambiz/seambiz/sdb"
 	"github.com/seambiz/seambiz/stime"
 )
 
@@ -198,19 +201,6 @@ func BenchmarkEagerFetch(b *testing.B) {
 func BenchmarkQuery(b *testing.B) {
 	b.ReportAllocs()
 
-	newResultDSN("bench", QueryResult{
-		Query: &Query{
-			Cols: []string{"pet.id", "pet.person_id", "pet.tag_id", "pet.species", "person.id", "person.name", "tag.id", "tag.name"},
-			Vals: [][]driver.Value{},
-		},
-	})
-
-	db, err := sql.Open("mimic", "bench")
-	if err != nil {
-		b.Fatal(err)
-	}
-	defer db.Close()
-
 	testCases := []struct {
 		numRows int
 	}{
@@ -223,16 +213,45 @@ func BenchmarkQuery(b *testing.B) {
 
 	for _, testCase := range testCases {
 
+		newResultDSN("bench", QueryResult{
+			Query: &Query{
+				Cols: []string{"pet.id", "pet.person_id", "pet.tag_id", "pet.species", "person.id", "person.name", "tag.id", "tag.name"},
+				DBTypes: []string{
+					"INT8",
+					"INT8",
+					"INT8",
+					"VARCHAR",
+					"INT8",
+					"VARCHAR",
+					"INT8",
+					"VARCHAR",
+				},
+				Vals: [][]driver.Value{},
+			},
+		})
+
+		db, err := sql.Open("mimic", "bench")
+		if err != nil {
+			b.Fatal(err)
+		}
+		defer db.Close()
+
 		for i := 0; i < testCase.numRows; i++ {
-			addResultRowDSN("bench", []driver.Value{1, 2, 3, "cat", 4, "name", 5, "tag"})
+			addResultRowDSN("bench", []driver.Value{1, 2, 3, "cat" + strconv.Itoa(i), 4, "name" + strconv.Itoa(i), 5, "tag" + strconv.Itoa(i)})
 		}
 
 		b.Run(fmt.Sprintf("petstore_%d", testCase.numRows), func(b *testing.B) {
 			store := NewPetStore(db)
 			for i := 0; i < b.N; i++ {
-				_, err := store.Query()
+				dest, err := store.Query()
 				if err != nil {
 					b.Fatal(err)
+				}
+				if len(dest) != testCase.numRows {
+					b.Fatal("not all rows returned", len(dest))
+				}
+				if dest[0].HasTag.Name != "tag0" {
+					b.Fatal("tag name", dest[0].HasTag.Name)
 				}
 			}
 		})
@@ -256,10 +275,16 @@ func BenchmarkQuery(b *testing.B) {
 				if err != nil {
 					b.Fatal(err)
 				}
+				if len(dest) != testCase.numRows {
+					b.Fatal("not all rows returned", len(dest))
+				}
+				if dest[0].Tag.Name != "tag0" {
+					b.Fatal("tag name", dest[0].Tag.Name)
+				}
 			}
 		})
 
-		b.Run(fmt.Sprintf("onex_%d", testCase.numRows), func(b *testing.B) {
+		b.Run(fmt.Sprintf("queryx_%d", testCase.numRows), func(b *testing.B) {
 			store := NewStore(db).
 				SelectFields("A", PetQueryFields).
 				SelectFields("B", PersonQueryFields).
@@ -270,22 +295,200 @@ func BenchmarkQuery(b *testing.B) {
 				SQL("WHERE A.id = ?")
 			for i := 0; i < b.N; i++ {
 				var dest []struct {
-					ID          int    `json:"id" db:"pet.id"`
-					PetPersonID int    `json:"pet_person_id" db:"pet.person_id"`
-					PetTagID    int    `json:"pet_tag_id" db:"pet.tag_id"`
-					Species     string `json:"species" db:"pet.species"`
-
-					PersonID   int    `json:"person_id" db:"person.id"`
-					PersonName string `json:"name" db:"person.name"`
-
-					TagID   int    `json:"tag_id" db:"tag.id"`
-					TagName string `json:"tag_name" db:"tag.name"`
+					Pet    codegen.Pet
+					Person codegen.Person
+					Tag    codegen.Tag
 				}
 				err := store.QueryxInto(&dest)
 				if err != nil {
 					b.Fatal(err)
 				}
+				if len(dest) != testCase.numRows {
+					b.Fatal("not all rows returned", len(dest))
+				}
+				if dest[0].Tag.Name != "tag0" {
+					b.Fatal("tag name", dest[0].Tag.Name)
+				}
+			}
+		})
+
+		b.Run(fmt.Sprintf("jet_%d", testCase.numRows), func(b *testing.B) {
+
+			type Pet struct {
+				ID       int
+				PersonID int
+				TagID    int
+				Species  string
+			}
+			type Person struct {
+				ID   int
+				Name string
+			}
+			type Tag struct {
+				ID   int
+				Name string
+			}
+			store := NewStore(db).
+				SelectFields("A", PetQueryFields).
+				SelectFields("B", PersonQueryFields).
+				SelectFields("C", TagQueryFields).
+				SQL("FROM fake_benchmark.pet A ").
+				SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+				SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+				SQL("WHERE A.id = ?")
+			for i := 0; i < b.N; i++ {
+				var dest []struct {
+					Pet    Pet
+					Person Person
+					Tag    Tag
+				}
+				err := store.QueryJet(&dest)
+				if err != nil {
+					b.Fatal(err)
+				}
+				if len(dest) != testCase.numRows {
+					fmt.Printf("%#v\n", dest)
+					b.Fatal("not all rows returned", len(dest))
+				}
+				if dest[0].Tag.Name != "tag0" {
+					b.Fatal("tag name", dest[0].Tag.Name)
+				}
+			}
+		})
+
+		b.Run(fmt.Sprintf("godbsql_%d", testCase.numRows), func(b *testing.B) {
+			store := NewStore(db).
+				SelectFields("A", PetQueryFields).
+				SelectFields("B", PersonQueryFields).
+				SelectFields("C", TagQueryFields).
+				SQL("FROM fake_benchmark.pet A ").
+				SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+				SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+				SQL("WHERE A.id = ?")
+			stmt := store.GetSQL()
+			for i := 0; i < b.N; i++ {
+				var dest []codegen.Pet
+				var pet codegen.Pet
+
+				rows, err := db.Query(stmt)
+				if err != nil {
+					b.Fatal(err)
+				}
+				defer rows.Close()
+				for rows.Next() {
+					pet.BelongsTo = &codegen.Person{}
+					pet.HasTag = &codegen.Tag{}
+
+					err := rows.Scan(&pet.ID, &pet.PersonID, &pet.TagID, &pet.Species, &pet.BelongsTo.ID, &pet.BelongsTo.Name,
+						&pet.HasTag.ID, &pet.HasTag.Name)
+					if err != nil {
+						b.Fatal(err)
+					}
+					dest = append(dest, pet)
+				}
+				err = rows.Err()
+				if err != nil {
+					b.Fatal(err)
+				}
+				if len(dest) != testCase.numRows {
+					b.Fatal("not all rows returned", len(dest))
+				}
+				if dest[0].HasTag.Name != "tag0" {
+					b.Fatal("tag name", dest[0].HasTag.Name)
+				}
+			}
+		})
+
+		b.Run(fmt.Sprintf("preparedsql_%d", testCase.numRows), func(b *testing.B) {
+			store := NewStore(db).
+				SelectFields("A", PetQueryFields).
+				SelectFields("B", PersonQueryFields).
+				SelectFields("C", TagQueryFields).
+				SQL("FROM fake_benchmark.pet A ").
+				SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+				SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+				SQL("WHERE A.id = ?")
+			stmt := store.GetSQL()
+			for i := 0; i < b.N; i++ {
+				var dest []codegen.Pet
+				var pet codegen.Pet
+
+				prepared, err := db.Prepare(stmt)
+				if err != nil {
+					b.Fatal(err)
+				}
+				rows, err := prepared.Query()
+				if err != nil {
+					b.Fatal(err)
+				}
+				defer rows.Close()
+				for rows.Next() {
+					pet.BelongsTo = &codegen.Person{}
+					pet.HasTag = &codegen.Tag{}
+
+					err := rows.Scan(&pet.ID, &pet.PersonID, &pet.TagID, &pet.Species, &pet.BelongsTo.ID, &pet.BelongsTo.Name,
+						&pet.HasTag.ID, &pet.HasTag.Name)
+					if err != nil {
+						b.Fatal(err)
+					}
+					dest = append(dest, pet)
+				}
+				err = rows.Err()
+				if err != nil {
+					b.Fatal(err)
+				}
+				if len(dest) != testCase.numRows {
+					b.Fatal("not all rows returned", len(dest))
+				}
+				if dest[0].HasTag.Name != "tag0" {
+					b.Fatal("tag name", dest[0].HasTag.Name)
+				}
+			}
+		})
+
+		b.Run(fmt.Sprintf("map_%d", testCase.numRows), func(b *testing.B) {
+			store := NewStore(db).
+				SelectFields("A", PetQueryFields).
+				SelectFields("B", PersonQueryFields).
+				SelectFields("C", TagQueryFields).
+				SQL("FROM fake_benchmark.pet A ").
+				SQL("INNER JOIN fake_benchmark.person B ON (A.person_id = B.id) ").
+				SQL("INNER JOIN fake_benchmark.tag C ON (A.tag_id = C.id) ").
+				SQL("WHERE A.id = ?")
+			for i := 0; i < b.N; i++ {
+				var dest []codegen.Pet
+				var pet codegen.Pet
+
+				err := store.Map(func(row []sql.RawBytes) {
+					pet.ID = sdb.ToInt(row[0])
+					pet.PersonID = sdb.ToInt(row[1])
+					pet.TagID = sdb.ToInt(row[2])
+					pet.Species = sdb.ToString(row[3])
+
+					pet.BelongsTo = &codegen.Person{}
+					pet.BelongsTo.ID = sdb.ToInt(row[4])
+					pet.BelongsTo.Name = sdb.ToString(row[5])
+
+					pet.HasTag = &codegen.Tag{}
+					pet.HasTag.ID = sdb.ToInt(row[6])
+					pet.HasTag.Name = sdb.ToString(row[7])
+				}, func() {
+					dest = append(dest, pet)
+				})
+				if err != nil {
+					b.Fatal(err)
+				}
+				if len(dest) != testCase.numRows {
+					b.Fatal("not all rows returned", len(dest))
+				}
+				if dest[0].HasTag.Name != "tag0" {
+					b.Fatal("tag name", dest[0].HasTag.Name)
+				}
 			}
 		})
 	}
+}
+
+func b2s(b []byte) string {
+	return *(*string)(unsafe.Pointer(&b))
 }

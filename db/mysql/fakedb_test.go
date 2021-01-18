@@ -5,6 +5,7 @@ import (
 	"database/sql/driver"
 	"errors"
 	"io"
+	"reflect"
 	"strconv"
 )
 
@@ -26,8 +27,10 @@ type ResultRows struct {
 }
 
 type Query struct {
-	Cols []string
-	Vals [][]driver.Value
+	Cols    []string
+	Vals    [][]driver.Value
+	Types   []reflect.Type
+	DBTypes []string
 }
 
 type mimic struct {
@@ -71,7 +74,7 @@ func (m *mimicStmt) Query(args []driver.Value) (driver.Rows, error) {
 		return nil, errors.New("statement was not a query type")
 	}
 
-	return &mimicRows{columns: m.Q.Query.Cols, values: m.Q.Query.Vals}, nil
+	return &mimicRows{columns: m.Q.Query.Cols, values: m.Q.Query.Vals, types: m.Q.Types, dbtypes: m.Q.DBTypes}, nil
 }
 
 type mimicResult struct {
@@ -90,8 +93,22 @@ type mimicRows struct {
 	cursor  int
 	columns []string
 	values  [][]driver.Value
+	types   []reflect.Type
+	dbtypes []string
 }
 
+func (m *mimicRows) ColumnTypeDatabaseTypeName(i int) string {
+	if len(m.dbtypes) == 0 {
+		return "VARCHAR"
+	}
+	return m.dbtypes[i]
+}
+func (m *mimicRows) ColumnTypeScanType(i int) reflect.Type {
+	if len(m.types) == 0 {
+		return reflect.TypeOf(sql.RawBytes{})
+	}
+	return m.types[i]
+}
 func (m *mimicRows) Columns() []string { return m.columns }
 func (m *mimicRows) Close() error      { return nil }
 func (m *mimicRows) Next(dest []driver.Value) error {

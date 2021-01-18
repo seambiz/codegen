@@ -670,7 +670,7 @@ func prepareSchemaConfig(conf *Config) {
 				}
 				typename, ok := GoTypeMapping[table.Fields[i].DBType]
 				if !ok {
-					panic(table.Fields[i].Name)
+					panic(fmt.Sprintf("%#v", table.Fields[i]))
 				}
 				table.Fields[i].GoType = typename
 				zero, ok := goZeroMapping[typename]

@@ -121,6 +121,13 @@ func (MysqlUpdate) getForeignKey(table *codegen.Table, fkName string) *codegen.F
 	return fk
 }
 
+func getEnumValues(s string) []string {
+	s = strings.Replace(s, "enum(", "", 1)
+	s = s[1 : len(s)-2]
+
+	return strings.Split(s, "','")
+}
+
 // Update command
 func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 	for _, schemaName := range conf.Database.Schemas {
@@ -160,6 +167,10 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 				fNew.IsNullable = c.IsNullable == "YES"
 				fNew.IsAutoincrement = strings.Contains(c.Extra, "auto_increment")
 				fNew.IsPrimaryKey = c.ColumnKey == "PRI"
+
+				if fNew.DBType == "enum" {
+					fNew.EnumValues = getEnumValues(c.ColumnType)
+				}
 
 				mergo.MergeWithOverwrite(fRef, fNew)
 			}
