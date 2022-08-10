@@ -1,12 +1,12 @@
 {
-	"MetaLinter": "golangci-lint run /home/sl/gospace/codegen/dm/mysql --enable-all --disable lll,gocyclo,goconst",
-	"LintPackage": "bitbucket.org/codegen/dm/mysql",
+	"MetaLinter": "golangci-lint run /home/sl/gospace/codegen/mysql --enable-all --disable lll,gocyclo,goconst",
+	"LintPackage": "bitbucket.org/codegen/mysql",
 	"GoFmtCmd": "gofumports -w",
 	"Package": "mysql",
 	"RootPackage": "codegen",
 	"RootPackageInclude": "bitbucket.org/codegen",
 	"DirOut": "/home/sl/gospace/codegen",
-	"SubPackage": "dm",
+	"SubPackage": "db",
 	"FilePattern": "%s.go",
 	"Schemas": [
 		{
@@ -3422,7 +3422,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_CACHED_INDEXES",
@@ -3441,7 +3441,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_COLUMNS",
@@ -3481,7 +3481,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_DATAFILES",
@@ -3497,7 +3497,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_FIELDS",
@@ -3517,7 +3517,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_FOREIGN",
@@ -3547,7 +3547,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_FOREIGN_COLS",
@@ -3571,7 +3571,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_INDEXES",
@@ -3610,7 +3610,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_SESSION_TEMP_TABLESPACES",
@@ -3641,7 +3641,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_TABLES",
@@ -3686,7 +3686,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_TABLESPACES",
@@ -3754,7 +3754,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_TABLESPACES_BRIEF",
@@ -3783,7 +3783,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_TABLESTATS",
@@ -3826,7 +3826,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "INNODB_VIRTUAL",
@@ -3845,7 +3845,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "KEYWORDS",
@@ -3862,7 +3862,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "RESOURCE_GROUPS",
@@ -3894,7 +3894,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "ROLE_COLUMN_GRANTS",
@@ -3943,7 +3943,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "ROLE_ROUTINE_GRANTS",
@@ -4000,7 +4000,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "ROLE_TABLE_GRANTS",
@@ -4045,7 +4045,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "ST_GEOMETRY_COLUMNS",
@@ -4084,7 +4084,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "ST_SPATIAL_REFERENCE_SYSTEMS",
@@ -4118,7 +4118,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "ST_UNITS_OF_MEASURE",
@@ -4145,7 +4145,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "TABLESPACES_EXTENSIONS",
@@ -4161,7 +4161,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "TABLES_EXTENSIONS",
@@ -4190,7 +4190,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "TABLE_CONSTRAINTS_EXTENSIONS",
@@ -4223,7 +4223,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "USER_ATTRIBUTES",
@@ -4243,7 +4243,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "VIEW_ROUTINE_USAGE",
@@ -4274,7 +4274,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "VIEW_TABLE_USAGE",
@@ -4305,10 +4305,10 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				}
 			],
-			"TemplateFolder": "./templatesdm/"
+			"TemplateFolder": "./templates/"
 		},
 		{
 			"Name": "fake_benchmark",
@@ -4742,8 +4742,7 @@
 	"Database": {
 		"DSN": "dev:dev@/?parseTime=true",
 		"Schemas": [
-			"information_schema",
-			"dvds"
+			"information_schema"
 		]
 	}
 }

@@ -45,6 +45,11 @@ var GoTypeMapping = map[string]string{
 	"blob":       "[]byte",
 	"mediumblob": "[]byte",
 	"longblob":   "[]byte",
+
+	// special cases
+	"enum": "string",
+	"set":  "string",
+	"json": "string",
 }
 
 var goZeroMapping = map[string]string{

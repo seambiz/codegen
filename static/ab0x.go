@@ -141,7 +141,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/once.package.fakedb_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/once.package.fakedb_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -167,7 +167,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/once.package.shared.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/once.package.shared.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -193,7 +193,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/once.package.store.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/once.package.store.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -219,7 +219,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/once.package.store_timing_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/once.package.store_timing_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -245,7 +245,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/once.root.dbconstants.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/once.root.dbconstants.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -271,7 +271,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/once.root.dbtypes.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/once.root.dbtypes.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -297,7 +297,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.01-header.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.01-header.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -323,7 +323,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.02-type.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.02-type.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -349,7 +349,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.03-queryfields.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.03-queryfields.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -375,7 +375,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.04-store.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.04-store.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -401,7 +401,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.05-bind.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.05-bind.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -427,7 +427,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.06-select.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.06-select.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -453,7 +453,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.07-queries-custom.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.07-queries-custom.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -479,7 +479,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.07-queries-one.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.07-queries-one.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -505,7 +505,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.07-queries.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.07-queries.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -531,7 +531,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.08-foreigndata.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.08-foreigndata.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -557,7 +557,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.09-upsert.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.09-upsert.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -583,7 +583,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.10-insert.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.10-insert.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -609,7 +609,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.11-update.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.11-update.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -635,7 +635,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.12-delete.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.12-delete.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -661,7 +661,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.13-truncate.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.13-truncate.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -687,7 +687,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.14-indexqueries.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.14-indexqueries.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -713,7 +713,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.15-json.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.15-json.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -739,7 +739,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store.16-footer.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store.16-footer.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -765,7 +765,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -791,7 +791,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.package.store_timing_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.package.store_timing_test.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -817,7 +817,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.root.repository.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.root.repository.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -843,7 +843,7 @@ func init() {
 		panic(err)
 	}
 
-	f, err = FS.OpenFile(CTX, "/table.subpackage.repo.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0777)
+	f, err = FS.OpenFile(CTX, "/table.subpackage.repo.tmpl", os.O_RDWR|os.O_CREATE|os.O_TRUNC, 0o777)
 	if err != nil {
 		panic(err)
 	}
@@ -862,14 +862,13 @@ func init() {
 		FileSystem: FS,
 		LockSystem: webdav.NewMemLS(),
 	}
-
 }
 
 // Open a file
 func (hfs *HTTPFS) Open(path string) (http.File, error) {
 	path = hfs.Prefix + path
 
-	f, err := FS.OpenFile(CTX, path, os.O_RDONLY, 0644)
+	f, err := FS.OpenFile(CTX, path, os.O_RDONLY, 0o644)
 	if err != nil {
 		return nil, err
 	}
@@ -879,7 +878,7 @@ func (hfs *HTTPFS) Open(path string) (http.File, error) {
 
 // ReadFile is adapTed from ioutil
 func ReadFile(path string) ([]byte, error) {
-	f, err := FS.OpenFile(CTX, path, os.O_RDONLY, 0644)
+	f, err := FS.OpenFile(CTX, path, os.O_RDONLY, 0o644)
 	if err != nil {
 		return nil, err
 	}
