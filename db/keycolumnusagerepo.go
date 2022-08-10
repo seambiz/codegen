@@ -21,28 +21,28 @@ func NewKeyColumnUsageRepo(conn *sql.DB) *KeyColumnUsageRepo {
 	}
 }
 
-func (r KeyColumnUsageRepo) Create(data *codegen.KeyColumnUsage) error {
+func (r KeyColumnUsageRepo) Create(ctx *codegen.BaseContext, data *codegen.KeyColumnUsage) error {
 	panic("not implemented")
 }
 
-func (r KeyColumnUsageRepo) Update(data *codegen.KeyColumnUsage) error {
+func (r KeyColumnUsageRepo) Update(ctx *codegen.BaseContext, data *codegen.KeyColumnUsage) error {
 	panic("not implemented")
 }
 
-func (r KeyColumnUsageRepo) UpdatePartial(data *codegen.KeyColumnUsagePartial) error {
+func (r KeyColumnUsageRepo) UpdatePartial(ctx *codegen.BaseContext, data *codegen.KeyColumnUsagePartial) error {
 	panic("not implemented")
 }
 
-func (r KeyColumnUsageRepo) Delete(data *codegen.KeyColumnUsage) error {
+func (r KeyColumnUsageRepo) Delete(ctx *codegen.BaseContext, data *codegen.KeyColumnUsage) error {
 	panic("not implemented")
 }
 
-func (r KeyColumnUsageRepo) Upsert(data []*codegen.KeyColumnUsage) error {
+func (r KeyColumnUsageRepo) Upsert(ctx *codegen.BaseContext, data []*codegen.KeyColumnUsage) error {
 	panic("not implemented")
 }
 
-func (r KeyColumnUsageRepo) QueryBySchemaAndRefSchemaAndTable(schema, refschema, table string) ([]*codegen.KeyColumnUsage, error) {
-	return mysql.NewKeyColumnUsageStore(r.conn).
+func (r KeyColumnUsageRepo) QueryBySchemaAndRefSchemaAndTable(ctx *codegen.BaseContext, schema, refschema, table string) ([]*codegen.KeyColumnUsage, error) {
+	return mysql.NewKeyColumnUsageStore(ctx, r.conn).
 		Where("UPPER(table_schema) = UPPER(?) AND UPPER(referenced_table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?)").
 		OrderBy("constraint_name, ordinal_position").
 		Query(schema, refschema, table)

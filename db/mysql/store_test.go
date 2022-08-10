@@ -287,8 +287,7 @@ func TestScanToStruct(t *testing.T) {
 	pet1 := codegen.Pet{ID: 1, PersonID: 1, TagID: 1, Species: "cat"}
 
 	t.Run("empy struct", func(t *testing.T) {
-		var dest struct {
-		}
+		var dest struct{}
 		execScanToStruct(&dest, t)
 	})
 	t.Run("one struct", func(t *testing.T) {

@@ -66,7 +66,7 @@ func BenchmarkStatisticsSelectAll(b *testing.B) {
 	data := &codegen.Statistics{}
 	gofakeit.Struct(data)
 	for i := 0; i < 100; i++ {
-		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.TableSchema, data.TableName, data.NonUnique, data.IndexSchema, data.IndexName, data.SeqInIndex, data.ColumnName, *data.Collation, *data.Cardinality, *data.SubPart, *data.Packed, data.Nullable, data.IndexType, *data.Comment, data.IndexComment})
+		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.TableSchema, data.TableName, data.NonUnique, data.IndexSchema, *data.IndexName, data.SeqInIndex, *data.ColumnName, *data.Collation, *data.Cardinality, *data.SubPart, *data.Packed, data.Nullable, data.IndexType, data.Comment, data.IndexComment, data.IsVisible, *data.Expression})
 	}
 	store := NewStatisticsStore(db)
 
@@ -90,9 +90,9 @@ func BenchmarkStatisticsSelectCols(b *testing.B) {
 	data := &codegen.Statistics{}
 	gofakeit.Struct(data)
 	for i := 0; i < 100; i++ {
-		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.IndexComment})
+		addResultRowDSN("bench", []driver.Value{data.TableCatalog, *data.Expression})
 	}
-	store := NewStatisticsStore(db).Columns(codegen.Statistics_TableCatalog, codegen.Statistics_IndexComment)
+	store := NewStatisticsStore(db).Columns(codegen.Statistics_TableCatalog, codegen.Statistics_Expression)
 
 	for i := 0; i < b.N; i++ {
 		_, err = store.Query()

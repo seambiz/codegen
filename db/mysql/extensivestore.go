@@ -13,8 +13,6 @@ import (
 	codegen "bitbucket.org/codegen"
 
 	"github.com/fatih/structs"
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/seambiz/seambiz/sdb"
 	"github.com/seambiz/seambiz/stime"
 )
@@ -145,7 +143,7 @@ type Extensive struct {
 }
 
 // new implements Bindable.new
-func (ex *Extensive) new() Bindable {
+func (s *Extensive) new() Bindable {
 	return &Extensive{}
 }
 
@@ -155,8 +153,8 @@ type ExtensiveSlice struct {
 }
 
 // append implements BindableSlice.append
-func (ex *ExtensiveSlice) append(d Bindable) {
-	ex.data = append(ex.data, d.(*Extensive))
+func (s *ExtensiveSlice) append(d Bindable) {
+	s.data = append(s.data, d.(*Extensive))
 }
 
 // constant slice for all fields of the table "Extensive".
@@ -415,473 +413,474 @@ type ExtensiveStore struct {
 }
 
 // NewExtensiveStore return DAO Store for Extensive
-func NewExtensiveStore(conn Execer) *ExtensiveStore {
-	ex := &ExtensiveStore{}
-	ex.db = conn
-	ex.withJoin = true
-	ex.joinType = sdb.LEFT
-	ex.batch = 1000
-	return ex
+func NewExtensiveStore(ctx *codegen.BaseContext, conn Execer) *ExtensiveStore {
+	s := &ExtensiveStore{}
+	s.db = conn
+	s.withJoin = true
+	s.joinType = sdb.LEFT
+	s.batch = 1000
+	s.log = ctx.Log
+	return s
 }
 
 // WithoutJoins won't execute JOIN when querying for records.
-func (ex *ExtensiveStore) WithoutJoins() *ExtensiveStore {
-	ex.withJoin = false
-	return ex
+func (s *ExtensiveStore) WithoutJoins() *ExtensiveStore {
+	s.withJoin = false
+	return s
 }
 
 // Where sets local sql, that will be appended to SELECT.
-func (ex *ExtensiveStore) Where(sql string) *ExtensiveStore {
-	ex.where = sql
-	return ex
+func (s *ExtensiveStore) Where(sql string) *ExtensiveStore {
+	s.where = sql
+	return s
 }
 
 // OrderBy sets local sql, that will be appended to SELECT.
-func (ex *ExtensiveStore) OrderBy(sql string) *ExtensiveStore {
-	ex.orderBy = sql
-	return ex
+func (s *ExtensiveStore) OrderBy(sql string) *ExtensiveStore {
+	s.orderBy = sql
+	return s
 }
 
 // GroupBy sets local sql, that will be appended to SELECT.
-func (ex *ExtensiveStore) GroupBy(sql string) *ExtensiveStore {
-	ex.groupBy = sql
-	return ex
+func (s *ExtensiveStore) GroupBy(sql string) *ExtensiveStore {
+	s.groupBy = sql
+	return s
 }
 
 // Limit result set size
-func (ex *ExtensiveStore) Limit(n int) *ExtensiveStore {
-	ex.limit = n
-	return ex
+func (s *ExtensiveStore) Limit(n int) *ExtensiveStore {
+	s.limit = n
+	return s
 }
 
 // Offset used, if a limit is provided
-func (ex *ExtensiveStore) Offset(n int) *ExtensiveStore {
-	ex.offset = n
-	return ex
+func (s *ExtensiveStore) Offset(n int) *ExtensiveStore {
+	s.offset = n
+	return s
 }
 
 // JoinType sets join statement type (Default: INNER | LEFT | RIGHT | OUTER).
-func (ex *ExtensiveStore) JoinType(jt string) *ExtensiveStore {
-	ex.joinType = jt
-	return ex
+func (s *ExtensiveStore) JoinType(jt string) *ExtensiveStore {
+	s.joinType = jt
+	return s
 }
 
 // Columns sets bits for specific columns.
-func (ex *ExtensiveStore) Columns(cols ...int) *ExtensiveStore {
-	ex.Store.Columns(cols...)
-	return ex
+func (s *ExtensiveStore) Columns(cols ...int) *ExtensiveStore {
+	s.Store.Columns(cols...)
+	return s
 }
 
 // SetBits sets complete BitSet for use in UpdatePartial.
-func (ex *ExtensiveStore) SetBits(colSet *big.Int) *ExtensiveStore {
-	ex.colSet = colSet
-	return ex
+func (s *ExtensiveStore) SetBits(colSet *big.Int) *ExtensiveStore {
+	s.colSet = colSet
+	return s
 }
 
-func (ex *Extensive) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindFakeBenchmarkExtensive(&ex.Extensive, row, withJoin, colSet, col)
+func (s *Extensive) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+	BindFakeBenchmarkExtensive(&s.Extensive, row, withJoin, colSet, col)
 }
 
 // nolint:gocyclo
-func BindFakeBenchmarkExtensive(ex *codegen.Extensive, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+func BindFakeBenchmarkExtensive(s *codegen.Extensive, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Extensive_ID) == 1 {
-		ex.ID = sdb.ToInt(row[*col])
+		s.ID = sdb.ToInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Tinyint) == 1 {
-		ex.Tinyint = sdb.ToInt(row[*col])
+		s.Tinyint = sdb.ToInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
-		ex.TinyintUnsigned = sdb.ToUInt(row[*col])
+		s.TinyintUnsigned = sdb.ToUInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
 		if row[*col] == nil {
-			ex.TinyintNull = nil
+			s.TinyintNull = nil
 		} else {
-			ex.TinyintNull = new(int)
-			*ex.TinyintNull = sdb.ToInt(row[*col])
+			s.TinyintNull = new(int)
+			*s.TinyintNull = sdb.ToInt(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Smallint) == 1 {
-		ex.Smallint = sdb.ToInt(row[*col])
+		s.Smallint = sdb.ToInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
-		ex.SmallintUnsigned = sdb.ToUInt(row[*col])
+		s.SmallintUnsigned = sdb.ToUInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
 		if row[*col] == nil {
-			ex.SmallintNull = nil
+			s.SmallintNull = nil
 		} else {
-			ex.SmallintNull = new(int)
-			*ex.SmallintNull = sdb.ToInt(row[*col])
+			s.SmallintNull = new(int)
+			*s.SmallintNull = sdb.ToInt(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Int) == 1 {
-		ex.Int = sdb.ToInt(row[*col])
+		s.Int = sdb.ToInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_IntNull) == 1 {
 		if row[*col] == nil {
-			ex.IntNull = nil
+			s.IntNull = nil
 		} else {
-			ex.IntNull = new(int)
-			*ex.IntNull = sdb.ToInt(row[*col])
+			s.IntNull = new(int)
+			*s.IntNull = sdb.ToInt(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
-		ex.IntUnsigned = sdb.ToUInt(row[*col])
+		s.IntUnsigned = sdb.ToUInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Bigint) == 1 {
-		ex.Bigint = sdb.ToInt64(row[*col])
+		s.Bigint = sdb.ToInt64(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_BigintNull) == 1 {
 		if row[*col] == nil {
-			ex.BigintNull = nil
+			s.BigintNull = nil
 		} else {
-			ex.BigintNull = new(int64)
-			*ex.BigintNull = sdb.ToInt64(row[*col])
+			s.BigintNull = new(int64)
+			*s.BigintNull = sdb.ToInt64(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
-		ex.BigintUnsigned = sdb.ToUInt64(row[*col])
+		s.BigintUnsigned = sdb.ToUInt64(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Varchar) == 1 {
-		ex.Varchar = sdb.ToString(row[*col])
+		s.Varchar = sdb.ToString(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
 		if row[*col] == nil {
-			ex.VarcharNull = nil
+			s.VarcharNull = nil
 		} else {
-			ex.VarcharNull = new(string)
-			*ex.VarcharNull = sdb.ToString(row[*col])
+			s.VarcharNull = new(string)
+			*s.VarcharNull = sdb.ToString(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Float) == 1 {
-		ex.Float = sdb.ToFloat32(row[*col])
+		s.Float = sdb.ToFloat32(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_FloatNull) == 1 {
 		if row[*col] == nil {
-			ex.FloatNull = nil
+			s.FloatNull = nil
 		} else {
-			ex.FloatNull = new(float32)
-			*ex.FloatNull = sdb.ToFloat32(row[*col])
+			s.FloatNull = new(float32)
+			*s.FloatNull = sdb.ToFloat32(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Double) == 1 {
-		ex.Double = sdb.ToFloat64(row[*col])
+		s.Double = sdb.ToFloat64(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
 		if row[*col] == nil {
-			ex.DoubleNull = nil
+			s.DoubleNull = nil
 		} else {
-			ex.DoubleNull = new(float64)
-			*ex.DoubleNull = sdb.ToFloat64(row[*col])
+			s.DoubleNull = new(float64)
+			*s.DoubleNull = sdb.ToFloat64(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Decimal) == 1 {
-		ex.Decimal = sdb.ToFloat64(row[*col])
+		s.Decimal = sdb.ToFloat64(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
 		if row[*col] == nil {
-			ex.DecimalNull = nil
+			s.DecimalNull = nil
 		} else {
-			ex.DecimalNull = new(float64)
-			*ex.DecimalNull = sdb.ToFloat64(row[*col])
+			s.DecimalNull = new(float64)
+			*s.DecimalNull = sdb.ToFloat64(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Numeric) == 1 {
-		ex.Numeric = sdb.ToFloat64(row[*col])
+		s.Numeric = sdb.ToFloat64(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_NumericNull) == 1 {
 		if row[*col] == nil {
-			ex.NumericNull = nil
+			s.NumericNull = nil
 		} else {
-			ex.NumericNull = new(float64)
-			*ex.NumericNull = sdb.ToFloat64(row[*col])
+			s.NumericNull = new(float64)
+			*s.NumericNull = sdb.ToFloat64(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
-		ex.CreatedAt = sdb.ToUInt(row[*col])
+		s.CreatedAt = sdb.ToUInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_UpdatedAt) == 1 {
-		ex.UpdatedAt = sdb.ToUInt(row[*col])
+		s.UpdatedAt = sdb.ToUInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
-		ex.Tinyint1 = sdb.ToBool(row[*col])
+		s.Tinyint1 = sdb.ToBool(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
 		if row[*col] == nil {
-			ex.Tinyint1Null = nil
+			s.Tinyint1Null = nil
 		} else {
-			ex.Tinyint1Null = new(bool)
-			*ex.Tinyint1Null = sdb.ToBool(row[*col])
+			s.Tinyint1Null = new(bool)
+			*s.Tinyint1Null = sdb.ToBool(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Year) == 1 {
-		ex.Year = sdb.ToInt(row[*col])
+		s.Year = sdb.ToInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_YearNull) == 1 {
 		if row[*col] == nil {
-			ex.YearNull = nil
+			s.YearNull = nil
 		} else {
-			ex.YearNull = new(int)
-			*ex.YearNull = sdb.ToInt(row[*col])
+			s.YearNull = new(int)
+			*s.YearNull = sdb.ToInt(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Date) == 1 {
-		ex.Date = sdb.ToTime(row[*col])
+		s.Date = sdb.ToTime(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_DateNull) == 1 {
 		if row[*col] == nil {
-			ex.DateNull = nil
+			s.DateNull = nil
 		} else {
-			ex.DateNull = new(time.Time)
-			*ex.DateNull = sdb.ToTime(row[*col])
+			s.DateNull = new(time.Time)
+			*s.DateNull = sdb.ToTime(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Time) == 1 {
-		ex.Time = sdb.ToTime(row[*col])
+		s.Time = sdb.ToTime(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_TimeNull) == 1 {
 		if row[*col] == nil {
-			ex.TimeNull = nil
+			s.TimeNull = nil
 		} else {
-			ex.TimeNull = new(time.Time)
-			*ex.TimeNull = sdb.ToTime(row[*col])
+			s.TimeNull = new(time.Time)
+			*s.TimeNull = sdb.ToTime(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Datetime) == 1 {
-		ex.Datetime = sdb.ToTime(row[*col])
+		s.Datetime = sdb.ToTime(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
 		if row[*col] == nil {
-			ex.DatetimeNull = nil
+			s.DatetimeNull = nil
 		} else {
-			ex.DatetimeNull = new(time.Time)
-			*ex.DatetimeNull = sdb.ToTime(row[*col])
+			s.DatetimeNull = new(time.Time)
+			*s.DatetimeNull = sdb.ToTime(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Timestamp) == 1 {
-		ex.Timestamp = sdb.ToTime(row[*col])
+		s.Timestamp = sdb.ToTime(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
 		if row[*col] == nil {
-			ex.TimestampNull = nil
+			s.TimestampNull = nil
 		} else {
-			ex.TimestampNull = new(time.Time)
-			*ex.TimestampNull = sdb.ToTime(row[*col])
+			s.TimestampNull = new(time.Time)
+			*s.TimestampNull = sdb.ToTime(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Char) == 1 {
-		ex.Char = sdb.ToString(row[*col])
+		s.Char = sdb.ToString(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_CharNull) == 1 {
 		if row[*col] == nil {
-			ex.CharNull = nil
+			s.CharNull = nil
 		} else {
-			ex.CharNull = new(string)
-			*ex.CharNull = sdb.ToString(row[*col])
+			s.CharNull = new(string)
+			*s.CharNull = sdb.ToString(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Tinytext) == 1 {
-		ex.Tinytext = sdb.ToString(row[*col])
+		s.Tinytext = sdb.ToString(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
 		if row[*col] == nil {
-			ex.TinytextNull = nil
+			s.TinytextNull = nil
 		} else {
-			ex.TinytextNull = new(string)
-			*ex.TinytextNull = sdb.ToString(row[*col])
+			s.TinytextNull = new(string)
+			*s.TinytextNull = sdb.ToString(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Text) == 1 {
-		ex.Text = sdb.ToString(row[*col])
+		s.Text = sdb.ToString(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_TextNull) == 1 {
 		if row[*col] == nil {
-			ex.TextNull = nil
+			s.TextNull = nil
 		} else {
-			ex.TextNull = new(string)
-			*ex.TextNull = sdb.ToString(row[*col])
+			s.TextNull = new(string)
+			*s.TextNull = sdb.ToString(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
-		ex.Mediumtext = sdb.ToString(row[*col])
+		s.Mediumtext = sdb.ToString(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
 		if row[*col] == nil {
-			ex.MediumtextNull = nil
+			s.MediumtextNull = nil
 		} else {
-			ex.MediumtextNull = new(string)
-			*ex.MediumtextNull = sdb.ToString(row[*col])
+			s.MediumtextNull = new(string)
+			*s.MediumtextNull = sdb.ToString(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Longtext) == 1 {
-		ex.Longtext = sdb.ToString(row[*col])
+		s.Longtext = sdb.ToString(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
 		if row[*col] == nil {
-			ex.LongtextNull = nil
+			s.LongtextNull = nil
 		} else {
-			ex.LongtextNull = new(string)
-			*ex.LongtextNull = sdb.ToString(row[*col])
+			s.LongtextNull = new(string)
+			*s.LongtextNull = sdb.ToString(row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Binary) == 1 {
-		ex.Binary = (row[*col])
+		s.Binary = (row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
 		if row[*col] == nil {
-			ex.BinaryNull = nil
+			s.BinaryNull = nil
 		} else {
-			ex.BinaryNull = new([]byte)
-			*ex.BinaryNull = (row[*col])
+			s.BinaryNull = new([]byte)
+			*s.BinaryNull = (row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Varbinary) == 1 {
-		ex.Varbinary = (row[*col])
+		s.Varbinary = (row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
 		if row[*col] == nil {
-			ex.VarbinaryNull = nil
+			s.VarbinaryNull = nil
 		} else {
-			ex.VarbinaryNull = new([]byte)
-			*ex.VarbinaryNull = (row[*col])
+			s.VarbinaryNull = new([]byte)
+			*s.VarbinaryNull = (row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
-		ex.Tinyblob = (row[*col])
+		s.Tinyblob = (row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
 		if row[*col] == nil {
-			ex.TinyblobNull = nil
+			s.TinyblobNull = nil
 		} else {
-			ex.TinyblobNull = new([]byte)
-			*ex.TinyblobNull = (row[*col])
+			s.TinyblobNull = new([]byte)
+			*s.TinyblobNull = (row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Blob) == 1 {
-		ex.Blob = (row[*col])
+		s.Blob = (row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_BlobNull) == 1 {
 		if row[*col] == nil {
-			ex.BlobNull = nil
+			s.BlobNull = nil
 		} else {
-			ex.BlobNull = new([]byte)
-			*ex.BlobNull = (row[*col])
+			s.BlobNull = new([]byte)
+			*s.BlobNull = (row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
-		ex.Mediumblob = (row[*col])
+		s.Mediumblob = (row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
 		if row[*col] == nil {
-			ex.MediumblobNull = nil
+			s.MediumblobNull = nil
 		} else {
-			ex.MediumblobNull = new([]byte)
-			*ex.MediumblobNull = (row[*col])
+			s.MediumblobNull = new([]byte)
+			*s.MediumblobNull = (row[*col])
 		}
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_Longblob) == 1 {
-		ex.Longblob = (row[*col])
+		s.Longblob = (row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
 		if row[*col] == nil {
-			ex.LongblobNull = nil
+			s.LongblobNull = nil
 		} else {
-			ex.LongblobNull = new([]byte)
-			*ex.LongblobNull = (row[*col])
+			s.LongblobNull = new([]byte)
+			*s.LongblobNull = (row[*col])
 		}
 		*col++
 	}
 }
 
-func (ex *ExtensiveStore) selectStatement() *sdb.SQLStatement {
+func (s *ExtensiveStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
-	sql.Fields("", "A", ExtensiveQueryFields(ex.colSet))
+	sql.Fields("", "A", ExtensiveQueryFields(s.colSet))
 	sql.Append(" FROM fake_benchmark.extensive A ")
-	if ex.where != "" {
-		sql.Append("WHERE", ex.where)
+	if s.where != "" {
+		sql.Append("WHERE", s.where)
 	}
-	if ex.groupBy != "" {
-		sql.Append("GROUP BY", ex.groupBy)
+	if s.groupBy != "" {
+		sql.Append("GROUP BY", s.groupBy)
 	}
-	if ex.orderBy != "" {
-		sql.Append("ORDER BY", ex.orderBy)
+	if s.orderBy != "" {
+		sql.Append("ORDER BY", s.orderBy)
 	}
-	if ex.limit > 0 {
-		sql.AppendRaw("LIMIT ", ex.limit)
-		if ex.offset > 0 {
-			sql.AppendRaw(",", ex.offset)
+	if s.limit > 0 {
+		sql.AppendRaw("LIMIT ", s.limit)
+		if s.offset > 0 {
+			sql.AppendRaw(",", s.offset)
 		}
 	}
 	return sql
 }
 
 // QueryCustom retrieves many rows from 'fake_benchmark.extensive' as a slice of Extensive with 1:1 joined data.
-func (ex *ExtensiveStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen.Extensive, error) {
+func (s *ExtensiveStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen.Extensive, error) {
 	dto := &Extensive{}
 	data := &ExtensiveSlice{}
-	err := ex.queryCustom(data, dto, stmt, args...)
+	err := s.queryCustom(data, dto, stmt, args...)
 	if err != nil {
-		log.Error().Err(err).Msg("querycustom")
+		s.log.Error().Err(err).Msg("querycustom")
 		return nil, err
 	}
 	retValues := make([]*codegen.Extensive, len(data.data))
@@ -892,199 +891,199 @@ func (ex *ExtensiveStore) QueryCustom(stmt string, args ...interface{}) ([]*code
 }
 
 // One retrieves a row from 'fake_benchmark.extensive' as a Extensive with 1:1 joined data.
-func (ex *ExtensiveStore) One(args ...interface{}) (*codegen.Extensive, error) {
+func (s *ExtensiveStore) One(args ...interface{}) (*codegen.Extensive, error) {
 	data := &Extensive{}
 
-	err := ex.one(data, ex.selectStatement(), args...)
+	err := s.one(data, s.selectStatement(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("query one")
+		s.log.Error().Err(err).Msg("query one")
 		return nil, err
 	}
 	return &data.Extensive, nil
 }
 
 // Query retrieves many rows from 'fake_benchmark.extensive' as a slice of Extensive with 1:1 joined data.
-func (ex *ExtensiveStore) Query(args ...interface{}) ([]*codegen.Extensive, error) {
-	stmt := ex.selectStatement()
-	return ex.QueryCustom(stmt.Query(), args...)
+func (s *ExtensiveStore) Query(args ...interface{}) ([]*codegen.Extensive, error) {
+	stmt := s.selectStatement()
+	return s.QueryCustom(stmt.Query(), args...)
 }
 
 // extensiveUpsertStmt helper for generating Upsert statement.
 // nolint:gocyclo
-func (ex *ExtensiveStore) extensiveUpsertStmt() *sdb.UpsertStatement {
+func (s *ExtensiveStore) extensiveUpsertStmt() *sdb.UpsertStatement {
 	upsert := []string{}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint) == 1 {
 		upsert = append(upsert, "tinyint = VALUES(tinyint)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
 		upsert = append(upsert, "tinyint_unsigned = VALUES(tinyint_unsigned)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
 		upsert = append(upsert, "tinyint_null = VALUES(tinyint_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Smallint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Smallint) == 1 {
 		upsert = append(upsert, "smallint = VALUES(smallint)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
 		upsert = append(upsert, "smallint_unsigned = VALUES(smallint_unsigned)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
 		upsert = append(upsert, "smallint_null = VALUES(smallint_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Int) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Int) == 1 {
 		upsert = append(upsert, "int = VALUES(int)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_IntNull) == 1 {
 		upsert = append(upsert, "int_null = VALUES(int_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
 		upsert = append(upsert, "int_unsigned = VALUES(int_unsigned)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Bigint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Bigint) == 1 {
 		upsert = append(upsert, "bigint = VALUES(bigint)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BigintNull) == 1 {
 		upsert = append(upsert, "bigint_null = VALUES(bigint_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
 		upsert = append(upsert, "bigint_unsigned = VALUES(bigint_unsigned)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varchar) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Varchar) == 1 {
 		upsert = append(upsert, "varchar = VALUES(varchar)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
 		upsert = append(upsert, "varchar_null = VALUES(varchar_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Float) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Float) == 1 {
 		upsert = append(upsert, "float = VALUES(float)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_FloatNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_FloatNull) == 1 {
 		upsert = append(upsert, "float_null = VALUES(float_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Double) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Double) == 1 {
 		upsert = append(upsert, "double = VALUES(double)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
 		upsert = append(upsert, "double_null = VALUES(double_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Decimal) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Decimal) == 1 {
 		upsert = append(upsert, "decimal = VALUES(decimal)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
 		upsert = append(upsert, "decimal_null = VALUES(decimal_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Numeric) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Numeric) == 1 {
 		upsert = append(upsert, "numeric = VALUES(numeric)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_NumericNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_NumericNull) == 1 {
 		upsert = append(upsert, "numeric_null = VALUES(numeric_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
 		upsert = append(upsert, "created_at = VALUES(created_at)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_UpdatedAt) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_UpdatedAt) == 1 {
 		upsert = append(upsert, "updated_at = VALUES(updated_at)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
 		upsert = append(upsert, "tinyint1 = VALUES(tinyint1)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
 		upsert = append(upsert, "tinyint1_null = VALUES(tinyint1_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Year) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Year) == 1 {
 		upsert = append(upsert, "year = VALUES(year)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_YearNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_YearNull) == 1 {
 		upsert = append(upsert, "year_null = VALUES(year_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Date) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Date) == 1 {
 		upsert = append(upsert, "date = VALUES(date)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DateNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DateNull) == 1 {
 		upsert = append(upsert, "date_null = VALUES(date_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Time) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Time) == 1 {
 		upsert = append(upsert, "time = VALUES(time)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimeNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TimeNull) == 1 {
 		upsert = append(upsert, "time_null = VALUES(time_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Datetime) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Datetime) == 1 {
 		upsert = append(upsert, "datetime = VALUES(datetime)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
 		upsert = append(upsert, "datetime_null = VALUES(datetime_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Timestamp) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Timestamp) == 1 {
 		upsert = append(upsert, "timestamp = VALUES(timestamp)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
 		upsert = append(upsert, "timestamp_null = VALUES(timestamp_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Char) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Char) == 1 {
 		upsert = append(upsert, "char = VALUES(char)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CharNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_CharNull) == 1 {
 		upsert = append(upsert, "char_null = VALUES(char_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinytext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinytext) == 1 {
 		upsert = append(upsert, "tinytext = VALUES(tinytext)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
 		upsert = append(upsert, "tinytext_null = VALUES(tinytext_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Text) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Text) == 1 {
 		upsert = append(upsert, "text = VALUES(text)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TextNull) == 1 {
 		upsert = append(upsert, "text_null = VALUES(text_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
 		upsert = append(upsert, "mediumtext = VALUES(mediumtext)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
 		upsert = append(upsert, "mediumtext_null = VALUES(mediumtext_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longtext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Longtext) == 1 {
 		upsert = append(upsert, "longtext = VALUES(longtext)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
 		upsert = append(upsert, "longtext_null = VALUES(longtext_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Binary) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Binary) == 1 {
 		upsert = append(upsert, "binary = VALUES(binary)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
 		upsert = append(upsert, "binary_null = VALUES(binary_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varbinary) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Varbinary) == 1 {
 		upsert = append(upsert, "varbinary = VALUES(varbinary)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
 		upsert = append(upsert, "varbinary_null = VALUES(varbinary_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
 		upsert = append(upsert, "tinyblob = VALUES(tinyblob)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
 		upsert = append(upsert, "tinyblob_null = VALUES(tinyblob_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Blob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Blob) == 1 {
 		upsert = append(upsert, "blob = VALUES(blob)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BlobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BlobNull) == 1 {
 		upsert = append(upsert, "blob_null = VALUES(blob_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
 		upsert = append(upsert, "mediumblob = VALUES(mediumblob)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
 		upsert = append(upsert, "mediumblob_null = VALUES(mediumblob_null)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Longblob) == 1 {
 		upsert = append(upsert, "longblob = VALUES(longblob)")
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
 		upsert = append(upsert, "longblob_null = VALUES(longblob_null)")
 	}
 	sql := &sdb.UpsertStatement{}
@@ -1095,24 +1094,24 @@ func (ex *ExtensiveStore) extensiveUpsertStmt() *sdb.UpsertStatement {
 }
 
 // Upsert executes upsert for array of Extensive
-func (ex *ExtensiveStore) Upsert(data ...*codegen.Extensive) (int64, error) {
-	sql := ex.extensiveUpsertStmt()
+func (s *ExtensiveStore) Upsert(data ...*codegen.Extensive) (int64, error) {
+	sql := s.extensiveUpsertStmt()
 
 	for _, d := range data {
 		sql.Record(d)
 	}
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "ExtensiveUpsert").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "ExtensiveUpsert").Str("stmt", sql.String()).Msg("sql")
 	}
-	res, err := ex.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return -1, err
 	}
 	affected, err := res.RowsAffected()
 	if err != nil {
-		log.Error().Err(err).Msg("rowsaffected")
+		s.log.Error().Err(err).Msg("rowsaffected")
 		return -1, err
 	}
 
@@ -1120,13 +1119,13 @@ func (ex *ExtensiveStore) Upsert(data ...*codegen.Extensive) (int64, error) {
 }
 
 // Insert inserts the Extensive to the database.
-func (ex *ExtensiveStore) Insert(data *codegen.Extensive) error {
+func (s *ExtensiveStore) Insert(data *codegen.Extensive) error {
 	var err error
 	sql := sdb.NewSQLStatement()
 	data.CreatedAt = stime.Now()
 	data.UpdatedAt = stime.Now()
 	sql.AppendRaw("INSERT INTO fake_benchmark.extensive (")
-	fields := ExtensiveQueryFields(ex.colSet)
+	fields := ExtensiveQueryFields(s.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")
 	for i := range fields {
@@ -1137,18 +1136,18 @@ func (ex *ExtensiveStore) Insert(data *codegen.Extensive) error {
 	}
 	sql.Append(")")
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.extensive.Insert").Str("stmt", sql.String()).Int("ID", data.ID).Int("Tinyint", data.Tinyint).Uint("TinyintUnsigned", data.TinyintUnsigned).Int("TinyintNull", logInt(data.TinyintNull)).Int("Smallint", data.Smallint).Uint("SmallintUnsigned", data.SmallintUnsigned).Int("SmallintNull", logInt(data.SmallintNull)).Int("Int", data.Int).Int("IntNull", logInt(data.IntNull)).Uint("IntUnsigned", data.IntUnsigned).Int64("Bigint", data.Bigint).Int64("BigintNull", logInt64(data.BigintNull)).Uint64("BigintUnsigned", data.BigintUnsigned).Str("Varchar", data.Varchar).Str("VarcharNull", logString(data.VarcharNull)).Float32("Float", data.Float).Float32("FloatNull", logFloat32(data.FloatNull)).Float64("Double", data.Double).Float64("DoubleNull", logFloat64(data.DoubleNull)).Float64("Decimal", data.Decimal).Float64("DecimalNull", logFloat64(data.DecimalNull)).Float64("Numeric", data.Numeric).Float64("NumericNull", logFloat64(data.NumericNull)).Uint("CreatedAt", data.CreatedAt).Uint("UpdatedAt", data.UpdatedAt).Bool("Tinyint1", data.Tinyint1).Bool("Tinyint1Null", logBool(data.Tinyint1Null)).Int("Year", data.Year).Int("YearNull", logInt(data.YearNull)).Time("Date", data.Date).Time("DateNull", logTime(data.DateNull)).Time("Time", data.Time).Time("TimeNull", logTime(data.TimeNull)).Time("Datetime", data.Datetime).Time("DatetimeNull", logTime(data.DatetimeNull)).Time("Timestamp", data.Timestamp).Time("TimestampNull", logTime(data.TimestampNull)).Str("Char", data.Char).Str("CharNull", logString(data.CharNull)).Str("Tinytext", data.Tinytext).Str("TinytextNull", logString(data.TinytextNull)).Str("Text", data.Text).Str("TextNull", logString(data.TextNull)).Str("Mediumtext", data.Mediumtext).Str("MediumtextNull", logString(data.MediumtextNull)).Str("Longtext", data.Longtext).Str("LongtextNull", logString(data.LongtextNull)).Bytes("Binary", data.Binary).Bytes("BinaryNull", logBytes(data.BinaryNull)).Bytes("Varbinary", data.Varbinary).Bytes("VarbinaryNull", logBytes(data.VarbinaryNull)).Bytes("Tinyblob", data.Tinyblob).Bytes("TinyblobNull", logBytes(data.TinyblobNull)).Bytes("Blob", data.Blob).Bytes("BlobNull", logBytes(data.BlobNull)).Bytes("Mediumblob", data.Mediumblob).Bytes("MediumblobNull", logBytes(data.MediumblobNull)).Bytes("Longblob", data.Longblob).Bytes("LongblobNull", logBytes(data.LongblobNull)).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.extensive.Insert").Str("stmt", sql.String()).Int("ID", data.ID).Int("Tinyint", data.Tinyint).Uint("TinyintUnsigned", data.TinyintUnsigned).Int("TinyintNull", logInt(data.TinyintNull)).Int("Smallint", data.Smallint).Uint("SmallintUnsigned", data.SmallintUnsigned).Int("SmallintNull", logInt(data.SmallintNull)).Int("Int", data.Int).Int("IntNull", logInt(data.IntNull)).Uint("IntUnsigned", data.IntUnsigned).Int64("Bigint", data.Bigint).Int64("BigintNull", logInt64(data.BigintNull)).Uint64("BigintUnsigned", data.BigintUnsigned).Str("Varchar", data.Varchar).Str("VarcharNull", logString(data.VarcharNull)).Float32("Float", data.Float).Float32("FloatNull", logFloat32(data.FloatNull)).Float64("Double", data.Double).Float64("DoubleNull", logFloat64(data.DoubleNull)).Float64("Decimal", data.Decimal).Float64("DecimalNull", logFloat64(data.DecimalNull)).Float64("Numeric", data.Numeric).Float64("NumericNull", logFloat64(data.NumericNull)).Uint("CreatedAt", data.CreatedAt).Uint("UpdatedAt", data.UpdatedAt).Bool("Tinyint1", data.Tinyint1).Bool("Tinyint1Null", logBool(data.Tinyint1Null)).Int("Year", data.Year).Int("YearNull", logInt(data.YearNull)).Time("Date", data.Date).Time("DateNull", logTime(data.DateNull)).Time("Time", data.Time).Time("TimeNull", logTime(data.TimeNull)).Time("Datetime", data.Datetime).Time("DatetimeNull", logTime(data.DatetimeNull)).Time("Timestamp", data.Timestamp).Time("TimestampNull", logTime(data.TimestampNull)).Str("Char", data.Char).Str("CharNull", logString(data.CharNull)).Str("Tinytext", data.Tinytext).Str("TinytextNull", logString(data.TinytextNull)).Str("Text", data.Text).Str("TextNull", logString(data.TextNull)).Str("Mediumtext", data.Mediumtext).Str("MediumtextNull", logString(data.MediumtextNull)).Str("Longtext", data.Longtext).Str("LongtextNull", logString(data.LongtextNull)).Bytes("Binary", data.Binary).Bytes("BinaryNull", logBytes(data.BinaryNull)).Bytes("Varbinary", data.Varbinary).Bytes("VarbinaryNull", logBytes(data.VarbinaryNull)).Bytes("Tinyblob", data.Tinyblob).Bytes("TinyblobNull", logBytes(data.TinyblobNull)).Bytes("Blob", data.Blob).Bytes("BlobNull", logBytes(data.BlobNull)).Bytes("Mediumblob", data.Mediumblob).Bytes("MediumblobNull", logBytes(data.MediumblobNull)).Bytes("Longblob", data.Longblob).Bytes("LongblobNull", logBytes(data.LongblobNull)).Msg("sql")
 	}
-	res, err := ex.db.Exec(sql.Query(), data.ID, data.Tinyint, data.TinyintUnsigned, data.TinyintNull, data.Smallint, data.SmallintUnsigned, data.SmallintNull, data.Int, data.IntNull, data.IntUnsigned, data.Bigint, data.BigintNull, data.BigintUnsigned, data.Varchar, data.VarcharNull, data.Float, data.FloatNull, data.Double, data.DoubleNull, data.Decimal, data.DecimalNull, data.Numeric, data.NumericNull, data.CreatedAt, data.UpdatedAt, data.Tinyint1, data.Tinyint1Null, data.Year, data.YearNull, data.Date, data.DateNull, data.Time, data.TimeNull, data.Datetime, data.DatetimeNull, data.Timestamp, data.TimestampNull, data.Char, data.CharNull, data.Tinytext, data.TinytextNull, data.Text, data.TextNull, data.Mediumtext, data.MediumtextNull, data.Longtext, data.LongtextNull, data.Binary, data.BinaryNull, data.Varbinary, data.VarbinaryNull, data.Tinyblob, data.TinyblobNull, data.Blob, data.BlobNull, data.Mediumblob, data.MediumblobNull, data.Longblob, data.LongblobNull)
+	res, err := s.db.Exec(sql.Query(), data.ID, data.Tinyint, data.TinyintUnsigned, data.TinyintNull, data.Smallint, data.SmallintUnsigned, data.SmallintNull, data.Int, data.IntNull, data.IntUnsigned, data.Bigint, data.BigintNull, data.BigintUnsigned, data.Varchar, data.VarcharNull, data.Float, data.FloatNull, data.Double, data.DoubleNull, data.Decimal, data.DecimalNull, data.Numeric, data.NumericNull, data.CreatedAt, data.UpdatedAt, data.Tinyint1, data.Tinyint1Null, data.Year, data.YearNull, data.Date, data.DateNull, data.Time, data.TimeNull, data.Datetime, data.DatetimeNull, data.Timestamp, data.TimestampNull, data.Char, data.CharNull, data.Tinytext, data.TinytextNull, data.Text, data.TextNull, data.Mediumtext, data.MediumtextNull, data.Longtext, data.LongtextNull, data.Binary, data.BinaryNull, data.Varbinary, data.VarbinaryNull, data.Tinyblob, data.TinyblobNull, data.Blob, data.BlobNull, data.Mediumblob, data.MediumblobNull, data.Longblob, data.LongblobNull)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return err
 	}
 	// retrieve id
 	id, err := res.LastInsertId()
 	if err != nil {
-		log.Error().Err(err).Msg("lastinsertid")
+		s.log.Error().Err(err).Msg("lastinsertid")
 		return err
 	}
 
@@ -1160,123 +1159,123 @@ func (ex *ExtensiveStore) Insert(data *codegen.Extensive) error {
 
 // Update updates the Extensive in the database.
 // nolint[gocyclo]
-func (ex *ExtensiveStore) Update(data *codegen.Extensive) (int64, error) {
+func (s *ExtensiveStore) Update(data *codegen.Extensive) (int64, error) {
 	sql := sdb.NewSQLStatement()
 	var prepend string
 	args := []interface{}{}
 	data.UpdatedAt = stime.Now()
 	sql.Append("UPDATE fake_benchmark.extensive SET")
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint) == 1 {
 		sql.AppendRaw(prepend, "tinyint = ?")
 		prepend = ","
 		args = append(args, data.Tinyint)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
 		sql.AppendRaw(prepend, "tinyint_unsigned = ?")
 		prepend = ","
 		args = append(args, data.TinyintUnsigned)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
 		sql.AppendRaw(prepend, "tinyint_null = ?")
 		prepend = ","
 		args = append(args, data.TinyintNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Smallint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Smallint) == 1 {
 		sql.AppendRaw(prepend, "smallint = ?")
 		prepend = ","
 		args = append(args, data.Smallint)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
 		sql.AppendRaw(prepend, "smallint_unsigned = ?")
 		prepend = ","
 		args = append(args, data.SmallintUnsigned)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
 		sql.AppendRaw(prepend, "smallint_null = ?")
 		prepend = ","
 		args = append(args, data.SmallintNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Int) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Int) == 1 {
 		sql.AppendRaw(prepend, "int = ?")
 		prepend = ","
 		args = append(args, data.Int)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_IntNull) == 1 {
 		sql.AppendRaw(prepend, "int_null = ?")
 		prepend = ","
 		args = append(args, data.IntNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
 		sql.AppendRaw(prepend, "int_unsigned = ?")
 		prepend = ","
 		args = append(args, data.IntUnsigned)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Bigint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Bigint) == 1 {
 		sql.AppendRaw(prepend, "bigint = ?")
 		prepend = ","
 		args = append(args, data.Bigint)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BigintNull) == 1 {
 		sql.AppendRaw(prepend, "bigint_null = ?")
 		prepend = ","
 		args = append(args, data.BigintNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
 		sql.AppendRaw(prepend, "bigint_unsigned = ?")
 		prepend = ","
 		args = append(args, data.BigintUnsigned)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varchar) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Varchar) == 1 {
 		sql.AppendRaw(prepend, "varchar = ?")
 		prepend = ","
 		args = append(args, data.Varchar)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
 		sql.AppendRaw(prepend, "varchar_null = ?")
 		prepend = ","
 		args = append(args, data.VarcharNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Float) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Float) == 1 {
 		sql.AppendRaw(prepend, "float = ?")
 		prepend = ","
 		args = append(args, data.Float)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_FloatNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_FloatNull) == 1 {
 		sql.AppendRaw(prepend, "float_null = ?")
 		prepend = ","
 		args = append(args, data.FloatNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Double) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Double) == 1 {
 		sql.AppendRaw(prepend, "double = ?")
 		prepend = ","
 		args = append(args, data.Double)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
 		sql.AppendRaw(prepend, "double_null = ?")
 		prepend = ","
 		args = append(args, data.DoubleNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Decimal) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Decimal) == 1 {
 		sql.AppendRaw(prepend, "decimal = ?")
 		prepend = ","
 		args = append(args, data.Decimal)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
 		sql.AppendRaw(prepend, "decimal_null = ?")
 		prepend = ","
 		args = append(args, data.DecimalNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Numeric) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Numeric) == 1 {
 		sql.AppendRaw(prepend, "numeric = ?")
 		prepend = ","
 		args = append(args, data.Numeric)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_NumericNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_NumericNull) == 1 {
 		sql.AppendRaw(prepend, "numeric_null = ?")
 		prepend = ","
 		args = append(args, data.NumericNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
 		sql.AppendRaw(prepend, "created_at = ?")
 		prepend = ","
 		args = append(args, data.CreatedAt)
@@ -1284,209 +1283,209 @@ func (ex *ExtensiveStore) Update(data *codegen.Extensive) (int64, error) {
 	sql.AppendRaw(prepend, "updated_at = ?")
 	prepend = ","
 	args = append(args, data.UpdatedAt)
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
 		sql.AppendRaw(prepend, "tinyint1 = ?")
 		prepend = ","
 		args = append(args, data.Tinyint1)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
 		sql.AppendRaw(prepend, "tinyint1_null = ?")
 		prepend = ","
 		args = append(args, data.Tinyint1Null)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Year) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Year) == 1 {
 		sql.AppendRaw(prepend, "year = ?")
 		prepend = ","
 		args = append(args, data.Year)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_YearNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_YearNull) == 1 {
 		sql.AppendRaw(prepend, "year_null = ?")
 		prepend = ","
 		args = append(args, data.YearNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Date) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Date) == 1 {
 		sql.AppendRaw(prepend, "date = ?")
 		prepend = ","
 		args = append(args, data.Date)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DateNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DateNull) == 1 {
 		sql.AppendRaw(prepend, "date_null = ?")
 		prepend = ","
 		args = append(args, data.DateNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Time) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Time) == 1 {
 		sql.AppendRaw(prepend, "time = ?")
 		prepend = ","
 		args = append(args, data.Time)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimeNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TimeNull) == 1 {
 		sql.AppendRaw(prepend, "time_null = ?")
 		prepend = ","
 		args = append(args, data.TimeNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Datetime) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Datetime) == 1 {
 		sql.AppendRaw(prepend, "datetime = ?")
 		prepend = ","
 		args = append(args, data.Datetime)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
 		sql.AppendRaw(prepend, "datetime_null = ?")
 		prepend = ","
 		args = append(args, data.DatetimeNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Timestamp) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Timestamp) == 1 {
 		sql.AppendRaw(prepend, "timestamp = ?")
 		prepend = ","
 		args = append(args, data.Timestamp)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
 		sql.AppendRaw(prepend, "timestamp_null = ?")
 		prepend = ","
 		args = append(args, data.TimestampNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Char) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Char) == 1 {
 		sql.AppendRaw(prepend, "char = ?")
 		prepend = ","
 		args = append(args, data.Char)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CharNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_CharNull) == 1 {
 		sql.AppendRaw(prepend, "char_null = ?")
 		prepend = ","
 		args = append(args, data.CharNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinytext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinytext) == 1 {
 		sql.AppendRaw(prepend, "tinytext = ?")
 		prepend = ","
 		args = append(args, data.Tinytext)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
 		sql.AppendRaw(prepend, "tinytext_null = ?")
 		prepend = ","
 		args = append(args, data.TinytextNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Text) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Text) == 1 {
 		sql.AppendRaw(prepend, "text = ?")
 		prepend = ","
 		args = append(args, data.Text)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TextNull) == 1 {
 		sql.AppendRaw(prepend, "text_null = ?")
 		prepend = ","
 		args = append(args, data.TextNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
 		sql.AppendRaw(prepend, "mediumtext = ?")
 		prepend = ","
 		args = append(args, data.Mediumtext)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
 		sql.AppendRaw(prepend, "mediumtext_null = ?")
 		prepend = ","
 		args = append(args, data.MediumtextNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longtext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Longtext) == 1 {
 		sql.AppendRaw(prepend, "longtext = ?")
 		prepend = ","
 		args = append(args, data.Longtext)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
 		sql.AppendRaw(prepend, "longtext_null = ?")
 		prepend = ","
 		args = append(args, data.LongtextNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Binary) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Binary) == 1 {
 		sql.AppendRaw(prepend, "binary = ?")
 		prepend = ","
 		args = append(args, data.Binary)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
 		sql.AppendRaw(prepend, "binary_null = ?")
 		prepend = ","
 		args = append(args, data.BinaryNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varbinary) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Varbinary) == 1 {
 		sql.AppendRaw(prepend, "varbinary = ?")
 		prepend = ","
 		args = append(args, data.Varbinary)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
 		sql.AppendRaw(prepend, "varbinary_null = ?")
 		prepend = ","
 		args = append(args, data.VarbinaryNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
 		sql.AppendRaw(prepend, "tinyblob = ?")
 		prepend = ","
 		args = append(args, data.Tinyblob)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
 		sql.AppendRaw(prepend, "tinyblob_null = ?")
 		prepend = ","
 		args = append(args, data.TinyblobNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Blob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Blob) == 1 {
 		sql.AppendRaw(prepend, "blob = ?")
 		prepend = ","
 		args = append(args, data.Blob)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BlobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BlobNull) == 1 {
 		sql.AppendRaw(prepend, "blob_null = ?")
 		prepend = ","
 		args = append(args, data.BlobNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
 		sql.AppendRaw(prepend, "mediumblob = ?")
 		prepend = ","
 		args = append(args, data.Mediumblob)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
 		sql.AppendRaw(prepend, "mediumblob_null = ?")
 		prepend = ","
 		args = append(args, data.MediumblobNull)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Longblob) == 1 {
 		sql.AppendRaw(prepend, "longblob = ?")
 		prepend = ","
 		args = append(args, data.Longblob)
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
 		sql.AppendRaw(prepend, "longblob_null = ?")
 		args = append(args, data.LongblobNull)
 	}
 	sql.Append(" WHERE id = ?")
 	args = append(args, data.ID)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.extensive.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.extensive.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
-	res, err := ex.db.Exec(sql.Query(), args...)
+	res, err := s.db.Exec(sql.Query(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // Delete deletes the Extensive from the database.
-func (ex *ExtensiveStore) Delete(data *codegen.Extensive) (int64, error) {
+func (s *ExtensiveStore) Delete(data *codegen.Extensive) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
 	sql.Append("DELETE FROM fake_benchmark.extensive WHERE")
 	sql.Append("id = ?")
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.extensive.Delete").Str("stmt", sql.String()).Int("ID", data.ID).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.extensive.Delete").Str("stmt", sql.String()).Int("ID", data.ID).Msg("sql")
 	}
-	res, err := ex.db.Exec(sql.Query(), data.ID)
+	res, err := s.db.Exec(sql.Query(), data.ID)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // DeleteSlice delets all slice element from the database.
-func (ex *ExtensiveStore) DeleteSlice(data []*codegen.Extensive) (int64, error) {
+func (s *ExtensiveStore) DeleteSlice(data []*codegen.Extensive) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
@@ -1499,48 +1498,48 @@ func (ex *ExtensiveStore) DeleteSlice(data []*codegen.Extensive) (int64, error) 
 		sql.AppendInt(data[i].ID)
 	}
 	sql.Append(")")
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.extensive.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.extensive.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
 	}
-	res, err := ex.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // DeleteByQuery uses a where condition to delete entries.
-func (ex *ExtensiveStore) DeleteByQuery(args ...interface{}) (int64, error) {
+func (s *ExtensiveStore) DeleteByQuery(args ...interface{}) (int64, error) {
 	var err error
 	sql := sdb.NewSQLStatement()
 	sql.Append("DELETE FROM fake_benchmark.extensive")
-	if ex.where == "" {
+	if s.where == "" {
 		return 0, errors.New("no where condition set")
 	}
-	sql.Append("WHERE", ex.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.extensive.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	sql.Append("WHERE", s.where)
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.extensive.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
 
-	res, err := ex.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // Truncate deletes all rows from Extensive.
-func (ex *ExtensiveStore) Truncate() error {
+func (s *ExtensiveStore) Truncate() error {
 	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE fake_benchmark.extensive")
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.extensive.Truncate").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.extensive.Truncate").Str("stmt", sql.String()).Msg("sql")
 	}
-	_, err := ex.db.Exec(sql.Query())
+	_, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 	}
 	return err
 }
@@ -1549,262 +1548,262 @@ func (ex *ExtensiveStore) Truncate() error {
 //
 // Generated from index 'primary'.
 // nolint[goconst]
-func (ex *ExtensiveStore) OneByID(id int) (*codegen.Extensive, error) {
-	ex.where = "A.id = ?"
-	return ex.One(id)
+func (s *ExtensiveStore) OneByID(id int) (*codegen.Extensive, error) {
+	s.where = "A.id = ?"
+	return s.One(id)
 }
 
 // ToJSON writes a single object to the buffer.
 // nolint[gocylco]
-func (ex *ExtensiveStore) ToJSON(t *sdb.JsonBuffer, data *Extensive) {
+func (s *ExtensiveStore) ToJSON(t *sdb.JsonBuffer, data *Extensive) {
 	prepend := "{"
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_ID) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_ID) == 1 {
 		t.JD(prepend, "id", data.ID)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint) == 1 {
 		t.JD(prepend, "tinyint", data.Tinyint)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyintUnsigned) == 1 {
 		t.JDu(prepend, "tinyint_unsigned", data.TinyintUnsigned)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyintNull) == 1 {
 		t.JD(prepend, "tinyint_null", *data.TinyintNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Smallint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Smallint) == 1 {
 		t.JD(prepend, "smallint", data.Smallint)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_SmallintUnsigned) == 1 {
 		t.JDu(prepend, "smallint_unsigned", data.SmallintUnsigned)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_SmallintNull) == 1 {
 		t.JD(prepend, "smallint_null", *data.SmallintNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Int) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Int) == 1 {
 		t.JD(prepend, "int", data.Int)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_IntNull) == 1 {
 		t.JD(prepend, "int_null", *data.IntNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_IntUnsigned) == 1 {
 		t.JDu(prepend, "int_unsigned", data.IntUnsigned)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Bigint) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Bigint) == 1 {
 		t.JD64(prepend, "bigint", data.Bigint)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BigintNull) == 1 {
 		t.JD64(prepend, "bigint_null", *data.BigintNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BigintUnsigned) == 1 {
 		t.JD64u(prepend, "bigint_unsigned", data.BigintUnsigned)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varchar) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Varchar) == 1 {
 		t.JS(prepend, "varchar", data.Varchar)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_VarcharNull) == 1 {
 		t.JS(prepend, "varchar_null", *data.VarcharNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Float) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Float) == 1 {
 		t.JF(prepend, "float", data.Float)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_FloatNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_FloatNull) == 1 {
 		t.JF(prepend, "float_null", *data.FloatNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Double) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Double) == 1 {
 		t.JF64(prepend, "double", data.Double)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DoubleNull) == 1 {
 		t.JF64(prepend, "double_null", *data.DoubleNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Decimal) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Decimal) == 1 {
 		t.JF64(prepend, "decimal", data.Decimal)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DecimalNull) == 1 {
 		t.JF64(prepend, "decimal_null", *data.DecimalNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Numeric) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Numeric) == 1 {
 		t.JF64(prepend, "numeric", data.Numeric)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_NumericNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_NumericNull) == 1 {
 		t.JF64(prepend, "numeric_null", *data.NumericNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_CreatedAt) == 1 {
 		t.JDu(prepend, "created_at", data.CreatedAt)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_UpdatedAt) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_UpdatedAt) == 1 {
 		t.JDu(prepend, "updated_at", data.UpdatedAt)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint1) == 1 {
 		t.JB(prepend, "tinyint1", data.Tinyint1)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyint1Null) == 1 {
 		t.JB(prepend, "tinyint1_null", *data.Tinyint1Null)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Year) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Year) == 1 {
 		t.JD(prepend, "year", data.Year)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_YearNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_YearNull) == 1 {
 		t.JD(prepend, "year_null", *data.YearNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Date) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Date) == 1 {
 		t.JT(prepend, "date", data.Date)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DateNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DateNull) == 1 {
 		t.JT(prepend, "date_null", *data.DateNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Time) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Time) == 1 {
 		t.JT(prepend, "time", data.Time)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimeNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TimeNull) == 1 {
 		t.JT(prepend, "time_null", *data.TimeNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Datetime) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Datetime) == 1 {
 		t.JT(prepend, "datetime", data.Datetime)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_DatetimeNull) == 1 {
 		t.JT(prepend, "datetime_null", *data.DatetimeNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Timestamp) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Timestamp) == 1 {
 		t.JT(prepend, "timestamp", data.Timestamp)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TimestampNull) == 1 {
 		t.JT(prepend, "timestamp_null", *data.TimestampNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Char) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Char) == 1 {
 		t.JS(prepend, "char", data.Char)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_CharNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_CharNull) == 1 {
 		t.JS(prepend, "char_null", *data.CharNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinytext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinytext) == 1 {
 		t.JS(prepend, "tinytext", data.Tinytext)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinytextNull) == 1 {
 		t.JS(prepend, "tinytext_null", *data.TinytextNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Text) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Text) == 1 {
 		t.JS(prepend, "text", data.Text)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TextNull) == 1 {
 		t.JS(prepend, "text_null", *data.TextNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Mediumtext) == 1 {
 		t.JS(prepend, "mediumtext", data.Mediumtext)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_MediumtextNull) == 1 {
 		t.JS(prepend, "mediumtext_null", *data.MediumtextNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longtext) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Longtext) == 1 {
 		t.JS(prepend, "longtext", data.Longtext)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_LongtextNull) == 1 {
 		t.JS(prepend, "longtext_null", *data.LongtextNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Binary) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Binary) == 1 {
 		t.JByte(prepend, "binary", data.Binary)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BinaryNull) == 1 {
 		t.JByte(prepend, "binary_null", *data.BinaryNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Varbinary) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Varbinary) == 1 {
 		t.JByte(prepend, "varbinary", data.Varbinary)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_VarbinaryNull) == 1 {
 		t.JByte(prepend, "varbinary_null", *data.VarbinaryNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Tinyblob) == 1 {
 		t.JByte(prepend, "tinyblob", data.Tinyblob)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_TinyblobNull) == 1 {
 		t.JByte(prepend, "tinyblob_null", *data.TinyblobNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Blob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Blob) == 1 {
 		t.JByte(prepend, "blob", data.Blob)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_BlobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_BlobNull) == 1 {
 		t.JByte(prepend, "blob_null", *data.BlobNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Mediumblob) == 1 {
 		t.JByte(prepend, "mediumblob", data.Mediumblob)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_MediumblobNull) == 1 {
 		t.JByte(prepend, "mediumblob_null", *data.MediumblobNull)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_Longblob) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_Longblob) == 1 {
 		t.JByte(prepend, "longblob", data.Longblob)
 		prepend = ","
 	}
-	if ex.colSet == nil || ex.colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Extensive_LongblobNull) == 1 {
 		t.JByte(prepend, "longblob_null", *data.LongblobNull)
 	}
 	t.S(`}`)
 }
 
 // ToJSONArray writes a slice to the named array.
-func (ex *ExtensiveStore) ToJSONArray(w io.Writer, data []*Extensive, name string) {
+func (s *ExtensiveStore) ToJSONArray(w io.Writer, data []*Extensive, name string) {
 	t := sdb.NewJsonBuffer()
 	t.SS(`{"`, name, `":[`)
 	for i := range data {
 		if i > 0 {
 			t.S(",")
 		}
-		ex.ToJSON(t, data[i])
+		s.ToJSON(t, data[i])
 	}
 
 	t.S("]}")

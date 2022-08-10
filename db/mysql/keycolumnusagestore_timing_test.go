@@ -66,7 +66,7 @@ func BenchmarkKeyColumnUsageSelectAll(b *testing.B) {
 	data := &codegen.KeyColumnUsage{}
 	gofakeit.Struct(data)
 	for i := 0; i < 100; i++ {
-		addResultRowDSN("bench", []driver.Value{data.ConstraintCatalog, data.ConstraintSchema, data.ConstraintName, data.TableCatalog, data.TableSchema, data.TableName, data.ColumnName, data.OrdinalPosition, *data.PositionInUniqueConstraint, *data.ReferencedTableSchema, *data.ReferencedTableName, *data.ReferencedColumnName})
+		addResultRowDSN("bench", []driver.Value{data.ConstraintCatalog, data.ConstraintSchema, *data.ConstraintName, data.TableCatalog, data.TableSchema, data.TableName, *data.ColumnName, data.OrdinalPosition, *data.PositionInUniqueConstraint, *data.ReferencedTableSchema, *data.ReferencedTableName, *data.ReferencedColumnName})
 	}
 	store := NewKeyColumnUsageStore(db)
 

@@ -17,8 +17,8 @@ func TestColumnsInsert(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("INSERT INTO information_schema.COLUMNS (table_catalog, table_schema, table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, datetime_precision, character_set_name, collation_name, column_type, column_key, extra, privileges, column_comment, generation_expression) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
-		WithArgs("", "", "", "", 0, nil, "", "", nil, nil, nil, nil, nil, nil, nil, "", "", "", "", "", "").
+		ExpectExec("INSERT INTO information_schema.COLUMNS (table_catalog, table_schema, table_name, column_name, ordinal_position, column_default, is_nullable, data_type, character_maximum_length, character_octet_length, numeric_precision, numeric_scale, datetime_precision, character_set_name, collation_name, column_type, column_key, extra, privileges, column_comment, generation_expression, srs_id) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
+		WithArgs("", "", "", nil, 0, nil, "", nil, nil, nil, nil, nil, nil, nil, nil, "", "", nil, nil, "", "", nil).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	store := NewColumnsStore(db)
 	err = store.Insert(&codegen.Columns{})
@@ -39,8 +39,8 @@ func TestColumnsUpdate(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("UPDATE information_schema.COLUMNS SET table_catalog = ?,table_schema = ?,table_name = ?,column_name = ?,ordinal_position = ?,column_default = ?,is_nullable = ?,data_type = ?,character_maximum_length = ?,character_octet_length = ?,numeric_precision = ?,numeric_scale = ?,datetime_precision = ?,character_set_name = ?,collation_name = ?,column_type = ?,column_key = ?,extra = ?,privileges = ?,column_comment = ?,generation_expression = ? WHERE ").
-		WithArgs("", "", "", "", 0, nil, "", "", nil, nil, nil, nil, nil, nil, nil, "", "", "", "", "", "").
+		ExpectExec("UPDATE information_schema.COLUMNS SET table_catalog = ?,table_schema = ?,table_name = ?,column_name = ?,ordinal_position = ?,column_default = ?,is_nullable = ?,data_type = ?,character_maximum_length = ?,character_octet_length = ?,numeric_precision = ?,numeric_scale = ?,datetime_precision = ?,character_set_name = ?,collation_name = ?,column_type = ?,column_key = ?,extra = ?,privileges = ?,column_comment = ?,generation_expression = ?,srs_id = ? WHERE ").
+		WithArgs("", "", "", nil, 0, nil, "", nil, nil, nil, nil, nil, nil, nil, nil, "", "", nil, nil, "", "", nil).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	store := NewColumnsStore(db)
 	aff, err := store.Update(&codegen.Columns{})
@@ -63,11 +63,11 @@ func TestColumnsSelectWithoutJoin(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	rows := sqlmock.NewRows([]string{"A.table_catalog", "A.table_schema", "A.table_name", "A.column_name", "A.ordinal_position", "A.column_default", "A.is_nullable", "A.data_type", "A.character_maximum_length", "A.character_octet_length", "A.numeric_precision", "A.numeric_scale", "A.datetime_precision", "A.character_set_name", "A.collation_name", "A.column_type", "A.column_key", "A.extra", "A.privileges", "A.column_comment", "A.generation_expression"}).
-		AddRow("", "", "", "", 0, nil, "", "", nil, nil, nil, nil, nil, nil, nil, "", "", "", "", "", "").
-		AddRow("", "", "", "", 0, nil, "", "", nil, nil, nil, nil, nil, nil, nil, "", "", "", "", "", "")
+	rows := sqlmock.NewRows([]string{"A.table_catalog", "A.table_schema", "A.table_name", "A.column_name", "A.ordinal_position", "A.column_default", "A.is_nullable", "A.data_type", "A.character_maximum_length", "A.character_octet_length", "A.numeric_precision", "A.numeric_scale", "A.datetime_precision", "A.character_set_name", "A.collation_name", "A.column_type", "A.column_key", "A.extra", "A.privileges", "A.column_comment", "A.generation_expression", "A.srs_id"}).
+		AddRow("", "", "", nil, 0, nil, "", nil, nil, nil, nil, nil, nil, nil, nil, "", "", nil, nil, "", "", nil).
+		AddRow("", "", "", nil, 0, nil, "", nil, nil, nil, nil, nil, nil, nil, nil, "", "", nil, nil, "", "", nil)
 
-	mock.ExpectQuery("SELECT A.table_catalog, A.table_schema, A.table_name, A.column_name, A.ordinal_position, A.column_default, A.is_nullable, A.data_type, A.character_maximum_length, A.character_octet_length, A.numeric_precision, A.numeric_scale, A.datetime_precision, A.character_set_name, A.collation_name, A.column_type, A.column_key, A.extra, A.privileges, A.column_comment, A.generation_expression FROM information_schema.COLUMNS A").
+	mock.ExpectQuery("SELECT A.table_catalog, A.table_schema, A.table_name, A.column_name, A.ordinal_position, A.column_default, A.is_nullable, A.data_type, A.character_maximum_length, A.character_octet_length, A.numeric_precision, A.numeric_scale, A.datetime_precision, A.character_set_name, A.collation_name, A.column_type, A.column_key, A.extra, A.privileges, A.column_comment, A.generation_expression, A.srs_id FROM information_schema.COLUMNS A").
 		WillReturnRows(rows)
 	store := NewColumnsStore(db).WithoutJoins()
 	data, err := store.Query()

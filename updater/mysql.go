@@ -14,14 +14,16 @@ type MysqlUpdate struct {
 	repoColumns codegen.ColumnsRepository
 	repoKeyCol  codegen.KeyColumnUsageRepository
 	repoStats   codegen.StatisticsRepository
+	ctx         *codegen.BaseContext
 }
 
-func NewMysqlUpdate(table codegen.TablesRepository, columns codegen.ColumnsRepository, keycol codegen.KeyColumnUsageRepository, stats codegen.StatisticsRepository) *MysqlUpdate {
+func NewMysqlUpdate(ctx *codegen.BaseContext, table codegen.TablesRepository, columns codegen.ColumnsRepository, keycol codegen.KeyColumnUsageRepository, stats codegen.StatisticsRepository) *MysqlUpdate {
 	return &MysqlUpdate{
 		repoTable:   table,
 		repoColumns: columns,
 		repoKeyCol:  keycol,
 		repoStats:   stats,
+		ctx:         ctx,
 	}
 }
 
@@ -133,7 +135,7 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 	for _, schemaName := range conf.Database.Schemas {
 		schema := u.getSchema(conf, schemaName)
 
-		tables, err := u.repoTable.QueryBySchema(schema.Name)
+		tables, err := u.repoTable.QueryBySchema(u.ctx, schema.Name)
 		if err != nil {
 			panic(err)
 		}
@@ -141,31 +143,31 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 		for _, table := range tables {
 			table := u.getTable(schema, table.TableName)
 
-			cols, err := u.repoColumns.QueryBySchemaAndTable(schema.Name, table.Name)
+			cols, err := u.repoColumns.QueryBySchemaAndTable(u.ctx, schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
 
 			for i := range cols {
-				fRef := u.getField(table, cols[i].ColumnName)
+				fRef := u.getField(table, *cols[i].ColumnName)
 				fRef.IsAutoincrement = false
 				fRef.IsNullable = false
 				fRef.IsPrimaryKey = false
 
 				c := cols[i]
 				fNew := codegen.Field{}
-				fNew.Name = c.ColumnName
+				fNew.Name = *c.ColumnName
 				if c.ColumnType == "tinyint(1)" {
 					fNew.DBType = c.ColumnType
 				} else {
-					if strings.Contains(c.DataType, "int") && strings.Contains(c.ColumnType, " unsigned") {
-						fNew.DBType = c.DataType + " unsigned"
+					if strings.Contains(*c.DataType, "int") && strings.Contains(c.ColumnType, " unsigned") {
+						fNew.DBType = *c.DataType + " unsigned"
 					} else {
-						fNew.DBType = c.DataType
+						fNew.DBType = *c.DataType
 					}
 				}
 				fNew.IsNullable = c.IsNullable == "YES"
-				fNew.IsAutoincrement = strings.Contains(c.Extra, "auto_increment")
+				fNew.IsAutoincrement = strings.Contains(*c.Extra, "auto_increment")
 				fNew.IsPrimaryKey = c.ColumnKey == "PRI"
 
 				if fNew.DBType == "enum" {
@@ -175,39 +177,39 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 				mergo.MergeWithOverwrite(fRef, fNew)
 			}
 
-			foreignKeys, err := u.repoKeyCol.QueryBySchemaAndRefSchemaAndTable(schema.Name, schema.Name, table.Name)
+			foreignKeys, err := u.repoKeyCol.QueryBySchemaAndRefSchemaAndTable(u.ctx, schema.Name, schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
 
 			for i := range foreignKeys {
-				fk := u.getForeignKey(table, foreignKeys[i].ConstraintName)
+				fk := u.getForeignKey(table, *foreignKeys[i].ConstraintName)
 				fk.Fields = fk.Fields[:0]
-				fk.Fields = append(fk.Fields, foreignKeys[i].ColumnName)
+				fk.Fields = append(fk.Fields, *foreignKeys[i].ColumnName)
 				fk.RefFields = fk.RefFields[:0]
 				fk.RefFields = append(fk.RefFields, *foreignKeys[i].ReferencedColumnName)
 				fk.RefTable = *foreignKeys[i].ReferencedTableName
 				fk.RefSchema = *foreignKeys[i].ReferencedTableSchema
 				fk.IsUnique = true
-				fk.Name = foreignKeys[i].ConstraintName
+				fk.Name = *foreignKeys[i].ConstraintName
 			}
 
-			indices, err := u.repoStats.IndexNameBySchemaAndTable(schema.Name, table.Name)
+			indices, err := u.repoStats.IndexNameBySchemaAndTable(u.ctx, schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
 
 			for _, indexName := range indices {
-				indexFields, err := u.repoStats.QueryBySchemaAndTableAndIndex(schema.Name, table.Name, indexName.IndexName)
+				indexFields, err := u.repoStats.QueryBySchemaAndTableAndIndex(u.ctx, schema.Name, table.Name, *indexName.IndexName)
 				if err != nil {
 					panic(err)
 				}
 
-				tableIndex := u.getIndex(table, indexName.IndexName)
+				tableIndex := u.getIndex(table, *indexName.IndexName)
 				tableIndex.IsUnique = indexFields[0].NonUnique == 0
 				tableIndex.Fields = make([]string, 0)
 				for _, field := range indexFields {
-					tableIndex.Fields = append(tableIndex.Fields, field.ColumnName)
+					tableIndex.Fields = append(tableIndex.Fields, *field.ColumnName)
 				}
 			}
 		}

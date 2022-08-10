@@ -12,37 +12,38 @@ type Columns struct {
 	TableCatalog           string  `json:"TABLE_CATALOG" db:"table_catalog"`
 	TableSchema            string  `json:"TABLE_SCHEMA" db:"table_schema"`
 	TableName              string  `json:"TABLE_NAME" db:"table_name"`
-	ColumnName             string  `json:"COLUMN_NAME" db:"column_name"`
-	OrdinalPosition        uint64  `json:"ORDINAL_POSITION" db:"ordinal_position"`
+	ColumnName             *string `json:"COLUMN_NAME" db:"column_name"`
+	OrdinalPosition        uint    `json:"ORDINAL_POSITION" db:"ordinal_position"`
 	ColumnDefault          *string `json:"COLUMN_DEFAULT" db:"column_default"`
 	IsNullable             string  `json:"IS_NULLABLE" db:"is_nullable"`
-	DataType               string  `json:"DATA_TYPE" db:"data_type"`
-	CharacterMaximumLength *uint64 `json:"CHARACTER_MAXIMUM_LENGTH" db:"character_maximum_length"`
-	CharacterOctetLength   *uint64 `json:"CHARACTER_OCTET_LENGTH" db:"character_octet_length"`
+	DataType               *string `json:"DATA_TYPE" db:"data_type"`
+	CharacterMaximumLength *int64  `json:"CHARACTER_MAXIMUM_LENGTH" db:"character_maximum_length"`
+	CharacterOctetLength   *int64  `json:"CHARACTER_OCTET_LENGTH" db:"character_octet_length"`
 	NumericPrecision       *uint64 `json:"NUMERIC_PRECISION" db:"numeric_precision"`
 	NumericScale           *uint64 `json:"NUMERIC_SCALE" db:"numeric_scale"`
-	DatetimePrecision      *uint64 `json:"DATETIME_PRECISION" db:"datetime_precision"`
+	DatetimePrecision      *uint   `json:"DATETIME_PRECISION" db:"datetime_precision"`
 	CharacterSetName       *string `json:"CHARACTER_SET_NAME" db:"character_set_name"`
 	CollationName          *string `json:"COLLATION_NAME" db:"collation_name"`
 	ColumnType             string  `json:"COLUMN_TYPE" db:"column_type"`
 	ColumnKey              string  `json:"COLUMN_KEY" db:"column_key"`
-	Extra                  string  `json:"EXTRA" db:"extra"`
-	Privileges             string  `json:"PRIVILEGES" db:"privileges"`
+	Extra                  *string `json:"EXTRA" db:"extra"`
+	Privileges             *string `json:"PRIVILEGES" db:"privileges"`
 	ColumnComment          string  `json:"COLUMN_COMMENT" db:"column_comment"`
 	GenerationExpression   string  `json:"GENERATION_EXPRESSION" db:"generation_expression"`
+	SrsID                  *uint   `json:"SRS_ID" db:"srs_id"`
 }
 
 /* KeyColumnUsage represents a row from KEY_COLUMN_USAGE. */
 type KeyColumnUsage struct {
 	ConstraintCatalog          string  `json:"CONSTRAINT_CATALOG" db:"constraint_catalog"`
 	ConstraintSchema           string  `json:"CONSTRAINT_SCHEMA" db:"constraint_schema"`
-	ConstraintName             string  `json:"CONSTRAINT_NAME" db:"constraint_name"`
+	ConstraintName             *string `json:"CONSTRAINT_NAME" db:"constraint_name"`
 	TableCatalog               string  `json:"TABLE_CATALOG" db:"table_catalog"`
 	TableSchema                string  `json:"TABLE_SCHEMA" db:"table_schema"`
 	TableName                  string  `json:"TABLE_NAME" db:"table_name"`
-	ColumnName                 string  `json:"COLUMN_NAME" db:"column_name"`
-	OrdinalPosition            int64   `json:"ORDINAL_POSITION" db:"ordinal_position"`
-	PositionInUniqueConstraint *int64  `json:"POSITION_IN_UNIQUE_CONSTRAINT" db:"position_in_unique_constraint"`
+	ColumnName                 *string `json:"COLUMN_NAME" db:"column_name"`
+	OrdinalPosition            uint    `json:"ORDINAL_POSITION" db:"ordinal_position"`
+	PositionInUniqueConstraint *uint   `json:"POSITION_IN_UNIQUE_CONSTRAINT" db:"position_in_unique_constraint"`
 	ReferencedTableSchema      *string `json:"REFERENCED_TABLE_SCHEMA" db:"referenced_table_schema"`
 	ReferencedTableName        *string `json:"REFERENCED_TABLE_NAME" db:"referenced_table_name"`
 	ReferencedColumnName       *string `json:"REFERENCED_COLUMN_NAME" db:"referenced_column_name"`
@@ -53,19 +54,21 @@ type Statistics struct {
 	TableCatalog string  `json:"TABLE_CATALOG" db:"table_catalog"`
 	TableSchema  string  `json:"TABLE_SCHEMA" db:"table_schema"`
 	TableName    string  `json:"TABLE_NAME" db:"table_name"`
-	NonUnique    int64   `json:"NON_UNIQUE" db:"non_unique"`
+	NonUnique    int     `json:"NON_UNIQUE" db:"non_unique"`
 	IndexSchema  string  `json:"INDEX_SCHEMA" db:"index_schema"`
-	IndexName    string  `json:"INDEX_NAME" db:"index_name"`
-	SeqInIndex   int64   `json:"SEQ_IN_INDEX" db:"seq_in_index"`
-	ColumnName   string  `json:"COLUMN_NAME" db:"column_name"`
+	IndexName    *string `json:"INDEX_NAME" db:"index_name"`
+	SeqInIndex   uint    `json:"SEQ_IN_INDEX" db:"seq_in_index"`
+	ColumnName   *string `json:"COLUMN_NAME" db:"column_name"`
 	Collation    *string `json:"COLLATION" db:"collation"`
 	Cardinality  *int64  `json:"CARDINALITY" db:"cardinality"`
 	SubPart      *int64  `json:"SUB_PART" db:"sub_part"`
-	Packed       *string `json:"PACKED" db:"packed"`
+	Packed       *[]byte `json:"PACKED" db:"packed"`
 	Nullable     string  `json:"NULLABLE" db:"nullable"`
 	IndexType    string  `json:"INDEX_TYPE" db:"index_type"`
-	Comment      *string `json:"COMMENT" db:"comment"`
+	Comment      string  `json:"COMMENT" db:"comment"`
 	IndexComment string  `json:"INDEX_COMMENT" db:"index_comment"`
+	IsVisible    string  `json:"IS_VISIBLE" db:"is_visible"`
+	Expression   *string `json:"EXPRESSION" db:"expression"`
 }
 
 /* Tables represents a row from TABLES. */
@@ -75,7 +78,7 @@ type Tables struct {
 	TableName      string     `json:"TABLE_NAME" db:"table_name"`
 	TableType      string     `json:"TABLE_TYPE" db:"table_type"`
 	Engine         *string    `json:"ENGINE" db:"engine"`
-	Version        *uint64    `json:"VERSION" db:"version"`
+	Version        *int       `json:"VERSION" db:"version"`
 	RowFormat      *string    `json:"ROW_FORMAT" db:"row_format"`
 	TableRows      *uint64    `json:"TABLE_ROWS" db:"table_rows"`
 	AvgRowLength   *uint64    `json:"AVG_ROW_LENGTH" db:"avg_row_length"`
@@ -84,13 +87,13 @@ type Tables struct {
 	IndexLength    *uint64    `json:"INDEX_LENGTH" db:"index_length"`
 	DataFree       *uint64    `json:"DATA_FREE" db:"data_free"`
 	AutoIncrement  *uint64    `json:"AUTO_INCREMENT" db:"auto_increment"`
-	CreateTime     *time.Time `json:"CREATE_TIME" db:"create_time"`
+	CreateTime     time.Time  `json:"CREATE_TIME" db:"create_time"`
 	UpdateTime     *time.Time `json:"UPDATE_TIME" db:"update_time"`
 	CheckTime      *time.Time `json:"CHECK_TIME" db:"check_time"`
 	TableCollation *string    `json:"TABLE_COLLATION" db:"table_collation"`
-	Checksum       *uint64    `json:"CHECKSUM" db:"checksum"`
+	Checksum       *int64     `json:"CHECKSUM" db:"checksum"`
 	CreateOptions  *string    `json:"CREATE_OPTIONS" db:"create_options"`
-	TableComment   string     `json:"TABLE_COMMENT" db:"table_comment"`
+	TableComment   *string    `json:"TABLE_COMMENT" db:"table_comment"`
 }
 
 /* Person represents a row from person. */
@@ -202,12 +205,12 @@ func (p *ColumnsPartial) SetTableName(param string) {
 	p.Touched.SetBit(&p.Touched, Columns_TableName, 1)
 }
 
-func (p *ColumnsPartial) SetColumnName(param string) {
+func (p *ColumnsPartial) SetColumnName(param *string) {
 	p.ColumnName = param
 	p.Touched.SetBit(&p.Touched, Columns_ColumnName, 1)
 }
 
-func (p *ColumnsPartial) SetOrdinalPosition(param uint64) {
+func (p *ColumnsPartial) SetOrdinalPosition(param uint) {
 	p.OrdinalPosition = param
 	p.Touched.SetBit(&p.Touched, Columns_OrdinalPosition, 1)
 }
@@ -222,17 +225,17 @@ func (p *ColumnsPartial) SetIsNullable(param string) {
 	p.Touched.SetBit(&p.Touched, Columns_IsNullable, 1)
 }
 
-func (p *ColumnsPartial) SetDataType(param string) {
+func (p *ColumnsPartial) SetDataType(param *string) {
 	p.DataType = param
 	p.Touched.SetBit(&p.Touched, Columns_DataType, 1)
 }
 
-func (p *ColumnsPartial) SetCharacterMaximumLength(param *uint64) {
+func (p *ColumnsPartial) SetCharacterMaximumLength(param *int64) {
 	p.CharacterMaximumLength = param
 	p.Touched.SetBit(&p.Touched, Columns_CharacterMaximumLength, 1)
 }
 
-func (p *ColumnsPartial) SetCharacterOctetLength(param *uint64) {
+func (p *ColumnsPartial) SetCharacterOctetLength(param *int64) {
 	p.CharacterOctetLength = param
 	p.Touched.SetBit(&p.Touched, Columns_CharacterOctetLength, 1)
 }
@@ -247,7 +250,7 @@ func (p *ColumnsPartial) SetNumericScale(param *uint64) {
 	p.Touched.SetBit(&p.Touched, Columns_NumericScale, 1)
 }
 
-func (p *ColumnsPartial) SetDatetimePrecision(param *uint64) {
+func (p *ColumnsPartial) SetDatetimePrecision(param *uint) {
 	p.DatetimePrecision = param
 	p.Touched.SetBit(&p.Touched, Columns_DatetimePrecision, 1)
 }
@@ -272,12 +275,12 @@ func (p *ColumnsPartial) SetColumnKey(param string) {
 	p.Touched.SetBit(&p.Touched, Columns_ColumnKey, 1)
 }
 
-func (p *ColumnsPartial) SetExtra(param string) {
+func (p *ColumnsPartial) SetExtra(param *string) {
 	p.Extra = param
 	p.Touched.SetBit(&p.Touched, Columns_Extra, 1)
 }
 
-func (p *ColumnsPartial) SetPrivileges(param string) {
+func (p *ColumnsPartial) SetPrivileges(param *string) {
 	p.Privileges = param
 	p.Touched.SetBit(&p.Touched, Columns_Privileges, 1)
 }
@@ -290,6 +293,11 @@ func (p *ColumnsPartial) SetColumnComment(param string) {
 func (p *ColumnsPartial) SetGenerationExpression(param string) {
 	p.GenerationExpression = param
 	p.Touched.SetBit(&p.Touched, Columns_GenerationExpression, 1)
+}
+
+func (p *ColumnsPartial) SetSrsID(param *uint) {
+	p.SrsID = param
+	p.Touched.SetBit(&p.Touched, Columns_SrsID, 1)
 }
 
 /* KeyColumnUsagePartial is used for updating specific columns from KEY_COLUMN_USAGE. */
@@ -308,7 +316,7 @@ func (p *KeyColumnUsagePartial) SetConstraintSchema(param string) {
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ConstraintSchema, 1)
 }
 
-func (p *KeyColumnUsagePartial) SetConstraintName(param string) {
+func (p *KeyColumnUsagePartial) SetConstraintName(param *string) {
 	p.ConstraintName = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ConstraintName, 1)
 }
@@ -328,17 +336,17 @@ func (p *KeyColumnUsagePartial) SetTableName(param string) {
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_TableName, 1)
 }
 
-func (p *KeyColumnUsagePartial) SetColumnName(param string) {
+func (p *KeyColumnUsagePartial) SetColumnName(param *string) {
 	p.ColumnName = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_ColumnName, 1)
 }
 
-func (p *KeyColumnUsagePartial) SetOrdinalPosition(param int64) {
+func (p *KeyColumnUsagePartial) SetOrdinalPosition(param uint) {
 	p.OrdinalPosition = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_OrdinalPosition, 1)
 }
 
-func (p *KeyColumnUsagePartial) SetPositionInUniqueConstraint(param *int64) {
+func (p *KeyColumnUsagePartial) SetPositionInUniqueConstraint(param *uint) {
 	p.PositionInUniqueConstraint = param
 	p.Touched.SetBit(&p.Touched, KeyColumnUsage_PositionInUniqueConstraint, 1)
 }
@@ -379,7 +387,7 @@ func (p *StatisticsPartial) SetTableName(param string) {
 	p.Touched.SetBit(&p.Touched, Statistics_TableName, 1)
 }
 
-func (p *StatisticsPartial) SetNonUnique(param int64) {
+func (p *StatisticsPartial) SetNonUnique(param int) {
 	p.NonUnique = param
 	p.Touched.SetBit(&p.Touched, Statistics_NonUnique, 1)
 }
@@ -389,17 +397,17 @@ func (p *StatisticsPartial) SetIndexSchema(param string) {
 	p.Touched.SetBit(&p.Touched, Statistics_IndexSchema, 1)
 }
 
-func (p *StatisticsPartial) SetIndexName(param string) {
+func (p *StatisticsPartial) SetIndexName(param *string) {
 	p.IndexName = param
 	p.Touched.SetBit(&p.Touched, Statistics_IndexName, 1)
 }
 
-func (p *StatisticsPartial) SetSeqInIndex(param int64) {
+func (p *StatisticsPartial) SetSeqInIndex(param uint) {
 	p.SeqInIndex = param
 	p.Touched.SetBit(&p.Touched, Statistics_SeqInIndex, 1)
 }
 
-func (p *StatisticsPartial) SetColumnName(param string) {
+func (p *StatisticsPartial) SetColumnName(param *string) {
 	p.ColumnName = param
 	p.Touched.SetBit(&p.Touched, Statistics_ColumnName, 1)
 }
@@ -419,7 +427,7 @@ func (p *StatisticsPartial) SetSubPart(param *int64) {
 	p.Touched.SetBit(&p.Touched, Statistics_SubPart, 1)
 }
 
-func (p *StatisticsPartial) SetPacked(param *string) {
+func (p *StatisticsPartial) SetPacked(param *[]byte) {
 	p.Packed = param
 	p.Touched.SetBit(&p.Touched, Statistics_Packed, 1)
 }
@@ -434,7 +442,7 @@ func (p *StatisticsPartial) SetIndexType(param string) {
 	p.Touched.SetBit(&p.Touched, Statistics_IndexType, 1)
 }
 
-func (p *StatisticsPartial) SetComment(param *string) {
+func (p *StatisticsPartial) SetComment(param string) {
 	p.Comment = param
 	p.Touched.SetBit(&p.Touched, Statistics_Comment, 1)
 }
@@ -442,6 +450,16 @@ func (p *StatisticsPartial) SetComment(param *string) {
 func (p *StatisticsPartial) SetIndexComment(param string) {
 	p.IndexComment = param
 	p.Touched.SetBit(&p.Touched, Statistics_IndexComment, 1)
+}
+
+func (p *StatisticsPartial) SetIsVisible(param string) {
+	p.IsVisible = param
+	p.Touched.SetBit(&p.Touched, Statistics_IsVisible, 1)
+}
+
+func (p *StatisticsPartial) SetExpression(param *string) {
+	p.Expression = param
+	p.Touched.SetBit(&p.Touched, Statistics_Expression, 1)
 }
 
 /* TablesPartial is used for updating specific columns from TABLES. */
@@ -475,7 +493,7 @@ func (p *TablesPartial) SetEngine(param *string) {
 	p.Touched.SetBit(&p.Touched, Tables_Engine, 1)
 }
 
-func (p *TablesPartial) SetVersion(param *uint64) {
+func (p *TablesPartial) SetVersion(param *int) {
 	p.Version = param
 	p.Touched.SetBit(&p.Touched, Tables_Version, 1)
 }
@@ -520,7 +538,7 @@ func (p *TablesPartial) SetAutoIncrement(param *uint64) {
 	p.Touched.SetBit(&p.Touched, Tables_AutoIncrement, 1)
 }
 
-func (p *TablesPartial) SetCreateTime(param *time.Time) {
+func (p *TablesPartial) SetCreateTime(param time.Time) {
 	p.CreateTime = param
 	p.Touched.SetBit(&p.Touched, Tables_CreateTime, 1)
 }
@@ -540,7 +558,7 @@ func (p *TablesPartial) SetTableCollation(param *string) {
 	p.Touched.SetBit(&p.Touched, Tables_TableCollation, 1)
 }
 
-func (p *TablesPartial) SetChecksum(param *uint64) {
+func (p *TablesPartial) SetChecksum(param *int64) {
 	p.Checksum = param
 	p.Touched.SetBit(&p.Touched, Tables_Checksum, 1)
 }
@@ -550,7 +568,7 @@ func (p *TablesPartial) SetCreateOptions(param *string) {
 	p.Touched.SetBit(&p.Touched, Tables_CreateOptions, 1)
 }
 
-func (p *TablesPartial) SetTableComment(param string) {
+func (p *TablesPartial) SetTableComment(param *string) {
 	p.TableComment = param
 	p.Touched.SetBit(&p.Touched, Tables_TableComment, 1)
 }

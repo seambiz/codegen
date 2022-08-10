@@ -66,7 +66,7 @@ func BenchmarkTablesSelectAll(b *testing.B) {
 	data := &codegen.Tables{}
 	gofakeit.Struct(data)
 	for i := 0; i < 100; i++ {
-		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.TableSchema, data.TableName, data.TableType, *data.Engine, *data.Version, *data.RowFormat, *data.TableRows, *data.AvgRowLength, *data.DataLength, *data.MaxDataLength, *data.IndexLength, *data.DataFree, *data.AutoIncrement, *data.CreateTime, *data.UpdateTime, *data.CheckTime, *data.TableCollation, *data.Checksum, *data.CreateOptions, data.TableComment})
+		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.TableSchema, data.TableName, data.TableType, *data.Engine, *data.Version, *data.RowFormat, *data.TableRows, *data.AvgRowLength, *data.DataLength, *data.MaxDataLength, *data.IndexLength, *data.DataFree, *data.AutoIncrement, data.CreateTime, *data.UpdateTime, *data.CheckTime, *data.TableCollation, *data.Checksum, *data.CreateOptions, *data.TableComment})
 	}
 	store := NewTablesStore(db)
 
@@ -90,7 +90,7 @@ func BenchmarkTablesSelectCols(b *testing.B) {
 	data := &codegen.Tables{}
 	gofakeit.Struct(data)
 	for i := 0; i < 100; i++ {
-		addResultRowDSN("bench", []driver.Value{data.TableCatalog, data.TableComment})
+		addResultRowDSN("bench", []driver.Value{data.TableCatalog, *data.TableComment})
 	}
 	store := NewTablesStore(db).Columns(codegen.Tables_TableCatalog, codegen.Tables_TableComment)
 

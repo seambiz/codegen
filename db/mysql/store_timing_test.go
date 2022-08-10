@@ -313,7 +313,6 @@ func BenchmarkQuery(b *testing.B) {
 		})
 
 		b.Run(fmt.Sprintf("jet_%d", testCase.numRows), func(b *testing.B) {
-
 			type Pet struct {
 				ID       int
 				PersonID int

@@ -17,8 +17,8 @@ func TestStatisticsInsert(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("INSERT INTO information_schema.STATISTICS (table_catalog, table_schema, table_name, non_unique, index_schema, index_name, seq_in_index, column_name, collation, cardinality, sub_part, packed, nullable, index_type, comment, index_comment) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
-		WithArgs("", "", "", 0, "", "", 0, "", nil, nil, nil, nil, "", "", nil, "").
+		ExpectExec("INSERT INTO information_schema.STATISTICS (table_catalog, table_schema, table_name, non_unique, index_schema, index_name, seq_in_index, column_name, collation, cardinality, sub_part, packed, nullable, index_type, comment, index_comment, is_visible, expression) VALUES ( ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? , ? )").
+		WithArgs("", "", "", 0, "", nil, 0, nil, nil, nil, nil, nil, "", "", "", "", "", nil).
 		WillReturnResult(sqlmock.NewResult(1, 1))
 	store := NewStatisticsStore(db)
 	err = store.Insert(&codegen.Statistics{})
@@ -39,8 +39,8 @@ func TestStatisticsUpdate(t *testing.T) {
 	}
 	defer db.Close()
 	mock.
-		ExpectExec("UPDATE information_schema.STATISTICS SET table_catalog = ?,table_schema = ?,table_name = ?,non_unique = ?,index_schema = ?,index_name = ?,seq_in_index = ?,column_name = ?,collation = ?,cardinality = ?,sub_part = ?,packed = ?,nullable = ?,index_type = ?,comment = ?,index_comment = ? WHERE ").
-		WithArgs("", "", "", 0, "", "", 0, "", nil, nil, nil, nil, "", "", nil, "").
+		ExpectExec("UPDATE information_schema.STATISTICS SET table_catalog = ?,table_schema = ?,table_name = ?,non_unique = ?,index_schema = ?,index_name = ?,seq_in_index = ?,column_name = ?,collation = ?,cardinality = ?,sub_part = ?,packed = ?,nullable = ?,index_type = ?,comment = ?,index_comment = ?,is_visible = ?,expression = ? WHERE ").
+		WithArgs("", "", "", 0, "", nil, 0, nil, nil, nil, nil, nil, "", "", "", "", "", nil).
 		WillReturnResult(sqlmock.NewResult(0, 1))
 	store := NewStatisticsStore(db)
 	aff, err := store.Update(&codegen.Statistics{})
@@ -63,11 +63,11 @@ func TestStatisticsSelectWithoutJoin(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	rows := sqlmock.NewRows([]string{"A.table_catalog", "A.table_schema", "A.table_name", "A.non_unique", "A.index_schema", "A.index_name", "A.seq_in_index", "A.column_name", "A.collation", "A.cardinality", "A.sub_part", "A.packed", "A.nullable", "A.index_type", "A.comment", "A.index_comment"}).
-		AddRow("", "", "", 0, "", "", 0, "", nil, nil, nil, nil, "", "", nil, "").
-		AddRow("", "", "", 0, "", "", 0, "", nil, nil, nil, nil, "", "", nil, "")
+	rows := sqlmock.NewRows([]string{"A.table_catalog", "A.table_schema", "A.table_name", "A.non_unique", "A.index_schema", "A.index_name", "A.seq_in_index", "A.column_name", "A.collation", "A.cardinality", "A.sub_part", "A.packed", "A.nullable", "A.index_type", "A.comment", "A.index_comment", "A.is_visible", "A.expression"}).
+		AddRow("", "", "", 0, "", nil, 0, nil, nil, nil, nil, nil, "", "", "", "", "", nil).
+		AddRow("", "", "", 0, "", nil, 0, nil, nil, nil, nil, nil, "", "", "", "", "", nil)
 
-	mock.ExpectQuery("SELECT A.table_catalog, A.table_schema, A.table_name, A.non_unique, A.index_schema, A.index_name, A.seq_in_index, A.column_name, A.collation, A.cardinality, A.sub_part, A.packed, A.nullable, A.index_type, A.comment, A.index_comment FROM information_schema.STATISTICS A").
+	mock.ExpectQuery("SELECT A.table_catalog, A.table_schema, A.table_name, A.non_unique, A.index_schema, A.index_name, A.seq_in_index, A.column_name, A.collation, A.cardinality, A.sub_part, A.packed, A.nullable, A.index_type, A.comment, A.index_comment, A.is_visible, A.expression FROM information_schema.STATISTICS A").
 		WillReturnRows(rows)
 	store := NewStatisticsStore(db).WithoutJoins()
 	data, err := store.Query()

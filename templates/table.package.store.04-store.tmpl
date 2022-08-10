@@ -1,4 +1,5 @@
 {{- $schema := .Schema }}
+{{- $conf := .Conf }}
 // {{ .Table.Title }}Store is used to query for '{{ .Table.Title }}' records.
 type {{ .Table.Title }}Store struct {
 	Store
@@ -6,9 +7,9 @@ type {{ .Table.Title }}Store struct {
 
 // New{{ .Table.Title }}Store return DAO Store for {{ .Table.Title }}
 {{- if $schema.IsMultiTenant }}
-func New{{ .Table.Title }}Store(ctx *kanban.BaseContext, {{ $schema.MTVarName }} {{ $schema.MTVarType }}, conn Execer) *{{ .Table.Title }}Store {
+func New{{ .Table.Title }}Store(ctx *{{ $conf.RootPackage }}.BaseContext, {{ $schema.MTVarName }} {{ $schema.MTVarType }}, conn Execer) *{{ .Table.Title }}Store {
 {{- else }}
-func New{{ .Table.Title }}Store(ctx *kanban.BaseContext, conn Execer) *{{ .Table.Title }}Store {
+func New{{ .Table.Title }}Store(ctx *{{ $conf.RootPackage }}.BaseContext, conn Execer) *{{ .Table.Title }}Store {
 {{- end }}
 	{{ .Table.Initials }} := &{{ .Table.Title }}Store{}
 	{{ .Table.Initials }}.db = conn

@@ -27,6 +27,7 @@ const (
 	Columns_Privileges
 	Columns_ColumnComment
 	Columns_GenerationExpression
+	Columns_SrsID
 
 	// Columns for table information_schema.KeyColumnUsage
 	KeyColumnUsage_ConstraintCatalog
@@ -59,6 +60,8 @@ const (
 	Statistics_IndexType
 	Statistics_Comment
 	Statistics_IndexComment
+	Statistics_IsVisible
+	Statistics_Expression
 
 	// Columns for table information_schema.Tables
 	Tables_TableCatalog

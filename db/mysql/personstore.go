@@ -8,8 +8,6 @@ import (
 
 	codegen "bitbucket.org/codegen"
 
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/seambiz/seambiz/sdb"
 )
 
@@ -21,7 +19,7 @@ type Person struct {
 }
 
 // new implements Bindable.new
-func (pe *Person) new() Bindable {
+func (s *Person) new() Bindable {
 	return &Person{}
 }
 
@@ -31,8 +29,8 @@ type PersonSlice struct {
 }
 
 // append implements BindableSlice.append
-func (pe *PersonSlice) append(d Bindable) {
-	pe.data = append(pe.data, d.(*Person))
+func (s *PersonSlice) append(d Bindable) {
+	s.data = append(s.data, d.(*Person))
 }
 
 // constant slice for all fields of the table "Person".
@@ -63,115 +61,116 @@ type PersonStore struct {
 }
 
 // NewPersonStore return DAO Store for Person
-func NewPersonStore(conn Execer) *PersonStore {
-	pe := &PersonStore{}
-	pe.db = conn
-	pe.withJoin = true
-	pe.joinType = sdb.LEFT
-	pe.batch = 1000
-	return pe
+func NewPersonStore(ctx *codegen.BaseContext, conn Execer) *PersonStore {
+	s := &PersonStore{}
+	s.db = conn
+	s.withJoin = true
+	s.joinType = sdb.LEFT
+	s.batch = 1000
+	s.log = ctx.Log
+	return s
 }
 
 // WithoutJoins won't execute JOIN when querying for records.
-func (pe *PersonStore) WithoutJoins() *PersonStore {
-	pe.withJoin = false
-	return pe
+func (s *PersonStore) WithoutJoins() *PersonStore {
+	s.withJoin = false
+	return s
 }
 
 // Where sets local sql, that will be appended to SELECT.
-func (pe *PersonStore) Where(sql string) *PersonStore {
-	pe.where = sql
-	return pe
+func (s *PersonStore) Where(sql string) *PersonStore {
+	s.where = sql
+	return s
 }
 
 // OrderBy sets local sql, that will be appended to SELECT.
-func (pe *PersonStore) OrderBy(sql string) *PersonStore {
-	pe.orderBy = sql
-	return pe
+func (s *PersonStore) OrderBy(sql string) *PersonStore {
+	s.orderBy = sql
+	return s
 }
 
 // GroupBy sets local sql, that will be appended to SELECT.
-func (pe *PersonStore) GroupBy(sql string) *PersonStore {
-	pe.groupBy = sql
-	return pe
+func (s *PersonStore) GroupBy(sql string) *PersonStore {
+	s.groupBy = sql
+	return s
 }
 
 // Limit result set size
-func (pe *PersonStore) Limit(n int) *PersonStore {
-	pe.limit = n
-	return pe
+func (s *PersonStore) Limit(n int) *PersonStore {
+	s.limit = n
+	return s
 }
 
 // Offset used, if a limit is provided
-func (pe *PersonStore) Offset(n int) *PersonStore {
-	pe.offset = n
-	return pe
+func (s *PersonStore) Offset(n int) *PersonStore {
+	s.offset = n
+	return s
 }
 
 // JoinType sets join statement type (Default: INNER | LEFT | RIGHT | OUTER).
-func (pe *PersonStore) JoinType(jt string) *PersonStore {
-	pe.joinType = jt
-	return pe
+func (s *PersonStore) JoinType(jt string) *PersonStore {
+	s.joinType = jt
+	return s
 }
 
 // Columns sets bits for specific columns.
-func (pe *PersonStore) Columns(cols ...int) *PersonStore {
-	pe.Store.Columns(cols...)
-	return pe
+func (s *PersonStore) Columns(cols ...int) *PersonStore {
+	s.Store.Columns(cols...)
+	return s
 }
 
 // SetBits sets complete BitSet for use in UpdatePartial.
-func (pe *PersonStore) SetBits(colSet *big.Int) *PersonStore {
-	pe.colSet = colSet
-	return pe
+func (s *PersonStore) SetBits(colSet *big.Int) *PersonStore {
+	s.colSet = colSet
+	return s
 }
 
-func (pe *Person) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindFakeBenchmarkPerson(&pe.Person, row, withJoin, colSet, col)
+func (s *Person) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+	BindFakeBenchmarkPerson(&s.Person, row, withJoin, colSet, col)
 }
 
 // nolint:gocyclo
-func BindFakeBenchmarkPerson(pe *codegen.Person, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+func BindFakeBenchmarkPerson(s *codegen.Person, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Person_ID) == 1 {
-		pe.ID = sdb.ToInt(row[*col])
+		s.ID = sdb.ToInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Person_Name) == 1 {
-		pe.Name = sdb.ToString(row[*col])
+		s.Name = sdb.ToString(row[*col])
 		*col++
 	}
 }
 
-func (pe *PersonStore) selectStatement() *sdb.SQLStatement {
+func (s *PersonStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
-	sql.Fields("", "A", PersonQueryFields(pe.colSet))
+	sql.Fields("", "A", PersonQueryFields(s.colSet))
 	sql.Append(" FROM fake_benchmark.person A ")
-	if pe.where != "" {
-		sql.Append("WHERE", pe.where)
+	if s.where != "" {
+		sql.Append("WHERE", s.where)
 	}
-	if pe.groupBy != "" {
-		sql.Append("GROUP BY", pe.groupBy)
+	if s.groupBy != "" {
+		sql.Append("GROUP BY", s.groupBy)
 	}
-	if pe.orderBy != "" {
-		sql.Append("ORDER BY", pe.orderBy)
+	if s.orderBy != "" {
+		sql.Append("ORDER BY", s.orderBy)
 	}
-	if pe.limit > 0 {
-		sql.AppendRaw("LIMIT ", pe.limit)
-		if pe.offset > 0 {
-			sql.AppendRaw(",", pe.offset)
+	if s.limit > 0 {
+		sql.AppendRaw("LIMIT ", s.limit)
+		if s.offset > 0 {
+			sql.AppendRaw(",", s.offset)
 		}
 	}
 	return sql
 }
 
 // QueryCustom retrieves many rows from 'fake_benchmark.person' as a slice of Person with 1:1 joined data.
-func (pe *PersonStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen.Person, error) {
+func (s *PersonStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen.Person, error) {
 	dto := &Person{}
 	data := &PersonSlice{}
-	err := pe.queryCustom(data, dto, stmt, args...)
+	err := s.queryCustom(data, dto, stmt, args...)
 	if err != nil {
-		log.Error().Err(err).Msg("querycustom")
+		s.log.Error().Err(err).Msg("querycustom")
 		return nil, err
 	}
 	retValues := make([]*codegen.Person, len(data.data))
@@ -182,25 +181,29 @@ func (pe *PersonStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen
 }
 
 // One retrieves a row from 'fake_benchmark.person' as a Person with 1:1 joined data.
-func (pe *PersonStore) One(args ...interface{}) (*codegen.Person, error) {
+func (s *PersonStore) One(args ...interface{}) (*codegen.Person, error) {
 	data := &Person{}
 
-	err := pe.one(data, pe.selectStatement(), args...)
+	err := s.one(data, s.selectStatement(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("query one")
+		s.log.Error().Err(err).Msg("query one")
 		return nil, err
 	}
 	return &data.Person, nil
 }
 
 // Query retrieves many rows from 'fake_benchmark.person' as a slice of Person with 1:1 joined data.
-func (pe *PersonStore) Query(args ...interface{}) ([]*codegen.Person, error) {
-	stmt := pe.selectStatement()
-	return pe.QueryCustom(stmt.Query(), args...)
+func (s *PersonStore) Query(args ...interface{}) ([]*codegen.Person, error) {
+	stmt := s.selectStatement()
+	return s.QueryCustom(stmt.Query(), args...)
 }
 
 // EagerFetch Pets eagerly fetches N records from referenced table 'pet'.
-func (pe *PersonStore) EagerFetchPets(data []*codegen.Person) error {
+func (s *PersonStore) EagerFetchPets(fkStore *PetStore, data []*codegen.Person) error {
+	if len(data) == 0 {
+		return nil
+	}
+
 	where := sdb.NewSQLStatement()
 	where.AppendRaw("person_id IN (")
 	for i, d := range data {
@@ -211,9 +214,9 @@ func (pe *PersonStore) EagerFetchPets(data []*codegen.Person) error {
 	}
 	where.Append(")")
 
-	details, err := NewPetStore(pe.db).Where(where.Query()).OrderBy("A.person_id DESC, A.id DESC").Query()
+	details, err := fkStore.Where(where.Query()).OrderBy("A.person_id DESC, A.id DESC").Query()
 	if err != nil {
-		log.Error().Err(err).Msg("fetch details")
+		s.log.Error().Err(err).Msg("fetch details")
 		return err
 	}
 	for i := range data {
@@ -229,9 +232,9 @@ func (pe *PersonStore) EagerFetchPets(data []*codegen.Person) error {
 
 // personUpsertStmt helper for generating Upsert statement.
 // nolint:gocyclo
-func (pe *PersonStore) personUpsertStmt() *sdb.UpsertStatement {
+func (s *PersonStore) personUpsertStmt() *sdb.UpsertStatement {
 	upsert := []string{}
-	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_Name) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Person_Name) == 1 {
 		upsert = append(upsert, "name = VALUES(name)")
 	}
 	sql := &sdb.UpsertStatement{}
@@ -242,24 +245,24 @@ func (pe *PersonStore) personUpsertStmt() *sdb.UpsertStatement {
 }
 
 // Upsert executes upsert for array of Person
-func (pe *PersonStore) Upsert(data ...*codegen.Person) (int64, error) {
-	sql := pe.personUpsertStmt()
+func (s *PersonStore) Upsert(data ...*codegen.Person) (int64, error) {
+	sql := s.personUpsertStmt()
 
 	for _, d := range data {
 		sql.Record(d)
 	}
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "PersonUpsert").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "PersonUpsert").Str("stmt", sql.String()).Msg("sql")
 	}
-	res, err := pe.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return -1, err
 	}
 	affected, err := res.RowsAffected()
 	if err != nil {
-		log.Error().Err(err).Msg("rowsaffected")
+		s.log.Error().Err(err).Msg("rowsaffected")
 		return -1, err
 	}
 
@@ -267,11 +270,11 @@ func (pe *PersonStore) Upsert(data ...*codegen.Person) (int64, error) {
 }
 
 // Insert inserts the Person to the database.
-func (pe *PersonStore) Insert(data *codegen.Person) error {
+func (s *PersonStore) Insert(data *codegen.Person) error {
 	var err error
 	sql := sdb.NewSQLStatement()
 	sql.AppendRaw("INSERT INTO fake_benchmark.person (")
-	fields := PersonQueryFields(pe.colSet)
+	fields := PersonQueryFields(s.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")
 	for i := range fields {
@@ -282,18 +285,18 @@ func (pe *PersonStore) Insert(data *codegen.Person) error {
 	}
 	sql.Append(")")
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.person.Insert").Str("stmt", sql.String()).Int("ID", data.ID).Str("Name", data.Name).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.person.Insert").Str("stmt", sql.String()).Int("ID", data.ID).Str("Name", data.Name).Msg("sql")
 	}
-	res, err := pe.db.Exec(sql.Query(), data.ID, data.Name)
+	res, err := s.db.Exec(sql.Query(), data.ID, data.Name)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return err
 	}
 	// retrieve id
 	id, err := res.LastInsertId()
 	if err != nil {
-		log.Error().Err(err).Msg("lastinsertid")
+		s.log.Error().Err(err).Msg("lastinsertid")
 		return err
 	}
 
@@ -305,49 +308,49 @@ func (pe *PersonStore) Insert(data *codegen.Person) error {
 
 // Update updates the Person in the database.
 // nolint[gocyclo]
-func (pe *PersonStore) Update(data *codegen.Person) (int64, error) {
+func (s *PersonStore) Update(data *codegen.Person) (int64, error) {
 	sql := sdb.NewSQLStatement()
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE fake_benchmark.person SET")
-	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_Name) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Person_Name) == 1 {
 		sql.AppendRaw(prepend, "name = ?")
 		args = append(args, data.Name)
 	}
 	sql.Append(" WHERE id = ?")
 	args = append(args, data.ID)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.person.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.person.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
-	res, err := pe.db.Exec(sql.Query(), args...)
+	res, err := s.db.Exec(sql.Query(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // Delete deletes the Person from the database.
-func (pe *PersonStore) Delete(data *codegen.Person) (int64, error) {
+func (s *PersonStore) Delete(data *codegen.Person) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
 	sql.Append("DELETE FROM fake_benchmark.person WHERE")
 	sql.Append("id = ?")
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.person.Delete").Str("stmt", sql.String()).Int("ID", data.ID).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.person.Delete").Str("stmt", sql.String()).Int("ID", data.ID).Msg("sql")
 	}
-	res, err := pe.db.Exec(sql.Query(), data.ID)
+	res, err := s.db.Exec(sql.Query(), data.ID)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // DeleteSlice delets all slice element from the database.
-func (pe *PersonStore) DeleteSlice(data []*codegen.Person) (int64, error) {
+func (s *PersonStore) DeleteSlice(data []*codegen.Person) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
@@ -360,48 +363,48 @@ func (pe *PersonStore) DeleteSlice(data []*codegen.Person) (int64, error) {
 		sql.AppendInt(data[i].ID)
 	}
 	sql.Append(")")
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.person.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.person.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
 	}
-	res, err := pe.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // DeleteByQuery uses a where condition to delete entries.
-func (pe *PersonStore) DeleteByQuery(args ...interface{}) (int64, error) {
+func (s *PersonStore) DeleteByQuery(args ...interface{}) (int64, error) {
 	var err error
 	sql := sdb.NewSQLStatement()
 	sql.Append("DELETE FROM fake_benchmark.person")
-	if pe.where == "" {
+	if s.where == "" {
 		return 0, errors.New("no where condition set")
 	}
-	sql.Append("WHERE", pe.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.person.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	sql.Append("WHERE", s.where)
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.person.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
 
-	res, err := pe.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // Truncate deletes all rows from Person.
-func (pe *PersonStore) Truncate() error {
+func (s *PersonStore) Truncate() error {
 	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE fake_benchmark.person")
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.person.Truncate").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.person.Truncate").Str("stmt", sql.String()).Msg("sql")
 	}
-	_, err := pe.db.Exec(sql.Query())
+	_, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 	}
 	return err
 }
@@ -410,34 +413,34 @@ func (pe *PersonStore) Truncate() error {
 //
 // Generated from index 'primary'.
 // nolint[goconst]
-func (pe *PersonStore) OneByID(id int) (*codegen.Person, error) {
-	pe.where = "A.id = ?"
-	return pe.One(id)
+func (s *PersonStore) OneByID(id int) (*codegen.Person, error) {
+	s.where = "A.id = ?"
+	return s.One(id)
 }
 
 // ToJSON writes a single object to the buffer.
 // nolint[gocylco]
-func (pe *PersonStore) ToJSON(t *sdb.JsonBuffer, data *Person) {
+func (s *PersonStore) ToJSON(t *sdb.JsonBuffer, data *Person) {
 	prepend := "{"
-	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_ID) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Person_ID) == 1 {
 		t.JD(prepend, "id", data.ID)
 		prepend = ","
 	}
-	if pe.colSet == nil || pe.colSet.Bit(codegen.Person_Name) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Person_Name) == 1 {
 		t.JS(prepend, "name", data.Name)
 	}
 	t.S(`}`)
 }
 
 // ToJSONArray writes a slice to the named array.
-func (pe *PersonStore) ToJSONArray(w io.Writer, data []*Person, name string) {
+func (s *PersonStore) ToJSONArray(w io.Writer, data []*Person, name string) {
 	t := sdb.NewJsonBuffer()
 	t.SS(`{"`, name, `":[`)
 	for i := range data {
 		if i > 0 {
 			t.S(",")
 		}
-		pe.ToJSON(t, data[i])
+		s.ToJSON(t, data[i])
 	}
 
 	t.S("]}")

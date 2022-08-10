@@ -8,8 +8,6 @@ import (
 
 	codegen "bitbucket.org/codegen"
 
-	"github.com/rs/zerolog"
-	"github.com/rs/zerolog/log"
 	"github.com/seambiz/seambiz/sdb"
 )
 
@@ -21,7 +19,7 @@ type Tag struct {
 }
 
 // new implements Bindable.new
-func (ta *Tag) new() Bindable {
+func (s *Tag) new() Bindable {
 	return &Tag{}
 }
 
@@ -31,8 +29,8 @@ type TagSlice struct {
 }
 
 // append implements BindableSlice.append
-func (ta *TagSlice) append(d Bindable) {
-	ta.data = append(ta.data, d.(*Tag))
+func (s *TagSlice) append(d Bindable) {
+	s.data = append(s.data, d.(*Tag))
 }
 
 // constant slice for all fields of the table "Tag".
@@ -63,115 +61,116 @@ type TagStore struct {
 }
 
 // NewTagStore return DAO Store for Tag
-func NewTagStore(conn Execer) *TagStore {
-	ta := &TagStore{}
-	ta.db = conn
-	ta.withJoin = true
-	ta.joinType = sdb.LEFT
-	ta.batch = 1000
-	return ta
+func NewTagStore(ctx *codegen.BaseContext, conn Execer) *TagStore {
+	s := &TagStore{}
+	s.db = conn
+	s.withJoin = true
+	s.joinType = sdb.LEFT
+	s.batch = 1000
+	s.log = ctx.Log
+	return s
 }
 
 // WithoutJoins won't execute JOIN when querying for records.
-func (ta *TagStore) WithoutJoins() *TagStore {
-	ta.withJoin = false
-	return ta
+func (s *TagStore) WithoutJoins() *TagStore {
+	s.withJoin = false
+	return s
 }
 
 // Where sets local sql, that will be appended to SELECT.
-func (ta *TagStore) Where(sql string) *TagStore {
-	ta.where = sql
-	return ta
+func (s *TagStore) Where(sql string) *TagStore {
+	s.where = sql
+	return s
 }
 
 // OrderBy sets local sql, that will be appended to SELECT.
-func (ta *TagStore) OrderBy(sql string) *TagStore {
-	ta.orderBy = sql
-	return ta
+func (s *TagStore) OrderBy(sql string) *TagStore {
+	s.orderBy = sql
+	return s
 }
 
 // GroupBy sets local sql, that will be appended to SELECT.
-func (ta *TagStore) GroupBy(sql string) *TagStore {
-	ta.groupBy = sql
-	return ta
+func (s *TagStore) GroupBy(sql string) *TagStore {
+	s.groupBy = sql
+	return s
 }
 
 // Limit result set size
-func (ta *TagStore) Limit(n int) *TagStore {
-	ta.limit = n
-	return ta
+func (s *TagStore) Limit(n int) *TagStore {
+	s.limit = n
+	return s
 }
 
 // Offset used, if a limit is provided
-func (ta *TagStore) Offset(n int) *TagStore {
-	ta.offset = n
-	return ta
+func (s *TagStore) Offset(n int) *TagStore {
+	s.offset = n
+	return s
 }
 
 // JoinType sets join statement type (Default: INNER | LEFT | RIGHT | OUTER).
-func (ta *TagStore) JoinType(jt string) *TagStore {
-	ta.joinType = jt
-	return ta
+func (s *TagStore) JoinType(jt string) *TagStore {
+	s.joinType = jt
+	return s
 }
 
 // Columns sets bits for specific columns.
-func (ta *TagStore) Columns(cols ...int) *TagStore {
-	ta.Store.Columns(cols...)
-	return ta
+func (s *TagStore) Columns(cols ...int) *TagStore {
+	s.Store.Columns(cols...)
+	return s
 }
 
 // SetBits sets complete BitSet for use in UpdatePartial.
-func (ta *TagStore) SetBits(colSet *big.Int) *TagStore {
-	ta.colSet = colSet
-	return ta
+func (s *TagStore) SetBits(colSet *big.Int) *TagStore {
+	s.colSet = colSet
+	return s
 }
 
-func (ta *Tag) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindFakeBenchmarkTag(&ta.Tag, row, withJoin, colSet, col)
+func (s *Tag) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+	BindFakeBenchmarkTag(&s.Tag, row, withJoin, colSet, col)
 }
 
 // nolint:gocyclo
-func BindFakeBenchmarkTag(ta *codegen.Tag, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
+func BindFakeBenchmarkTag(s *codegen.Tag, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Tag_ID) == 1 {
-		ta.ID = sdb.ToInt(row[*col])
+		s.ID = sdb.ToInt(row[*col])
 		*col++
 	}
 	if colSet == nil || colSet.Bit(codegen.Tag_Name) == 1 {
-		ta.Name = sdb.ToString(row[*col])
+		s.Name = sdb.ToString(row[*col])
 		*col++
 	}
 }
 
-func (ta *TagStore) selectStatement() *sdb.SQLStatement {
+func (s *TagStore) selectStatement() *sdb.SQLStatement {
 	sql := sdb.NewSQLStatement()
 	sql.Append("SELECT")
-	sql.Fields("", "A", TagQueryFields(ta.colSet))
+	sql.Fields("", "A", TagQueryFields(s.colSet))
 	sql.Append(" FROM fake_benchmark.tag A ")
-	if ta.where != "" {
-		sql.Append("WHERE", ta.where)
+	if s.where != "" {
+		sql.Append("WHERE", s.where)
 	}
-	if ta.groupBy != "" {
-		sql.Append("GROUP BY", ta.groupBy)
+	if s.groupBy != "" {
+		sql.Append("GROUP BY", s.groupBy)
 	}
-	if ta.orderBy != "" {
-		sql.Append("ORDER BY", ta.orderBy)
+	if s.orderBy != "" {
+		sql.Append("ORDER BY", s.orderBy)
 	}
-	if ta.limit > 0 {
-		sql.AppendRaw("LIMIT ", ta.limit)
-		if ta.offset > 0 {
-			sql.AppendRaw(",", ta.offset)
+	if s.limit > 0 {
+		sql.AppendRaw("LIMIT ", s.limit)
+		if s.offset > 0 {
+			sql.AppendRaw(",", s.offset)
 		}
 	}
 	return sql
 }
 
 // QueryCustom retrieves many rows from 'fake_benchmark.tag' as a slice of Tag with 1:1 joined data.
-func (ta *TagStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen.Tag, error) {
+func (s *TagStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen.Tag, error) {
 	dto := &Tag{}
 	data := &TagSlice{}
-	err := ta.queryCustom(data, dto, stmt, args...)
+	err := s.queryCustom(data, dto, stmt, args...)
 	if err != nil {
-		log.Error().Err(err).Msg("querycustom")
+		s.log.Error().Err(err).Msg("querycustom")
 		return nil, err
 	}
 	retValues := make([]*codegen.Tag, len(data.data))
@@ -182,28 +181,28 @@ func (ta *TagStore) QueryCustom(stmt string, args ...interface{}) ([]*codegen.Ta
 }
 
 // One retrieves a row from 'fake_benchmark.tag' as a Tag with 1:1 joined data.
-func (ta *TagStore) One(args ...interface{}) (*codegen.Tag, error) {
+func (s *TagStore) One(args ...interface{}) (*codegen.Tag, error) {
 	data := &Tag{}
 
-	err := ta.one(data, ta.selectStatement(), args...)
+	err := s.one(data, s.selectStatement(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("query one")
+		s.log.Error().Err(err).Msg("query one")
 		return nil, err
 	}
 	return &data.Tag, nil
 }
 
 // Query retrieves many rows from 'fake_benchmark.tag' as a slice of Tag with 1:1 joined data.
-func (ta *TagStore) Query(args ...interface{}) ([]*codegen.Tag, error) {
-	stmt := ta.selectStatement()
-	return ta.QueryCustom(stmt.Query(), args...)
+func (s *TagStore) Query(args ...interface{}) ([]*codegen.Tag, error) {
+	stmt := s.selectStatement()
+	return s.QueryCustom(stmt.Query(), args...)
 }
 
 // tagUpsertStmt helper for generating Upsert statement.
 // nolint:gocyclo
-func (ta *TagStore) tagUpsertStmt() *sdb.UpsertStatement {
+func (s *TagStore) tagUpsertStmt() *sdb.UpsertStatement {
 	upsert := []string{}
-	if ta.colSet == nil || ta.colSet.Bit(codegen.Tag_Name) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Tag_Name) == 1 {
 		upsert = append(upsert, "name = VALUES(name)")
 	}
 	sql := &sdb.UpsertStatement{}
@@ -214,24 +213,24 @@ func (ta *TagStore) tagUpsertStmt() *sdb.UpsertStatement {
 }
 
 // Upsert executes upsert for array of Tag
-func (ta *TagStore) Upsert(data ...*codegen.Tag) (int64, error) {
-	sql := ta.tagUpsertStmt()
+func (s *TagStore) Upsert(data ...*codegen.Tag) (int64, error) {
+	sql := s.tagUpsertStmt()
 
 	for _, d := range data {
 		sql.Record(d)
 	}
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "TagUpsert").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "TagUpsert").Str("stmt", sql.String()).Msg("sql")
 	}
-	res, err := ta.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return -1, err
 	}
 	affected, err := res.RowsAffected()
 	if err != nil {
-		log.Error().Err(err).Msg("rowsaffected")
+		s.log.Error().Err(err).Msg("rowsaffected")
 		return -1, err
 	}
 
@@ -239,11 +238,11 @@ func (ta *TagStore) Upsert(data ...*codegen.Tag) (int64, error) {
 }
 
 // Insert inserts the Tag to the database.
-func (ta *TagStore) Insert(data *codegen.Tag) error {
+func (s *TagStore) Insert(data *codegen.Tag) error {
 	var err error
 	sql := sdb.NewSQLStatement()
 	sql.AppendRaw("INSERT INTO fake_benchmark.tag (")
-	fields := TagQueryFields(ta.colSet)
+	fields := TagQueryFields(s.colSet)
 	sql.Fields("", "", fields)
 	sql.Append(") VALUES (")
 	for i := range fields {
@@ -254,18 +253,18 @@ func (ta *TagStore) Insert(data *codegen.Tag) error {
 	}
 	sql.Append(")")
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.tag.Insert").Str("stmt", sql.String()).Int("ID", data.ID).Str("Name", data.Name).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.tag.Insert").Str("stmt", sql.String()).Int("ID", data.ID).Str("Name", data.Name).Msg("sql")
 	}
-	res, err := ta.db.Exec(sql.Query(), data.ID, data.Name)
+	res, err := s.db.Exec(sql.Query(), data.ID, data.Name)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return err
 	}
 	// retrieve id
 	id, err := res.LastInsertId()
 	if err != nil {
-		log.Error().Err(err).Msg("lastinsertid")
+		s.log.Error().Err(err).Msg("lastinsertid")
 		return err
 	}
 
@@ -277,49 +276,49 @@ func (ta *TagStore) Insert(data *codegen.Tag) error {
 
 // Update updates the Tag in the database.
 // nolint[gocyclo]
-func (ta *TagStore) Update(data *codegen.Tag) (int64, error) {
+func (s *TagStore) Update(data *codegen.Tag) (int64, error) {
 	sql := sdb.NewSQLStatement()
 	var prepend string
 	args := []interface{}{}
 	sql.Append("UPDATE fake_benchmark.tag SET")
-	if ta.colSet == nil || ta.colSet.Bit(codegen.Tag_Name) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Tag_Name) == 1 {
 		sql.AppendRaw(prepend, "name = ?")
 		args = append(args, data.Name)
 	}
 	sql.Append(" WHERE id = ?")
 	args = append(args, data.ID)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.tag.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.tag.Update").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
-	res, err := ta.db.Exec(sql.Query(), args...)
+	res, err := s.db.Exec(sql.Query(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // Delete deletes the Tag from the database.
-func (ta *TagStore) Delete(data *codegen.Tag) (int64, error) {
+func (s *TagStore) Delete(data *codegen.Tag) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
 	sql.Append("DELETE FROM fake_benchmark.tag WHERE")
 	sql.Append("id = ?")
 
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.tag.Delete").Str("stmt", sql.String()).Int("ID", data.ID).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.tag.Delete").Str("stmt", sql.String()).Int("ID", data.ID).Msg("sql")
 	}
-	res, err := ta.db.Exec(sql.Query(), data.ID)
+	res, err := s.db.Exec(sql.Query(), data.ID)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // DeleteSlice delets all slice element from the database.
-func (ta *TagStore) DeleteSlice(data []*codegen.Tag) (int64, error) {
+func (s *TagStore) DeleteSlice(data []*codegen.Tag) (int64, error) {
 	var err error
 
 	sql := sdb.NewSQLStatement()
@@ -332,48 +331,48 @@ func (ta *TagStore) DeleteSlice(data []*codegen.Tag) (int64, error) {
 		sql.AppendInt(data[i].ID)
 	}
 	sql.Append(")")
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.tag.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.tag.DeleteSlice").Str("stmt", sql.String()).Msg("sql")
 	}
-	res, err := ta.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // DeleteByQuery uses a where condition to delete entries.
-func (ta *TagStore) DeleteByQuery(args ...interface{}) (int64, error) {
+func (s *TagStore) DeleteByQuery(args ...interface{}) (int64, error) {
 	var err error
 	sql := sdb.NewSQLStatement()
 	sql.Append("DELETE FROM fake_benchmark.tag")
-	if ta.where == "" {
+	if s.where == "" {
 		return 0, errors.New("no where condition set")
 	}
-	sql.Append("WHERE", ta.where)
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.tag.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
+	sql.Append("WHERE", s.where)
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.tag.DeleteByQuery").Str("stmt", sql.String()).Interface("args", args).Msg("sql")
 	}
 
-	res, err := ta.db.Exec(sql.Query())
+	res, err := s.db.Exec(sql.Query(), args...)
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 		return 0, err
 	}
 	return res.RowsAffected()
 }
 
 // Truncate deletes all rows from Tag.
-func (ta *TagStore) Truncate() error {
+func (s *TagStore) Truncate() error {
 	sql := sdb.NewSQLStatement()
 	sql.Append("TRUNCATE fake_benchmark.tag")
-	if zerolog.GlobalLevel() == zerolog.DebugLevel {
-		log.Debug().Str("fn", "fake_benchmark.tag.Truncate").Str("stmt", sql.String()).Msg("sql")
+	if s.log.Trace().Enabled() {
+		s.log.Trace().Str("fn", "fake_benchmark.tag.Truncate").Str("stmt", sql.String()).Msg("sql")
 	}
-	_, err := ta.db.Exec(sql.Query())
+	_, err := s.db.Exec(sql.Query())
 	if err != nil {
-		log.Error().Err(err).Msg("exec")
+		s.log.Error().Err(err).Msg("exec")
 	}
 	return err
 }
@@ -382,34 +381,34 @@ func (ta *TagStore) Truncate() error {
 //
 // Generated from index 'primary'.
 // nolint[goconst]
-func (ta *TagStore) OneByID(id int) (*codegen.Tag, error) {
-	ta.where = "A.id = ?"
-	return ta.One(id)
+func (s *TagStore) OneByID(id int) (*codegen.Tag, error) {
+	s.where = "A.id = ?"
+	return s.One(id)
 }
 
 // ToJSON writes a single object to the buffer.
 // nolint[gocylco]
-func (ta *TagStore) ToJSON(t *sdb.JsonBuffer, data *Tag) {
+func (s *TagStore) ToJSON(t *sdb.JsonBuffer, data *Tag) {
 	prepend := "{"
-	if ta.colSet == nil || ta.colSet.Bit(codegen.Tag_ID) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Tag_ID) == 1 {
 		t.JD(prepend, "id", data.ID)
 		prepend = ","
 	}
-	if ta.colSet == nil || ta.colSet.Bit(codegen.Tag_Name) == 1 {
+	if s.colSet == nil || s.colSet.Bit(codegen.Tag_Name) == 1 {
 		t.JS(prepend, "name", data.Name)
 	}
 	t.S(`}`)
 }
 
 // ToJSONArray writes a slice to the named array.
-func (ta *TagStore) ToJSONArray(w io.Writer, data []*Tag, name string) {
+func (s *TagStore) ToJSONArray(w io.Writer, data []*Tag, name string) {
 	t := sdb.NewJsonBuffer()
 	t.SS(`{"`, name, `":[`)
 	for i := range data {
 		if i > 0 {
 			t.S(",")
 		}
-		ta.ToJSON(t, data[i])
+		s.ToJSON(t, data[i])
 	}
 
 	t.S("]}")

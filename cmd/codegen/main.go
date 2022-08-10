@@ -104,7 +104,11 @@ func main() {
 		repoKeyCol := db.NewKeyColumnUsageRepo(conn)
 		repoCols := db.NewColumnsRepo(conn)
 
-		up = updater.NewMysqlUpdate(repoTable, repoCols, repoKeyCol, repoStats)
+		ctx := &codegen.BaseContext{
+			Log: &log.Logger,
+		}
+
+		up = updater.NewMysqlUpdate(ctx, repoTable, repoCols, repoKeyCol, repoStats)
 		conf, err = up.Update(&conf)
 		if err != nil {
 			panic(err)
