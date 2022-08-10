@@ -20,6 +20,7 @@ import (
 
 func Benchmark{{ $table.Title }}Insert(b *testing.B) {
 	b.ReportAllocs()
+	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -31,7 +32,7 @@ func Benchmark{{ $table.Title }}Insert(b *testing.B) {
 	{{- if $schema.IsMultiTenant }}
 	store := New{{ $table.Title }}Store(0, db)
 	{{- else }}
-	store := New{{ $table.Title }}Store(db)
+	store := New{{ $table.Title }}Store(ctx, db)
 	{{- end }}
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -46,6 +47,7 @@ func Benchmark{{ $table.Title }}Insert(b *testing.B) {
 
 func Benchmark{{ $table.Title }}Update(b *testing.B) {
 	b.ReportAllocs()
+	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -57,7 +59,7 @@ func Benchmark{{ $table.Title }}Update(b *testing.B) {
 	{{- if $schema.IsMultiTenant }}
 	store := New{{ $table.Title }}Store(0, db)
 	{{- else }}
-	store := New{{ $table.Title }}Store(db)
+	store := New{{ $table.Title }}Store(ctx, db)
 	{{- end }}
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -73,6 +75,7 @@ func Benchmark{{ $table.Title }}Update(b *testing.B) {
 {{- if gt (len $table.PkFields) 0 }}
 func Benchmark{{ $table.Title }}Delete(b *testing.B) {
 	b.ReportAllocs()
+	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -84,7 +87,7 @@ func Benchmark{{ $table.Title }}Delete(b *testing.B) {
 	{{- if $schema.IsMultiTenant }}
 	store := New{{ $table.Title }}Store(0, db)
 	{{- else }}
-	store := New{{ $table.Title }}Store(db)
+	store := New{{ $table.Title }}Store(ctx, db)
 	{{- end }}
 
 	b.RunParallel(func(pb *testing.PB) {
@@ -100,6 +103,7 @@ func Benchmark{{ $table.Title }}Delete(b *testing.B) {
 
 func Benchmark{{ $table.Title }}SelectAll(b *testing.B) {
 	b.ReportAllocs()
+	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
 
 	db, err := selectQuery({{ lower .Table.Title }}QueryFieldsAll)
 	if err != nil {
@@ -125,7 +129,7 @@ func Benchmark{{ $table.Title }}SelectAll(b *testing.B) {
 	{{- if $schema.IsMultiTenant }}
 	store := New{{ $table.Title }}Store(0, db)
 	{{- else }}
-	store := New{{ $table.Title }}Store(db)
+	store := New{{ $table.Title }}Store(ctx, db)
 	{{- end }}
 
 	for i := 0; i < b.N; i++ {
@@ -138,6 +142,8 @@ func Benchmark{{ $table.Title }}SelectAll(b *testing.B) {
 
 func Benchmark{{ $table.Title }}SelectCols(b *testing.B) {
 	b.ReportAllocs()
+	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+
 
 	db, err := selectQuery({{ lower .Table.Title }}QueryFieldsAll)
 	if err != nil {
@@ -168,7 +174,7 @@ func Benchmark{{ $table.Title }}SelectCols(b *testing.B) {
 	{{- if $schema.IsMultiTenant }}
 	store := New{{ $table.Title }}Store(0, db)
 	{{- else }}
-	store := New{{ $table.Title }}Store(db)
+	store := New{{ $table.Title }}Store(ctx, db)
 	{{- end -}}
 	.Columns({{ $conf.RootPackage }}.{{ $table.Title }}_{{ $first.Title }}, {{ $conf.RootPackage }}.{{ $table.Title }}_{{ $last.Title }})
 

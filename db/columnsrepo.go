@@ -13,36 +13,38 @@ import (
 /* ColumnsRepo implemente ColumnsRepository interface definition. */
 type ColumnsRepo struct {
 	conn *sql.DB
+	ctx  *codegen.BaseContext
 }
 
-func NewColumnsRepo(conn *sql.DB) *ColumnsRepo {
+func NewColumnsRepo(ctx *codegen.BaseContext, conn *sql.DB) *ColumnsRepo {
 	return &ColumnsRepo{
 		conn: conn,
+		ctx:  ctx,
 	}
 }
 
-func (r ColumnsRepo) Create(ctx *codegen.BaseContext, data *codegen.Columns) error {
+func (r ColumnsRepo) Create(data *codegen.Columns) error {
 	panic("not implemented")
 }
 
-func (r ColumnsRepo) Update(ctx *codegen.BaseContext, data *codegen.Columns) error {
+func (r ColumnsRepo) Update(data *codegen.Columns) error {
 	panic("not implemented")
 }
 
-func (r ColumnsRepo) UpdatePartial(ctx *codegen.BaseContext, data *codegen.ColumnsPartial) error {
+func (r ColumnsRepo) UpdatePartial(data *codegen.ColumnsPartial) error {
 	panic("not implemented")
 }
 
-func (r ColumnsRepo) Delete(ctx *codegen.BaseContext, data *codegen.Columns) error {
+func (r ColumnsRepo) Delete(data *codegen.Columns) error {
 	panic("not implemented")
 }
 
-func (r ColumnsRepo) Upsert(ctx *codegen.BaseContext, data []*codegen.Columns) error {
+func (r ColumnsRepo) Upsert(data []*codegen.Columns) error {
 	panic("not implemented")
 }
 
-func (r ColumnsRepo) QueryBySchemaAndTable(ctx *codegen.BaseContext, schema, table string) ([]*codegen.Columns, error) {
-	return mysql.NewColumnsStore(ctx, r.conn).
+func (r ColumnsRepo) QueryBySchemaAndTable(schema, table string) ([]*codegen.Columns, error) {
+	return mysql.NewColumnsStore(r.ctx, r.conn).
 		Where("UPPER(table_schema) = UPPER(?) AND UPPER(table_name) = UPPER(?) AND UPPER(extra) not like '%VIRTUAL%'").
 		OrderBy("ordinal_position").
 		Query(schema, table)

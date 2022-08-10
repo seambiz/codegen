@@ -13,36 +13,38 @@ import (
 /* TablesRepo implemente TablesRepository interface definition. */
 type TablesRepo struct {
 	conn *sql.DB
+	ctx  *codegen.BaseContext
 }
 
-func NewTablesRepo(conn *sql.DB) *TablesRepo {
+func NewTablesRepo(ctx *codegen.BaseContext, conn *sql.DB) *TablesRepo {
 	return &TablesRepo{
 		conn: conn,
+		ctx:  ctx,
 	}
 }
 
-func (r TablesRepo) Create(ctx *codegen.BaseContext, data *codegen.Tables) error {
+func (r TablesRepo) Create(data *codegen.Tables) error {
 	panic("not implemented")
 }
 
-func (r TablesRepo) Update(ctx *codegen.BaseContext, data *codegen.Tables) error {
+func (r TablesRepo) Update(data *codegen.Tables) error {
 	panic("not implemented")
 }
 
-func (r TablesRepo) UpdatePartial(ctx *codegen.BaseContext, data *codegen.TablesPartial) error {
+func (r TablesRepo) UpdatePartial(data *codegen.TablesPartial) error {
 	panic("not implemented")
 }
 
-func (r TablesRepo) Delete(ctx *codegen.BaseContext, data *codegen.Tables) error {
+func (r TablesRepo) Delete(data *codegen.Tables) error {
 	panic("not implemented")
 }
 
-func (r TablesRepo) Upsert(ctx *codegen.BaseContext, data []*codegen.Tables) error {
+func (r TablesRepo) Upsert(data []*codegen.Tables) error {
 	panic("not implemented")
 }
 
-func (r TablesRepo) QueryBySchema(ctx *codegen.BaseContext, schema string) ([]*codegen.Tables, error) {
-	return mysql.NewTablesStore(ctx, r.conn).
+func (r TablesRepo) QueryBySchema(schema string) ([]*codegen.Tables, error) {
+	return mysql.NewTablesStore(r.ctx, r.conn).
 		Where("UPPER(table_schema) = UPPER(?) AND table_type IN (UPPER('base table'), UPPER('system view'))").
 		Query(schema)
 }
