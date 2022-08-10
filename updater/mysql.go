@@ -5,6 +5,7 @@ import (
 	"strings"
 
 	"bitbucket.org/codegen"
+	"golang.org/x/exp/slices"
 
 	"github.com/imdario/mergo"
 )
@@ -141,6 +142,12 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 		}
 
 		for _, table := range tables {
+			if len(schema.TableNames) > 0 {
+				if !slices.Contains(schema.TableNames, table.TableName) {
+					continue
+				}
+			}
+
 			table := u.getTable(schema, table.TableName)
 
 			cols, err := u.repoColumns.QueryBySchemaAndTable(u.ctx, schema.Name, table.Name)

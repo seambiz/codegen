@@ -29,6 +29,7 @@ type db struct {
 type Schema struct {
 	Name           string   `json:",omitempty"`
 	Title          string   `json:",omitempty"`
+	TableNames     []string `json:",omitempty"`
 	Tables         []*Table `json:",omitempty"`
 	TemplateFolder string   `json:",omitempty"`
 	Prefix         string   `json:",omitempty"`
