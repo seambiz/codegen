@@ -3266,7 +3266,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "APPLICABLE_ROLES",
@@ -3316,7 +3316,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "CHECK_CONSTRAINTS",
@@ -3339,7 +3339,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "COLUMNS_EXTENSIONS",
@@ -3373,7 +3373,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "COLUMN_STATISTICS",
@@ -3396,7 +3396,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": false
 				},
 				{
 					"Name": "ENABLED_ROLES",
