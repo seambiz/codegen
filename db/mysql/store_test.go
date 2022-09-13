@@ -6,6 +6,7 @@ import (
 
 	codegen "bitbucket.org/codegen"
 	"github.com/DATA-DOG/go-sqlmock"
+	"github.com/rs/zerolog"
 	"github.com/seambiz/seambiz/sdb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -13,6 +14,7 @@ import (
 
 // Insert inserts the Tables to the database.
 func TestStoreMapScan(t *testing.T) {
+	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -29,7 +31,7 @@ func TestStoreMapScan(t *testing.T) {
 		WillReturnRows(rows)
 
 	res := map[string]sql.RawBytes{}
-	err = NewStore(db).SQL(stmt.Query()).MapScan(res)
+	err = NewStore(db, ctx.Log).SQL(stmt.Query()).MapScan(res)
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
 	}
@@ -44,6 +46,7 @@ func TestStoreMapScan(t *testing.T) {
 
 // TestStoreSelfJoin just shows the specific use-case some code generators have problem with.
 func TestStoreSelfJoin(t *testing.T) {
+	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -55,7 +58,7 @@ func TestStoreSelfJoin(t *testing.T) {
 	mock.ExpectQuery("SELECT A.id, A.name , B.id, B.name FROM fake_benchmark.Person A INNER JOIN fake_benchmark B ON (A.id = B.id+1)").
 		WillReturnRows(rows)
 
-	store := NewStore(db).
+	store := NewStore(db, ctx.Log).
 		SelectFields("A", PersonQueryFields).
 		SelectFields("B", PersonQueryFields).
 		SQL("FROM fake_benchmark.Person A ").

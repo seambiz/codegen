@@ -25,6 +25,26 @@ var (
 	buildTime    string
 )
 
+func getConfig(filename string) *codegen.Config {
+	var conf codegen.Config
+
+	jsonBytes, err := ioutil.ReadFile(filename)
+	if err != nil {
+		fmt.Println("invalid file")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	err = json.Unmarshal(jsonBytes, &conf)
+	if err != nil {
+		fmt.Println("config not valid json")
+		fmt.Println(err)
+		os.Exit(1)
+	}
+
+	return &conf
+}
+
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
 	zerolog.SetGlobalLevel(zerolog.DebugLevel)
@@ -59,29 +79,15 @@ func main() {
 		os.Exit(1)
 	}
 
-	var conf codegen.Config
-	jsonBytes, err := ioutil.ReadFile(*configFile)
-	if err != nil {
-		fmt.Println("invalid file")
-		fmt.Println(err)
-		os.Exit(1)
-	}
-	err = json.Unmarshal(jsonBytes, &conf)
-	if err != nil {
-		fmt.Println("config not valid json")
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
 	switch flag.Args()[0] {
 	case "update":
-		err = updateCommand.Parse(os.Args[2:])
+		err := updateCommand.Parse(os.Args[2:])
 		if err != nil {
 			panic(err)
 		}
 
 	case "gen":
-		err = genCommand.Parse(os.Args[2:])
+		err := genCommand.Parse(os.Args[2:])
 		if err != nil {
 			panic(err)
 		}
@@ -92,11 +98,15 @@ func main() {
 	}
 
 	if genCommand.Parsed() {
-		codegen.Generate(&conf)
+		conf := getConfig(*configFile + ".gen")
+		codegen.Generate(conf)
 	}
 
 	if updateCommand.Parsed() {
 		var up codegen.UpdateCmd
+		var err error
+
+		conf := getConfig(*configFile)
 
 		ctx := &codegen.BaseContext{
 			Log: &log.Logger,
@@ -109,17 +119,17 @@ func main() {
 		repoCols := db.NewColumnsRepo(ctx, conn)
 
 		up = updater.NewMysqlUpdate(ctx, repoTable, repoCols, repoKeyCol, repoStats)
-		conf, err = up.Update(&conf)
+		conf2, err := up.Update(conf)
 		if err != nil {
 			panic(err)
 		}
 
-		jsonBytes, err := json.MarshalIndent(conf, "", "\t")
+		jsonBytes, err := json.MarshalIndent(conf2, "", "\t")
 		if err != nil {
 			panic(err)
 		}
 
-		err = ioutil.WriteFile(*configFile, jsonBytes, 0x644)
+		err = ioutil.WriteFile(*configFile+".gen", jsonBytes, 0o644)
 		if err != nil {
 			panic(err)
 		}

@@ -29,14 +29,15 @@ type db struct {
 type Schema struct {
 	Name           string   `json:",omitempty"`
 	Title          string   `json:",omitempty"`
-	TableNames     []string `json:",omitempty"`
-	Tables         []*Table `json:",omitempty"`
 	TemplateFolder string   `json:",omitempty"`
 	Prefix         string   `json:",omitempty"`
 	IsMultiTenant  bool     `json:",omitempty"`
 	MTVarName      string   `json:",omitempty"`
 	MTVarType      string   `json:",omitempty"`
 	MTSchemaFmt    string   `json:",omitempty"`
+	NoAudit        []string `json:",omitempty"`
+	TableNames     []string `json:",omitempty"`
+	Tables         []*Table `json:",omitempty"`
 
 	preparedTemplatefiles map[string][]string
 }
@@ -151,6 +152,7 @@ type Field struct {
 	MappingFunc string `json:"-"`
 	JsonFunc    string `json:"-"`
 	Default     string `json:"-"`
+	NoAudit     bool   `json:"-"`
 }
 
 // IgnoreFields is used to ignore fields for specific statements

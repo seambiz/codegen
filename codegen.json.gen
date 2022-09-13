@@ -11,19 +11,396 @@
 	"Schemas": [
 		{
 			"Name": "information_schema",
+			"TemplateFolder": "./templates/",
 			"TableNames": [
 				"COLUMNS",
 				"KEY_COLUMN_USAGE",
 				"STATISTICS",
 				"TABLES"
 			],
-			"TemplateFolder": "./templates/",
 			"Tables": [
 				{
 					"Name": "COLUMNS",
-					"NoCreate": true,
+					"Fields": [
+						{
+							"Name": "TABLE_CATALOG",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_SCHEMA",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_NAME",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "COLUMN_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "ORDINAL_POSITION",
+							"DBType": "int unsigned"
+						},
+						{
+							"Name": "COLUMN_DEFAULT",
+							"DBType": "text",
+							"IsNullable": true
+						},
+						{
+							"Name": "IS_NULLABLE",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "DATA_TYPE",
+							"DBType": "longtext",
+							"IsNullable": true
+						},
+						{
+							"Name": "CHARACTER_MAXIMUM_LENGTH",
+							"DBType": "bigint",
+							"IsNullable": true
+						},
+						{
+							"Name": "CHARACTER_OCTET_LENGTH",
+							"DBType": "bigint",
+							"IsNullable": true
+						},
+						{
+							"Name": "NUMERIC_PRECISION",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "NUMERIC_SCALE",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "DATETIME_PRECISION",
+							"DBType": "int unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "CHARACTER_SET_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "COLLATION_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "COLUMN_TYPE",
+							"DBType": "mediumtext"
+						},
+						{
+							"Name": "COLUMN_KEY",
+							"DBType": "enum",
+							"EnumValues": [
+								"",
+								"PRI",
+								"UNI",
+								"MUL"
+							]
+						},
+						{
+							"Name": "EXTRA",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "PRIVILEGES",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "COLUMN_COMMENT",
+							"DBType": "text"
+						},
+						{
+							"Name": "GENERATION_EXPRESSION",
+							"DBType": "longtext"
+						},
+						{
+							"Name": "SRS_ID",
+							"DBType": "int unsigned",
+							"IsNullable": true
+						}
+					],
+					"Ignores": {},
 					"Generate": false,
+					"NoCreate": true,
 					"Audit": true
+				},
+				{
+					"Name": "KEY_COLUMN_USAGE",
+					"Fields": [
+						{
+							"Name": "CONSTRAINT_CATALOG",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "CONSTRAINT_SCHEMA",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "CONSTRAINT_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "TABLE_CATALOG",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_SCHEMA",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_NAME",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "COLUMN_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "ORDINAL_POSITION",
+							"DBType": "int unsigned"
+						},
+						{
+							"Name": "POSITION_IN_UNIQUE_CONSTRAINT",
+							"DBType": "int unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "REFERENCED_TABLE_SCHEMA",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "REFERENCED_TABLE_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "REFERENCED_COLUMN_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						}
+					],
+					"Ignores": {},
+					"Generate": true
+				},
+				{
+					"Name": "STATISTICS",
+					"Fields": [
+						{
+							"Name": "TABLE_CATALOG",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_SCHEMA",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_NAME",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "NON_UNIQUE",
+							"DBType": "int"
+						},
+						{
+							"Name": "INDEX_SCHEMA",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "INDEX_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "SEQ_IN_INDEX",
+							"DBType": "int unsigned"
+						},
+						{
+							"Name": "COLUMN_NAME",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "COLLATION",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "CARDINALITY",
+							"DBType": "bigint",
+							"IsNullable": true
+						},
+						{
+							"Name": "SUB_PART",
+							"DBType": "bigint",
+							"IsNullable": true
+						},
+						{
+							"Name": "PACKED",
+							"DBType": "binary",
+							"IsNullable": true
+						},
+						{
+							"Name": "NULLABLE",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "INDEX_TYPE",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "COMMENT",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "INDEX_COMMENT",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "IS_VISIBLE",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "EXPRESSION",
+							"DBType": "longtext",
+							"IsNullable": true
+						}
+					],
+					"Ignores": {},
+					"Generate": true
+				},
+				{
+					"Name": "TABLES",
+					"Fields": [
+						{
+							"Name": "TABLE_CATALOG",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_SCHEMA",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_NAME",
+							"DBType": "varchar"
+						},
+						{
+							"Name": "TABLE_TYPE",
+							"DBType": "enum",
+							"EnumValues": [
+								"BASE TABLE",
+								"VIEW",
+								"SYSTEM VIEW"
+							]
+						},
+						{
+							"Name": "ENGINE",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "VERSION",
+							"DBType": "int",
+							"IsNullable": true
+						},
+						{
+							"Name": "ROW_FORMAT",
+							"DBType": "enum",
+							"IsNullable": true,
+							"EnumValues": [
+								"Fixed",
+								"Dynamic",
+								"Compressed",
+								"Redundant",
+								"Compact",
+								"Paged"
+							]
+						},
+						{
+							"Name": "TABLE_ROWS",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "AVG_ROW_LENGTH",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "DATA_LENGTH",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "MAX_DATA_LENGTH",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "INDEX_LENGTH",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "DATA_FREE",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "AUTO_INCREMENT",
+							"DBType": "bigint unsigned",
+							"IsNullable": true
+						},
+						{
+							"Name": "CREATE_TIME",
+							"DBType": "timestamp"
+						},
+						{
+							"Name": "UPDATE_TIME",
+							"DBType": "datetime",
+							"IsNullable": true
+						},
+						{
+							"Name": "CHECK_TIME",
+							"DBType": "datetime",
+							"IsNullable": true
+						},
+						{
+							"Name": "TABLE_COLLATION",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "CHECKSUM",
+							"DBType": "bigint",
+							"IsNullable": true
+						},
+						{
+							"Name": "CREATE_OPTIONS",
+							"DBType": "varchar",
+							"IsNullable": true
+						},
+						{
+							"Name": "TABLE_COMMENT",
+							"DBType": "text",
+							"IsNullable": true
+						}
+					],
+					"Ignores": {},
+					"Generate": true
 				}
 			]
 		},
