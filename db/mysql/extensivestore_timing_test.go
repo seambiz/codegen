@@ -14,7 +14,7 @@ import (
 
 func BenchmarkExtensiveInsert(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -37,7 +37,7 @@ func BenchmarkExtensiveInsert(b *testing.B) {
 
 func BenchmarkExtensiveUpdate(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -60,7 +60,7 @@ func BenchmarkExtensiveUpdate(b *testing.B) {
 
 func BenchmarkExtensiveDelete(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -83,7 +83,7 @@ func BenchmarkExtensiveDelete(b *testing.B) {
 
 func BenchmarkExtensiveSelectAll(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(extensiveQueryFieldsAll)
 	if err != nil {
@@ -108,7 +108,7 @@ func BenchmarkExtensiveSelectAll(b *testing.B) {
 
 func BenchmarkExtensiveSelectCols(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(extensiveQueryFieldsAll)
 	if err != nil {

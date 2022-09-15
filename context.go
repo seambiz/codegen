@@ -2,6 +2,6 @@ package codegen
 
 import "github.com/rs/zerolog"
 
-type BaseContext struct {
+type Context struct {
 	Log *zerolog.Logger
 }

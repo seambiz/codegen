@@ -108,15 +108,15 @@ func main() {
 
 		conf := getConfig(*configFile)
 
-		ctx := &codegen.BaseContext{
+		ctx := &codegen.Context{
 			Log: &log.Logger,
 		}
 
 		conn := sdb.OpenDatabaseDSN(conf.Database.DSN)
-		repoTable := db.NewTablesRepo(ctx, conn)
-		repoStats := db.NewStatisticsRepo(ctx, conn)
-		repoKeyCol := db.NewKeyColumnUsageRepo(ctx, conn)
-		repoCols := db.NewColumnsRepo(ctx, conn)
+		repoTable := db.NewTablesRepo(conn)
+		repoStats := db.NewStatisticsRepo(conn)
+		repoKeyCol := db.NewKeyColumnUsageRepo(conn)
+		repoCols := db.NewColumnsRepo(conn)
 
 		up = updater.NewMysqlUpdate(ctx, repoTable, repoCols, repoKeyCol, repoStats)
 		conf2, err := up.Update(conf)

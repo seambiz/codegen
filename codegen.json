@@ -17,7 +17,37 @@
 				"STATISTICS",
 				"TABLES"
 			],
-			"TemplateFolder": "./templates/"
+			"TemplateFolder": "./templates/",
+			"Tables": [
+				{
+					"Name": "COLUMNS",
+					"NoCreate": true,
+					"NoDelete": true,
+					"NoUpdate": true,
+					"Generate": true
+				},
+				{
+					"Name": "KEY_COLUMN_USAGE",
+					"NoCreate": true,
+					"NoDelete": true,
+					"NoUpdate": true,
+					"Generate": true
+				},
+				{
+					"Name": "STATISTICS",
+					"NoCreate": true,
+					"NoDelete": true,
+					"NoUpdate": true,
+					"Generate": true
+				},
+				{
+					"Name": "TABLES",
+					"NoCreate": true,
+					"NoDelete": true,
+					"NoUpdate": true,
+					"Generate": true
+				}
+			]
 		},
 		{
 			"Name": "fake_benchmark",

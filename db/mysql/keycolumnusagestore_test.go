@@ -12,7 +12,7 @@ import (
 
 // Insert inserts the KeyColumnUsage to the database.
 func TestKeyColumnUsageInsert(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -35,7 +35,7 @@ func TestKeyColumnUsageInsert(t *testing.T) {
 }
 
 func TestKeyColumnUsageUpdate(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -61,7 +61,7 @@ func TestKeyColumnUsageUpdate(t *testing.T) {
 }
 
 func TestKeyColumnUsageSelectWithoutJoin(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

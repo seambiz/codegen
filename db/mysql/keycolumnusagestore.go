@@ -97,16 +97,18 @@ func KeyColumnUsageQueryFields(colSet *big.Int) []string {
 // KeyColumnUsageStore is used to query for 'KeyColumnUsage' records.
 type KeyColumnUsageStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewKeyColumnUsageStore return DAO Store for KeyColumnUsage
-func NewKeyColumnUsageStore(ctx *codegen.BaseContext, conn Execer) *KeyColumnUsageStore {
+func NewKeyColumnUsageStore(ctx *codegen.Context, conn Execer) *KeyColumnUsageStore {
 	s := &KeyColumnUsageStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 

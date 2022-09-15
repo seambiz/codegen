@@ -12,7 +12,7 @@ import (
 
 // Insert inserts the Columns to the database.
 func TestColumnsInsert(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -35,7 +35,7 @@ func TestColumnsInsert(t *testing.T) {
 }
 
 func TestColumnsUpdate(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -61,7 +61,7 @@ func TestColumnsUpdate(t *testing.T) {
 }
 
 func TestColumnsSelectWithoutJoin(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

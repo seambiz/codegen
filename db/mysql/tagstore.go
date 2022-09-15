@@ -58,16 +58,18 @@ func TagQueryFields(colSet *big.Int) []string {
 // TagStore is used to query for 'Tag' records.
 type TagStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewTagStore return DAO Store for Tag
-func NewTagStore(ctx *codegen.BaseContext, conn Execer) *TagStore {
+func NewTagStore(ctx *codegen.Context, conn Execer) *TagStore {
 	s := &TagStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 

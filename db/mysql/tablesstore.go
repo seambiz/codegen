@@ -134,16 +134,18 @@ func TablesQueryFields(colSet *big.Int) []string {
 // TablesStore is used to query for 'Tables' records.
 type TablesStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewTablesStore return DAO Store for Tables
-func NewTablesStore(ctx *codegen.BaseContext, conn Execer) *TablesStore {
+func NewTablesStore(ctx *codegen.Context, conn Execer) *TablesStore {
 	s := &TablesStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 

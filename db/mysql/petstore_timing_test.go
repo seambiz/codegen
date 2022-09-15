@@ -14,7 +14,7 @@ import (
 
 func BenchmarkPetInsert(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -37,7 +37,7 @@ func BenchmarkPetInsert(b *testing.B) {
 
 func BenchmarkPetUpdate(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -60,7 +60,7 @@ func BenchmarkPetUpdate(b *testing.B) {
 
 func BenchmarkPetDelete(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -83,7 +83,7 @@ func BenchmarkPetDelete(b *testing.B) {
 
 func BenchmarkPetSelectAll(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(petQueryFieldsAll)
 	if err != nil {
@@ -108,7 +108,7 @@ func BenchmarkPetSelectAll(b *testing.B) {
 
 func BenchmarkPetSelectCols(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(petQueryFieldsAll)
 	if err != nil {

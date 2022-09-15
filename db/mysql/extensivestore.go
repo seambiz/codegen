@@ -410,16 +410,18 @@ func ExtensiveQueryFields(colSet *big.Int) []string {
 // ExtensiveStore is used to query for 'Extensive' records.
 type ExtensiveStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewExtensiveStore return DAO Store for Extensive
-func NewExtensiveStore(ctx *codegen.BaseContext, conn Execer) *ExtensiveStore {
+func NewExtensiveStore(ctx *codegen.Context, conn Execer) *ExtensiveStore {
 	s := &ExtensiveStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 

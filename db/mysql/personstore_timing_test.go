@@ -14,7 +14,7 @@ import (
 
 func BenchmarkPersonInsert(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -37,7 +37,7 @@ func BenchmarkPersonInsert(b *testing.B) {
 
 func BenchmarkPersonUpdate(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -60,7 +60,7 @@ func BenchmarkPersonUpdate(b *testing.B) {
 
 func BenchmarkPersonDelete(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -83,7 +83,7 @@ func BenchmarkPersonDelete(b *testing.B) {
 
 func BenchmarkPersonSelectAll(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(personQueryFieldsAll)
 	if err != nil {
@@ -108,7 +108,7 @@ func BenchmarkPersonSelectAll(b *testing.B) {
 
 func BenchmarkPersonSelectCols(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(personQueryFieldsAll)
 	if err != nil {

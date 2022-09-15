@@ -131,7 +131,10 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": true,
+					"NoCreate": true,
+					"NoUpdate": true,
+					"NoDelete": true
 				},
 				{
 					"Name": "KEY_COLUMN_USAGE",
@@ -192,7 +195,10 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": true,
+					"NoCreate": true,
+					"NoUpdate": true,
+					"NoDelete": true
 				},
 				{
 					"Name": "STATISTICS",
@@ -278,7 +284,10 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": true,
+					"NoCreate": true,
+					"NoUpdate": true,
+					"NoDelete": true
 				},
 				{
 					"Name": "TABLES",
@@ -398,7 +407,10 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": true
+					"Generate": true,
+					"NoCreate": true,
+					"NoUpdate": true,
+					"NoDelete": true
 				}
 			]
 		},

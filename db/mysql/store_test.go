@@ -14,7 +14,7 @@ import (
 
 // Insert inserts the Tables to the database.
 func TestStoreMapScan(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -46,7 +46,7 @@ func TestStoreMapScan(t *testing.T) {
 
 // TestStoreSelfJoin just shows the specific use-case some code generators have problem with.
 func TestStoreSelfJoin(t *testing.T) {
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

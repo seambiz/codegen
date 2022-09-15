@@ -121,16 +121,18 @@ func StatisticsQueryFields(colSet *big.Int) []string {
 // StatisticsStore is used to query for 'Statistics' records.
 type StatisticsStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewStatisticsStore return DAO Store for Statistics
-func NewStatisticsStore(ctx *codegen.BaseContext, conn Execer) *StatisticsStore {
+func NewStatisticsStore(ctx *codegen.Context, conn Execer) *StatisticsStore {
 	s := &StatisticsStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 

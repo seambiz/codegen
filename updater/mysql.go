@@ -15,10 +15,10 @@ type MysqlUpdate struct {
 	repoColumns codegen.ColumnsRepository
 	repoKeyCol  codegen.KeyColumnUsageRepository
 	repoStats   codegen.StatisticsRepository
-	ctx         *codegen.BaseContext
+	ctx         *codegen.Context
 }
 
-func NewMysqlUpdate(ctx *codegen.BaseContext, table codegen.TablesRepository, columns codegen.ColumnsRepository, keycol codegen.KeyColumnUsageRepository, stats codegen.StatisticsRepository) *MysqlUpdate {
+func NewMysqlUpdate(ctx *codegen.Context, table codegen.TablesRepository, columns codegen.ColumnsRepository, keycol codegen.KeyColumnUsageRepository, stats codegen.StatisticsRepository) *MysqlUpdate {
 	return &MysqlUpdate{
 		repoTable:   table,
 		repoColumns: columns,
@@ -136,7 +136,7 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 	for _, schemaName := range conf.Database.Schemas {
 		schema := u.getSchema(conf, schemaName)
 
-		tables, err := u.repoTable.QueryBySchema(schema.Name)
+		tables, err := u.repoTable.QueryBySchema(u.ctx, schema.Name)
 		if err != nil {
 			panic(err)
 		}
@@ -150,7 +150,7 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 
 			table := u.getTable(schema, table.TableName)
 
-			cols, err := u.repoColumns.QueryBySchemaAndTable(schema.Name, table.Name)
+			cols, err := u.repoColumns.QueryBySchemaAndTable(u.ctx, schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
@@ -184,7 +184,7 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 				mergo.MergeWithOverwrite(fRef, fNew)
 			}
 
-			foreignKeys, err := u.repoKeyCol.QueryBySchemaAndRefSchemaAndTable(schema.Name, schema.Name, table.Name)
+			foreignKeys, err := u.repoKeyCol.QueryBySchemaAndRefSchemaAndTable(u.ctx, schema.Name, schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
@@ -201,13 +201,13 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 				fk.Name = *foreignKeys[i].ConstraintName
 			}
 
-			indices, err := u.repoStats.IndexNameBySchemaAndTable(schema.Name, table.Name)
+			indices, err := u.repoStats.IndexNameBySchemaAndTable(u.ctx, schema.Name, table.Name)
 			if err != nil {
 				panic(err)
 			}
 
 			for _, indexName := range indices {
-				indexFields, err := u.repoStats.QueryBySchemaAndTableAndIndex(schema.Name, table.Name, *indexName.IndexName)
+				indexFields, err := u.repoStats.QueryBySchemaAndTableAndIndex(u.ctx, schema.Name, table.Name, *indexName.IndexName)
 				if err != nil {
 					panic(err)
 				}

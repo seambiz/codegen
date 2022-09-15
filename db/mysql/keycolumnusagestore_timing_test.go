@@ -13,7 +13,7 @@ import (
 
 func BenchmarkKeyColumnUsageInsert(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -36,7 +36,7 @@ func BenchmarkKeyColumnUsageInsert(b *testing.B) {
 
 func BenchmarkKeyColumnUsageUpdate(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -59,7 +59,7 @@ func BenchmarkKeyColumnUsageUpdate(b *testing.B) {
 
 func BenchmarkKeyColumnUsageSelectAll(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(keycolumnusageQueryFieldsAll)
 	if err != nil {
@@ -84,7 +84,7 @@ func BenchmarkKeyColumnUsageSelectAll(b *testing.B) {
 
 func BenchmarkKeyColumnUsageSelectCols(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(keycolumnusageQueryFieldsAll)
 	if err != nil {

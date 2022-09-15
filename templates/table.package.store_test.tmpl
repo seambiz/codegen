@@ -19,7 +19,7 @@ import (
 
 // Insert inserts the {{ $table.Title }} to the database.
 func Test{{ $table.Title }}Insert(t *testing.T) {
-	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+	ctx := &{{ $conf.RootPackage }}.Context{Log:&zerolog.Logger{}}
    	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -68,7 +68,7 @@ func Test{{ $table.Title }}Insert(t *testing.T) {
 }
 
 func Test{{ $table.Title }}Update(t *testing.T) {
-	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+	ctx := &{{ $conf.RootPackage }}.Context{Log:&zerolog.Logger{}}
    	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -121,7 +121,7 @@ func Test{{ $table.Title }}Update(t *testing.T) {
 }
 
 func Test{{ $table.Title }}SelectWithoutJoin(t *testing.T) {
-	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+	ctx := &{{ $conf.RootPackage }}.Context{Log:&zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -183,7 +183,7 @@ func Test{{ $table.Title }}SelectWithoutJoin(t *testing.T) {
 
 {{ if gt $table.NumUniqueFKs 0 }}
 func Test{{ $table.Title }}SelectJoin(t *testing.T) {
-	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+	ctx := &{{ $conf.RootPackage }}.Context{Log:&zerolog.Logger{}}
 	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -288,7 +288,7 @@ func Test{{ $table.Title }}SelectJoin(t *testing.T) {
 	{{ range $fk := .Table.ForeignKeys }}
 		{{ if not $fk.IsUnique }}
 func Test{{ $table.Title }}{{ $fk.CustomName }}EagerFetch(t *testing.T) {
-	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+	ctx := &{{ $conf.RootPackage }}.Context{Log:&zerolog.Logger{}}
    	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -433,7 +433,7 @@ func Test{{ $table.Title }}{{ $fk.CustomName }}EagerFetch(t *testing.T) {
 
 {{- if gt (len $table.PkFields) 0 }}
 func Test{{ $table.Title }}Delete(t *testing.T) {
-	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+	ctx := &{{ $conf.RootPackage }}.Context{Log:&zerolog.Logger{}}
    	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
@@ -481,7 +481,7 @@ func Test{{ $table.Title }}Delete(t *testing.T) {
 {{- $tmp := (index $table.PkFields 0) -}}
 {{ if and (eq (len $table.PkFields) 1) (eq $tmp.GoType "int") }}
 func Test{{ $table.Title }}DeleteSlice(t *testing.T) {
-	ctx := &{{ $conf.RootPackage }}.BaseContext{Log:&zerolog.Logger{}}
+	ctx := &{{ $conf.RootPackage }}.Context{Log:&zerolog.Logger{}}
    	db, mock, err := sqlmock.New(sqlmock.QueryMatcherOption(sqlmock.QueryMatcherEqual))
 	if err != nil {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)

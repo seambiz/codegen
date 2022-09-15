@@ -13,7 +13,7 @@ import (
 
 func BenchmarkColumnsInsert(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -36,7 +36,7 @@ func BenchmarkColumnsInsert(b *testing.B) {
 
 func BenchmarkColumnsUpdate(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -59,7 +59,7 @@ func BenchmarkColumnsUpdate(b *testing.B) {
 
 func BenchmarkColumnsSelectAll(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(columnsQueryFieldsAll)
 	if err != nil {
@@ -84,7 +84,7 @@ func BenchmarkColumnsSelectAll(b *testing.B) {
 
 func BenchmarkColumnsSelectCols(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(columnsQueryFieldsAll)
 	if err != nil {

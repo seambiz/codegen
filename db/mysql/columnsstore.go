@@ -137,16 +137,18 @@ func ColumnsQueryFields(colSet *big.Int) []string {
 // ColumnsStore is used to query for 'Columns' records.
 type ColumnsStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewColumnsStore return DAO Store for Columns
-func NewColumnsStore(ctx *codegen.BaseContext, conn Execer) *ColumnsStore {
+func NewColumnsStore(ctx *codegen.Context, conn Execer) *ColumnsStore {
 	s := &ColumnsStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 

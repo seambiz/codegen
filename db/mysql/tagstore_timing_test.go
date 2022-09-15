@@ -14,7 +14,7 @@ import (
 
 func BenchmarkTagInsert(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -37,7 +37,7 @@ func BenchmarkTagInsert(b *testing.B) {
 
 func BenchmarkTagUpdate(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -60,7 +60,7 @@ func BenchmarkTagUpdate(b *testing.B) {
 
 func BenchmarkTagDelete(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := insertQuery()
 	if err != nil {
@@ -83,7 +83,7 @@ func BenchmarkTagDelete(b *testing.B) {
 
 func BenchmarkTagSelectAll(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(tagQueryFieldsAll)
 	if err != nil {
@@ -108,7 +108,7 @@ func BenchmarkTagSelectAll(b *testing.B) {
 
 func BenchmarkTagSelectCols(b *testing.B) {
 	b.ReportAllocs()
-	ctx := &codegen.BaseContext{Log: &zerolog.Logger{}}
+	ctx := &codegen.Context{Log: &zerolog.Logger{}}
 
 	db, err := selectQuery(tagQueryFieldsAll)
 	if err != nil {

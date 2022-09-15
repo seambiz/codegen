@@ -66,16 +66,18 @@ func PetQueryFields(colSet *big.Int) []string {
 // PetStore is used to query for 'Pet' records.
 type PetStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewPetStore return DAO Store for Pet
-func NewPetStore(ctx *codegen.BaseContext, conn Execer) *PetStore {
+func NewPetStore(ctx *codegen.Context, conn Execer) *PetStore {
 	s := &PetStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 

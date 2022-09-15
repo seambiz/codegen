@@ -58,16 +58,18 @@ func PersonQueryFields(colSet *big.Int) []string {
 // PersonStore is used to query for 'Person' records.
 type PersonStore struct {
 	Store
+	ctx *codegen.Context
 }
 
 // NewPersonStore return DAO Store for Person
-func NewPersonStore(ctx *codegen.BaseContext, conn Execer) *PersonStore {
+func NewPersonStore(ctx *codegen.Context, conn Execer) *PersonStore {
 	s := &PersonStore{}
 	s.db = conn
 	s.withJoin = true
 	s.joinType = sdb.LEFT
 	s.batch = 1000
 	s.log = ctx.Log
+	s.ctx = ctx
 	return s
 }
 
