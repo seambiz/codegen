@@ -198,6 +198,9 @@ func (s *Store) OneString(args ...interface{}) (string, error) {
 	v, err := s.OneValue(func(b []byte) interface{} {
 		return sdb.ToString(b)
 	}, args...)
+	if err != nil {
+		return "", err
+	}
 	return v.(string), err
 }
 
@@ -206,6 +209,9 @@ func (s *Store) OneInt(args ...interface{}) (int, error) {
 	v, err := s.OneValue(func(b []byte) interface{} {
 		return sdb.ToInt(b)
 	}, args...)
+	if err != nil {
+		return 0, err
+	}
 	return v.(int), err
 }
 
@@ -214,6 +220,9 @@ func (s *Store) OneBool(args ...interface{}) (bool, error) {
 	v, err := s.OneValue(func(b []byte) interface{} {
 		return sdb.ToBool(b)
 	}, args...)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
 	return v.(bool), err
 }
 
