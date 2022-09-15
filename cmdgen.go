@@ -366,9 +366,13 @@ func generateTemplatesConfig(conf *Config) {
 
 		// first check all templates, that do not need to be concatenated
 		for _, fName := range fileNames {
+			if !strings.HasSuffix(fName, ".tmpl") {
+				continue
+			}
+
 			segments := strings.Split(fName, ".")
 			if len(segments) != 4 && len(segments) != 5 {
-				panic("filename segment length != 4,5")
+				panic("filename segment length != 4,5: " + fName)
 			}
 
 			if len(segments) == 4 {

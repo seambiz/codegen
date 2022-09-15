@@ -17,15 +17,7 @@
 				"STATISTICS",
 				"TABLES"
 			],
-			"TemplateFolder": "./templates/",
-			"Tables": [
-				{
-					"Name": "COLUMNS",
-					"NoCreate": true,
-					"Generate": false,
-					"Audit": true
-				}
-			]
+			"TemplateFolder": "./templates/"
 		},
 		{
 			"Name": "fake_benchmark",

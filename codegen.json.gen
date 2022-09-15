@@ -131,9 +131,7 @@
 						}
 					],
 					"Ignores": {},
-					"Generate": false,
-					"NoCreate": true,
-					"Audit": true
+					"Generate": true
 				},
 				{
 					"Name": "KEY_COLUMN_USAGE",
