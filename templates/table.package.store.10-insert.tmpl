@@ -12,6 +12,8 @@ func ({{ $table.StoreReceiver }}) Insert(data *{{ $conf.RootPackage }}.{{ $table
 		data.{{ $f.Title }} = stime.Now()
 		{{- else if eq $f.Title "UpdatedAt" }}
 		data.{{ $f.Title }} = stime.Now()
+		{{- else if and (eq (lower $f.Title) "uuid") $table.Audit }}
+		data.{{ $f.Title }} = s.ctx.SnowFlake.Generate().Int64()
 		{{- end -}}
 	{{- end -}}
 	

@@ -3,13 +3,14 @@
 // {{ .Table.Title }}Store is used to query for '{{ .Table.Title }}' records.
 type {{ .Table.Title }}Store struct {
 	Store
+	ctx *{{ $conf.RootPackage }}.Context
 }
 
 // New{{ .Table.Title }}Store return DAO Store for {{ .Table.Title }}
 {{- if $schema.IsMultiTenant }}
-func New{{ .Table.Title }}Store(ctx *{{ $conf.RootPackage }}.BaseContext, {{ $schema.MTVarName }} {{ $schema.MTVarType }}, conn Execer) *{{ .Table.Title }}Store {
+func New{{ .Table.Title }}Store(ctx *{{ $conf.RootPackage }}.Context, {{ $schema.MTVarName }} {{ $schema.MTVarType }}, conn Execer) *{{ .Table.Title }}Store {
 {{- else }}
-func New{{ .Table.Title }}Store(ctx *{{ $conf.RootPackage }}.BaseContext, conn Execer) *{{ .Table.Title }}Store {
+func New{{ .Table.Title }}Store(ctx *{{ $conf.RootPackage }}.Context, conn Execer) *{{ .Table.Title }}Store {
 {{- end }}
 	{{ .Table.Initials }} := &{{ .Table.Title }}Store{}
 	{{ .Table.Initials }}.db = conn
@@ -17,6 +18,7 @@ func New{{ .Table.Title }}Store(ctx *{{ $conf.RootPackage }}.BaseContext, conn E
 	{{ .Table.Initials }}.joinType = sdb.LEFT
 	{{ .Table.Initials }}.batch = 1000
 	{{ .Table.Initials }}.log = ctx.Log
+	{{ .Table.Initials }}.ctx = ctx
 	{{- if $schema.IsMultiTenant }}
 		{{ .Table.Initials }}.{{ $schema.MTVarName }} = {{ $schema.MTVarName }}
 	{{- end }}
