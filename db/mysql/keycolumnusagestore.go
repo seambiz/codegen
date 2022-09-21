@@ -167,11 +167,6 @@ func (s *KeyColumnUsageStore) SetBits(colSet *big.Int) *KeyColumnUsageStore {
 }
 
 func (s *KeyColumnUsage) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindInformationSchemaKeyColumnUsage(&s.KeyColumnUsage, row, withJoin, colSet, col)
-}
-
-// nolint:gocyclo
-func BindInformationSchemaKeyColumnUsage(s *codegen.KeyColumnUsage, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.KeyColumnUsage_ConstraintCatalog) == 1 {
 		s.ConstraintCatalog = sdb.ToString(row[*col])
 		*col++

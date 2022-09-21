@@ -7,7 +7,6 @@ import (
 	"math/big"
 	"reflect"
 
-	codegen "bitbucket.org/codegen"
 	"github.com/jmoiron/sqlx"
 	"github.com/jmoiron/sqlx/reflectx"
 	"github.com/rs/zerolog"
@@ -203,6 +202,9 @@ func (s *Store) OneString(args ...interface{}) (string, error) {
 	v, err := s.OneValue(func(b []byte) interface{} {
 		return sdb.ToString(b)
 	}, args...)
+	if err != nil {
+		return "", err
+	}
 	return v.(string), err
 }
 
@@ -211,6 +213,9 @@ func (s *Store) OneInt(args ...interface{}) (int, error) {
 	v, err := s.OneValue(func(b []byte) interface{} {
 		return sdb.ToInt(b)
 	}, args...)
+	if err != nil {
+		return 0, err
+	}
 	return v.(int), err
 }
 
@@ -219,6 +224,9 @@ func (s *Store) OneBool(args ...interface{}) (bool, error) {
 	v, err := s.OneValue(func(b []byte) interface{} {
 		return sdb.ToBool(b)
 	}, args...)
+	if err == sql.ErrNoRows {
+		return false, nil
+	}
 	return v.(bool), err
 }
 
@@ -326,32 +334,8 @@ func (s *Store) mapRowToStruct(pStruct reflect.Value, values []sql.RawBytes, col
 		case reflect.Struct:
 			fType := baseType.Field(i)
 			if fType.Anonymous {
-				switch data := field.Interface().(type) {
-				case codegen.Columns:
-					BindInformationSchemaColumns(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.KeyColumnUsage:
-					BindInformationSchemaKeyColumnUsage(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Statistics:
-					BindInformationSchemaStatistics(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Tables:
-					BindInformationSchemaTables(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Person:
-					BindFakeBenchmarkPerson(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Tag:
-					BindFakeBenchmarkTag(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Pet:
-					BindFakeBenchmarkPet(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				case codegen.Extensive:
-					BindFakeBenchmarkExtensive(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-				}
+				data := field.Interface().(Bindable)
+				data.bind(values, false, s.colSet, col)
 			} else {
 				s.mapRowToStruct(field, values, col)
 			}

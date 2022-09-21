@@ -25,5 +25,6 @@ func NewTablesRepo(conn *sql.DB) codegen.TablesRepository {
 func (r TablesRepo) QueryBySchema(ctx *codegen.Context, schema string) ([]*codegen.Tables, error) {
 	return mysql.NewTablesStore(ctx, r.conn).
 		Where("UPPER(table_schema) = UPPER(?) AND table_type IN (UPPER('base table'), UPPER('system view'))").
+		OrderBy("table_schema, table_name").
 		Query(schema)
 }

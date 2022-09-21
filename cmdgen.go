@@ -16,6 +16,7 @@ import (
 	"bitbucket.org/codegen/static"
 	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/samber/lo"
+	"github.com/sanity-io/litter"
 	"github.com/valyala/bytebufferpool"
 )
 
@@ -368,6 +369,12 @@ func generateTemplatesConfig(conf *Config) {
 		for _, fName := range fileNames {
 			if !strings.HasSuffix(fName, ".tmpl") {
 				continue
+			}
+
+			if schema.NoTests {
+				if strings.Contains(fName, "_test") {
+					continue
+				}
 			}
 
 			segments := strings.Split(fName, ".")
@@ -724,6 +731,7 @@ func prepareSchemaConfig(conf *Config) {
 				}
 				fk.GenTableName = strings.Title(fk.RefTable)
 
+				litter.Dump(fk.RefSchema)
 				fkSchema := conf.getSchema(fk.RefSchema)
 				if t := fkSchema.getTable(fk.RefTable); t != nil {
 					fk.GenTableName = t.Title
@@ -766,6 +774,8 @@ func prepareSchemaConfig(conf *Config) {
 			fnTableJoinFields(table, conf, table, tableAlias, &tableAlias, table.ForeignKeys)
 
 			// Index func name
+			// only unique names allowed, filter duplicates
+			uniqueFuncs := map[string]bool{}
 			for _, index := range table.Indices {
 				funcName := ""
 				if index.IsUnique {
@@ -779,6 +789,13 @@ func prepareSchemaConfig(conf *Config) {
 					}
 					funcName += table.Fields[table.FieldMapping[f]].Title
 				}
+
+				// unique check
+				if _, contains := uniqueFuncs[funcName]; contains {
+					index.Generate = false
+				}
+				uniqueFuncs[funcName] = true
+
 				index.FuncName = funcName
 			}
 		}

@@ -1,7 +1,6 @@
 package updater
 
 import (
-	"fmt"
 	"strings"
 
 	"bitbucket.org/codegen"
@@ -54,7 +53,6 @@ func (MysqlUpdate) getTable(schema *codegen.Schema, tableName string) *codegen.T
 		}
 	}
 	if t == nil {
-		fmt.Println("new table", tableName)
 		t = &codegen.Table{}
 		t.Generate = true
 		schema.Tables = append(schema.Tables, t)
@@ -191,9 +189,9 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 
 			for i := range foreignKeys {
 				fk := u.getForeignKey(table, *foreignKeys[i].ConstraintName)
-				fk.Fields = fk.Fields[:0]
+				// fk.Fields = fk.Fields[:0]
 				fk.Fields = append(fk.Fields, *foreignKeys[i].ColumnName)
-				fk.RefFields = fk.RefFields[:0]
+				// fk.RefFields = fk.RefFields[:0]
 				fk.RefFields = append(fk.RefFields, *foreignKeys[i].ReferencedColumnName)
 				fk.RefTable = *foreignKeys[i].ReferencedTableName
 				fk.RefSchema = *foreignKeys[i].ReferencedTableSchema

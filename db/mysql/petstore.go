@@ -136,11 +136,6 @@ func (s *PetStore) SetBits(colSet *big.Int) *PetStore {
 }
 
 func (s *Pet) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindFakeBenchmarkPet(&s.Pet, row, withJoin, colSet, col)
-}
-
-// nolint:gocyclo
-func BindFakeBenchmarkPet(s *codegen.Pet, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Pet_ID) == 1 {
 		s.ID = sdb.ToInt(row[*col])
 		*col++

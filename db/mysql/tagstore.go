@@ -128,11 +128,6 @@ func (s *TagStore) SetBits(colSet *big.Int) *TagStore {
 }
 
 func (s *Tag) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindFakeBenchmarkTag(&s.Tag, row, withJoin, colSet, col)
-}
-
-// nolint:gocyclo
-func BindFakeBenchmarkTag(s *codegen.Tag, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Tag_ID) == 1 {
 		s.ID = sdb.ToInt(row[*col])
 		*col++

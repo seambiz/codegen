@@ -330,18 +330,8 @@ func (s *Store) mapRowToStruct(pStruct reflect.Value, values []sql.RawBytes, col
 		case reflect.Struct:
 			fType := baseType.Field(i)
 			if fType.Anonymous {
-				switch data := field.Interface().(type) {
-{{- $package := .Conf.RootPackage -}}
-{{- range $schema := .Conf.Schemas -}}
-	{{- range $table := $schema.Tables -}}
-    	{{- if $table.Generate }}
-				case {{ $package }}.{{ $table.Title }}:
-					Bind{{ $schema.Title }}{{ $table.Title }}(&data, values, false, s.colSet, col)
-					field.Set(reflect.ValueOf(data))
-		{{- end -}}
-	{{- end -}}
-{{- end -}}
-				}
+				data := field.Interface().(Bindable)
+				data.bind(values, false, s.colSet, col)
 			} else {
 				s.mapRowToStruct(field, values, col)
 			}

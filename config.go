@@ -38,6 +38,7 @@ type Schema struct {
 	NoAudit        []string `json:",omitempty"`
 	TableNames     []string `json:",omitempty"`
 	Tables         []*Table `json:",omitempty"`
+	NoTests        bool     `json:",omitempty"`
 
 	preparedTemplatefiles map[string][]string
 }

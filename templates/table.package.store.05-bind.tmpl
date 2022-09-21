@@ -1,11 +1,6 @@
 {{ $table := .Table -}}
 {{ $conf := .Conf -}}
 func ({{ .Table.Initials }} *{{ .Table.Title }}) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-    Bind{{ .Schema.Title }}{{ $table.Title }}(&{{ $table.Initials }}.{{ $table.Title }},  row, withJoin, colSet, col)
-}
-
-// nolint:gocyclo
-func Bind{{ .Schema.Title }}{{ $table.Title }}({{ $table.Initials }} *{{ .Conf.RootPackage }}.{{ $table.Title }},  row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
     {{- range $field := .Table.Fields }}
     if colSet == nil || colSet.Bit({{ $conf.RootPackage }}.{{ $table.Title }}_{{ $field.Title }}) == 1 {
 		{{ if $field.IsNullable -}}

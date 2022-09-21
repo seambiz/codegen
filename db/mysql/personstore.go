@@ -128,11 +128,6 @@ func (s *PersonStore) SetBits(colSet *big.Int) *PersonStore {
 }
 
 func (s *Person) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindFakeBenchmarkPerson(&s.Person, row, withJoin, colSet, col)
-}
-
-// nolint:gocyclo
-func BindFakeBenchmarkPerson(s *codegen.Person, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Person_ID) == 1 {
 		s.ID = sdb.ToInt(row[*col])
 		*col++

@@ -191,11 +191,6 @@ func (s *StatisticsStore) SetBits(colSet *big.Int) *StatisticsStore {
 }
 
 func (s *Statistics) bind(row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
-	BindInformationSchemaStatistics(&s.Statistics, row, withJoin, colSet, col)
-}
-
-// nolint:gocyclo
-func BindInformationSchemaStatistics(s *codegen.Statistics, row []sql.RawBytes, withJoin bool, colSet *big.Int, col *int) {
 	if colSet == nil || colSet.Bit(codegen.Statistics_TableCatalog) == 1 {
 		s.TableCatalog = sdb.ToString(row[*col])
 		*col++
