@@ -4,7 +4,7 @@ import (
 	"database/sql/driver"
 	"testing"
 
-	codegen "bitbucket.org/codegen"
+	codegen "github.com/seambiz/codegen"
 
 	"github.com/brianvoe/gofakeit/v5"
 	"github.com/rs/zerolog"
