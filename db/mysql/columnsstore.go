@@ -5,7 +5,7 @@ import (
 	"io"
 	"math/big"
 
-	codegen "bitbucket.org/codegen"
+	codegen "github.com/seambiz/codegen"
 
 	"github.com/seambiz/seambiz/sdb"
 )

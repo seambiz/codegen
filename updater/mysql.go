@@ -3,8 +3,8 @@ package updater
 import (
 	"strings"
 
-	"bitbucket.org/codegen"
-	"bitbucket.org/codegen/config"
+	"github.com/seambiz/codegen"
+	"github.com/seambiz/codegen/config"
 	"golang.org/x/exp/slices"
 
 	"github.com/imdario/mergo"

@@ -4,7 +4,7 @@ import (
 	"testing"
 	"time"
 
-	codegen "bitbucket.org/codegen"
+	codegen "github.com/seambiz/codegen"
 
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/rs/zerolog"

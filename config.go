@@ -4,7 +4,7 @@ import (
 	"encoding/json"
 	"io/ioutil"
 
-	"bitbucket.org/codegen/config"
+	"github.com/seambiz/codegen/config"
 )
 
 func ReadConfig(filename string) *config.Config {

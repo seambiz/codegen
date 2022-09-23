@@ -14,11 +14,11 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"bitbucket.org/codegen/config"
-	"bitbucket.org/codegen/gen"
-	"bitbucket.org/codegen/static"
 	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/samber/lo"
+	"github.com/seambiz/codegen/config"
+	"github.com/seambiz/codegen/gen"
+	"github.com/seambiz/codegen/static"
 	"github.com/valyala/bytebufferpool"
 )
 

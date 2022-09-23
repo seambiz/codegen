@@ -4,9 +4,9 @@ import (
 	"database/sql"
 	"testing"
 
-	codegen "bitbucket.org/codegen"
 	"github.com/DATA-DOG/go-sqlmock"
 	"github.com/rs/zerolog"
+	codegen "github.com/seambiz/codegen"
 	"github.com/seambiz/seambiz/sdb"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"

@@ -3,8 +3,8 @@ package gen
 import (
 	"strings"
 
-	"bitbucket.org/codegen/config"
 	"github.com/elliotchance/orderedmap/v2"
+	"github.com/seambiz/codegen/config"
 )
 
 var newLine = byte('\n')

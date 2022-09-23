@@ -1,8 +1,8 @@
 package main
 
 import (
-	"bitbucket.org/codegen/config"
-	"bitbucket.org/codegen/gen"
+	"github.com/seambiz/codegen/config"
+	"github.com/seambiz/codegen/gen"
 )
 
 type Router struct{}

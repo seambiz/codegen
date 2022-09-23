@@ -6,12 +6,12 @@ import (
 	"fmt"
 	"os"
 
-	"bitbucket.org/codegen"
-	"bitbucket.org/codegen/db"
-	"bitbucket.org/codegen/updater"
 	_ "github.com/go-sql-driver/mysql"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
+	"github.com/seambiz/codegen"
+	"github.com/seambiz/codegen/db"
+	"github.com/seambiz/codegen/updater"
 	"github.com/seambiz/seambiz/sdb"
 )
 

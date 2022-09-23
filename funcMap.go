@@ -3,8 +3,8 @@ package codegen
 import (
 	"text/template"
 
-	"bitbucket.org/codegen/config"
 	"github.com/Masterminds/sprig"
+	"github.com/seambiz/codegen/config"
 	"github.com/valyala/bytebufferpool"
 )
 

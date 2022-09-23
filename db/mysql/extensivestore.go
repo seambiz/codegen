@@ -10,7 +10,7 @@ import (
 	"strings"
 	"time"
 
-	codegen "bitbucket.org/codegen"
+	codegen "github.com/seambiz/codegen"
 
 	"github.com/fatih/structs"
 	"github.com/seambiz/seambiz/sdb"

@@ -7,8 +7,8 @@ import (
 	"strings"
 	"testing"
 
-	"bitbucket.org/codegen"
-	"bitbucket.org/codegen/gen"
+	"github.com/seambiz/codegen"
+	"github.com/seambiz/codegen/gen"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 

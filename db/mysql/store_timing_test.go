@@ -8,9 +8,9 @@ import (
 	"testing"
 	"unsafe"
 
-	codegen "bitbucket.org/codegen"
 	"github.com/brianvoe/gofakeit/v5"
 	"github.com/rs/zerolog"
+	codegen "github.com/seambiz/codegen"
 	"github.com/seambiz/seambiz/sdb"
 	"github.com/seambiz/seambiz/stime"
 )

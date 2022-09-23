@@ -1,6 +1,6 @@
 package main
 
-import "bitbucket.org/codegen"
+import "github.com/seambiz/codegen"
 
 func main() {
 	conf := codegen.ReadConfig("../codegen.json.gen")

@@ -1,8 +1,8 @@
 package templates
 
 import (
-	"bitbucket.org/codegen"
-	"bitbucket.org/codegen/gen"
+	"github.com/seambiz/codegen"
+	"github.com/seambiz/codegen/gen"
 )
 
 type Router struct{}

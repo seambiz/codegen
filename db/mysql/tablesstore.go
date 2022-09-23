@@ -6,7 +6,7 @@ import (
 	"math/big"
 	"time"
 
-	codegen "bitbucket.org/codegen"
+	codegen "github.com/seambiz/codegen"
 
 	"github.com/seambiz/seambiz/sdb"
 )
