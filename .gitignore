@@ -3,3 +3,5 @@
 dist
 
 mysql.test
+
+dist/
