@@ -4,7 +4,6 @@ before:
   hooks:
     # You may remove this if you don't use go modules.
     - go mod tidy
-    - make embed
 builds:
   - env:
       - CGO_ENABLED=0
