@@ -781,6 +781,7 @@ func PrepareSchemaConfig(conf *config.Config) {
 				table.ForeignKeys[k].RefTableTitle = fk.GenTableName
 				if fk.CustomName == "" {
 					table.ForeignKeys[k].CustomName = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
+					table.ForeignKeys[k].Name = varcaser.Caser{From: fieldsCase, To: varcaser.LowerSnakeCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
 				}
 
 				if !fk.IsUnique && len(fk.RefFields) > 1 {
