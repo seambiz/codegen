@@ -45,6 +45,14 @@ $(BINARIES):
 	$(GO) build $(GOFLAGS) -tags '$(TAGS)' -o ./dist/$@  -ldflags "$(LDF_LOCAL)" ./cmd/$@
 	echo "done building $@ -> dist/$@"
 
+.PHONY: release
+release:
+	$(eval VERSION_FILE := cmd/codegen/VERSION.txt)
+	$(eval VERSION := $(shell cat ${VERSION_FILE}))
+	git tag -a ${VERSION} -m ${VERSION}
+	git push origin ${VERSION}
+
+
 .PHONY: $(BINARIES_DOCKER)
 $(BINARIES_DOCKER): docker-%: % check-docker
 	docker build --rm -f Dockerfile.$(patsubst docker-%,%, $@) -t $(patsubst docker-%, %, $@) .
