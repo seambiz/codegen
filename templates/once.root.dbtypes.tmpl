@@ -28,7 +28,11 @@ func ({{ $table.Initials }} {{ $table.Title }})Diff(other {{ $table.Title }}) []
 	{{ range $field := $table.Fields -}}
 		{{- if not $field.IsPrimaryKey }}
 	if {{ $table.Initials }}.{{ $field.Title }} != other.{{ $field.Title}} {
-		changes = append(changes, Change{ Field: "{{ lower $field.Name }}", OldValue: fmt.Sprintf("%v", other.{{ $field.Title }}), NewValue: fmt.Sprintf("%v", {{ $table.Initials }}.{{ $field.Title }})})
+		changes = append(changes, Change{ 
+			Field: "{{ lower $field.Name }}", 
+			OldValue: fmt.Sprintf("%v", other.{{ $field.Title }}), 
+			NewValue: fmt.Sprintf("%v", {{ $table.Initials }}.{{ $field.Title }}),
+		})
 	}	
 		{{ end -}}
 	{{ end -}}

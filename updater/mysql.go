@@ -4,6 +4,7 @@ import (
 	"strings"
 
 	"bitbucket.org/codegen"
+	"bitbucket.org/codegen/config"
 	"golang.org/x/exp/slices"
 
 	"github.com/imdario/mergo"
@@ -27,8 +28,8 @@ func NewMysqlUpdate(ctx *codegen.Context, table codegen.TablesRepository, column
 	}
 }
 
-func (MysqlUpdate) getSchema(conf *codegen.Config, name string) *codegen.Schema {
-	var s *codegen.Schema
+func (MysqlUpdate) getSchema(conf *config.Config, name string) *config.Schema {
+	var s *config.Schema
 	for i := range conf.Schemas {
 		if name == conf.Schemas[i].Name {
 			s = conf.Schemas[i]
@@ -36,7 +37,7 @@ func (MysqlUpdate) getSchema(conf *codegen.Config, name string) *codegen.Schema 
 		}
 	}
 	if s == nil {
-		s = &codegen.Schema{}
+		s = &config.Schema{}
 		conf.Schemas = append(conf.Schemas, s)
 	}
 	s.Name = name
@@ -44,8 +45,8 @@ func (MysqlUpdate) getSchema(conf *codegen.Config, name string) *codegen.Schema 
 	return s
 }
 
-func (MysqlUpdate) getTable(schema *codegen.Schema, tableName string) *codegen.Table {
-	var t *codegen.Table
+func (MysqlUpdate) getTable(schema *config.Schema, tableName string) *config.Table {
+	var t *config.Table
 	for i := range schema.Tables {
 		if schema.Tables[i].Name == tableName {
 			t = schema.Tables[i]
@@ -53,7 +54,7 @@ func (MysqlUpdate) getTable(schema *codegen.Schema, tableName string) *codegen.T
 		}
 	}
 	if t == nil {
-		t = &codegen.Table{}
+		t = &config.Table{}
 		t.Generate = true
 		schema.Tables = append(schema.Tables, t)
 		t.Name = tableName
@@ -62,8 +63,8 @@ func (MysqlUpdate) getTable(schema *codegen.Schema, tableName string) *codegen.T
 	return t
 }
 
-func (MysqlUpdate) getField(table *codegen.Table, fieldName string) *codegen.Field {
-	var f *codegen.Field
+func (MysqlUpdate) getField(table *config.Table, fieldName string) *config.Field {
+	var f *config.Field
 
 	for i := range table.Fields {
 		if table.Fields[i].Name == fieldName {
@@ -72,7 +73,7 @@ func (MysqlUpdate) getField(table *codegen.Table, fieldName string) *codegen.Fie
 		}
 	}
 	if f == nil {
-		f = &codegen.Field{}
+		f = &config.Field{}
 		table.Fields = append(table.Fields, f)
 		f.Name = fieldName
 	}
@@ -80,8 +81,8 @@ func (MysqlUpdate) getField(table *codegen.Table, fieldName string) *codegen.Fie
 	return f
 }
 
-func (MysqlUpdate) getIndex(table *codegen.Table, indexName string) *codegen.Index {
-	var ind *codegen.Index
+func (MysqlUpdate) getIndex(table *config.Table, indexName string) *config.Index {
+	var ind *config.Index
 
 	indexName = strings.ToLower(indexName)
 
@@ -92,7 +93,7 @@ func (MysqlUpdate) getIndex(table *codegen.Table, indexName string) *codegen.Ind
 		}
 	}
 	if ind == nil {
-		ind = &codegen.Index{}
+		ind = &config.Index{}
 		ind.Generate = true
 		table.Indices = append(table.Indices, ind)
 		ind.Name = indexName
@@ -101,8 +102,8 @@ func (MysqlUpdate) getIndex(table *codegen.Table, indexName string) *codegen.Ind
 	return ind
 }
 
-func (MysqlUpdate) getForeignKey(table *codegen.Table, fkName string) *codegen.ForeignKey {
-	var fk *codegen.ForeignKey
+func (MysqlUpdate) getForeignKey(table *config.Table, fkName string) *config.ForeignKey {
+	var fk *config.ForeignKey
 
 	fkName = strings.ToLower(fkName)
 
@@ -113,7 +114,7 @@ func (MysqlUpdate) getForeignKey(table *codegen.Table, fkName string) *codegen.F
 		}
 	}
 	if fk == nil {
-		fk = &codegen.ForeignKey{}
+		fk = &config.ForeignKey{}
 		fk.IsUnique = true
 		table.ForeignKeys = append(table.ForeignKeys, fk)
 		fk.Name = fkName
@@ -130,7 +131,7 @@ func getEnumValues(s string) []string {
 }
 
 // Update command
-func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
+func (u MysqlUpdate) Update(conf *config.Config) (config.Config, error) {
 	for _, schemaName := range conf.Database.Schemas {
 		schema := u.getSchema(conf, schemaName)
 
@@ -160,7 +161,7 @@ func (u MysqlUpdate) Update(conf *codegen.Config) (codegen.Config, error) {
 				fRef.IsPrimaryKey = false
 
 				c := cols[i]
-				fNew := codegen.Field{}
+				fNew := config.Field{}
 				fNew.Name = *c.ColumnName
 				if c.ColumnType == "tinyint(1)" {
 					fNew.DBType = c.ColumnType

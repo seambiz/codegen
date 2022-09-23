@@ -3,6 +3,7 @@ package codegen
 import (
 	"bytes"
 	"fmt"
+	"go/format"
 	"io/ioutil"
 	"os"
 	"os/exec"
@@ -13,10 +14,11 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"bitbucket.org/codegen/config"
+	"bitbucket.org/codegen/gen"
 	"bitbucket.org/codegen/static"
 	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/samber/lo"
-	"github.com/sanity-io/litter"
 	"github.com/valyala/bytebufferpool"
 )
 
@@ -124,7 +126,7 @@ func (g *GenBuffer) Line(ss ...string) {
 }
 
 // LogField generates zerolog logging instruction for single field
-func (g *GenBuffer) LogField(f *Field, prefix string) {
+func (g *GenBuffer) LogField(f *config.Field, prefix string) {
 	switch f.GoType {
 	case "[]byte":
 		g.S("Bytes")
@@ -195,7 +197,7 @@ func (g *GenBuffer) LogField(f *Field, prefix string) {
 }
 
 // Log generates zerolog logging instruction for array of fields
-func (g *GenBuffer) Log(fields []*Field, prefix string) {
+func (g *GenBuffer) Log(fields []*config.Field, prefix string) {
 	for i, f := range fields {
 		if i > 0 {
 			g.S(".")
@@ -263,14 +265,14 @@ func isDelimiter(ch rune, delimiters ...rune) bool {
 	return false
 }
 
-// execCommand wraps exec.Command
-func execCommand(command string) {
+// ExecCommand wraps exec.Command
+func ExecCommand(command string) {
 	parts := strings.Split(command, " ")
 	if len(parts) == 0 {
 		return
 	}
 
-	fmt.Println(parts)
+	fmt.Println("command", parts)
 	cmd := exec.Command(parts[0], parts[1:]...)
 	cmd.Stderr = os.Stderr
 	cmd.Stdout = os.Stdout
@@ -335,13 +337,13 @@ Parse the config and add all filtered templates that should be processed to each
 This way the generation code will be much simpler.
 And this function will be easier to test.
 */
-func generateTemplatesConfig(conf *Config) {
+func generateTemplatesConfig(conf *config.Config) {
 	// not the most performant approach, as templates will be rebuilt for each table, but much more readable than the old code
 	for _, schema := range conf.Schemas {
 
-		schema.preparedTemplatefiles = make(map[string][]string)
+		schema.PreparedTemplatefiles = make(map[string][]string)
 		for _, t := range schema.Tables {
-			t.preparedTemplatefiles = make(map[string][]string)
+			t.PreparedTemplatefiles = make(map[string][]string)
 		}
 
 		var fileNames []string
@@ -387,7 +389,7 @@ func generateTemplatesConfig(conf *Config) {
 				case "once":
 					// 1. add all simple "once" templates to the schema
 					mapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
-					schema.preparedTemplatefiles[mapKey] = append(schema.preparedTemplatefiles[mapKey], fName)
+					schema.PreparedTemplatefiles[mapKey] = append(schema.PreparedTemplatefiles[mapKey], fName)
 
 				case "table":
 					// 2. add all simple "table" templates to the tables
@@ -396,7 +398,7 @@ func generateTemplatesConfig(conf *Config) {
 							continue
 						}
 						mapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
-						t.preparedTemplatefiles[mapKey] = append(t.preparedTemplatefiles[mapKey], fName)
+						t.PreparedTemplatefiles[mapKey] = append(t.PreparedTemplatefiles[mapKey], fName)
 					}
 				}
 			}
@@ -420,7 +422,7 @@ func generateTemplatesConfig(conf *Config) {
 
 			currentMapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
 			if segments[0] == "once" {
-				schema.preparedTemplatefiles[currentMapKey] = append(schema.preparedTemplatefiles[currentMapKey], fName)
+				schema.PreparedTemplatefiles[currentMapKey] = append(schema.PreparedTemplatefiles[currentMapKey], fName)
 			}
 		}
 
@@ -456,13 +458,13 @@ func generateTemplatesConfig(conf *Config) {
 				}
 
 				currentMapKey := strings.Join([]string{segments[0], segments[1], segments[2]}, ".")
-				t.preparedTemplatefiles[currentMapKey] = append(t.preparedTemplatefiles[currentMapKey], tFile)
+				t.PreparedTemplatefiles[currentMapKey] = append(t.PreparedTemplatefiles[currentMapKey], tFile)
 			}
 		}
 	}
 }
 
-func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string, templateFiles map[string][]string) {
+func generateFile(conf *config.Config, schema *config.Schema, table *config.Table, fileprefix string, templateFiles map[string][]string) {
 	for key, fileNames := range templateFiles {
 		var buf bytes.Buffer
 		templateContents := []byte("")
@@ -490,9 +492,9 @@ func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string,
 		}
 
 		type GenData struct {
-			Conf   *Config
-			Schema *Schema
-			Table  *Table
+			Conf   *config.Config
+			Schema *config.Schema
+			Table  *config.Table
 		}
 
 		d := GenData{}
@@ -512,55 +514,81 @@ func generateFile(conf *Config, schema *Schema, table *Table, fileprefix string,
 		}
 		switch segments[1] {
 		case "subpackage":
-			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), conf.SubPackage)
+			fileName := filepath.Join(conf.DirOut, conf.SubPackage, fmt.Sprintf(conf.FilePattern, strings.ToLower(prefix+strings.Title(segments[2]))))
+			WriteToCodgenFile(conf, buf.Bytes(), fileName)
 		case "package":
-			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), filepath.Join(conf.SubPackage, conf.Package))
+			fileName := filepath.Join(conf.DirOut, filepath.Join(conf.SubPackage, conf.Package), fmt.Sprintf(conf.FilePattern, strings.ToLower(prefix+strings.Title(segments[2]))))
+			WriteToCodgenFile(conf, buf.Bytes(), fileName)
 		case "root":
-			writeToCodgenFile(buf, conf, prefix+strings.Title(segments[2]), "")
+			fileName := filepath.Join(conf.DirOut, "", fmt.Sprintf(conf.FilePattern, strings.ToLower(prefix+strings.Title(segments[2]))))
+			WriteToCodgenFile(conf, buf.Bytes(), fileName)
 		}
 	}
 }
 
-func generateCode(conf *Config) {
+func generateCode(conf *config.Config) {
 	for _, schema := range conf.Schemas {
-		generateFile(conf, schema, nil, schema.Prefix, schema.preparedTemplatefiles)
+		generateFile(conf, schema, nil, schema.Prefix, schema.PreparedTemplatefiles)
 
 		for _, table := range schema.Tables {
-			generateFile(conf, schema, table, schema.Prefix+table.Name, table.preparedTemplatefiles)
+			generateFile(conf, schema, table, schema.Prefix+table.Name, table.PreparedTemplatefiles)
 		}
 	}
 
 	if conf.GoFmtCmd != "" {
-		execCommand(conf.GoFmtCmd + " " + conf.DirOut)
+		ExecCommand(conf.GoFmtCmd + " " + conf.DirOut)
 	}
 	if conf.LintPackage != "" {
-		execCommand("go vet " + conf.LintPackage)
+		ExecCommand("go vet " + conf.LintPackage)
 	}
 	if conf.MetaLinter != "" {
-		execCommand(conf.MetaLinter)
+		ExecCommand(conf.MetaLinter)
 	}
 }
 
 // Generate main call to start generation
-func Generate(conf *Config) {
-	prepareSchemaConfig(conf)
+func Generate(conf *config.Config) {
+	PrepareSchemaConfig(conf)
 	generateTemplatesConfig(conf)
 	generateCode(conf)
 }
 
-func fnTableJoinFields(baseTable *Table, conf *Config, table *Table, refAlias rune, tableAlias *rune, fks []*ForeignKey) {
+func Lint(dirOrFile string, lintCmd *string) {
+	linter := "golangci-lint run --enable-all -D ifshort -D scopelint -D exhaustivestruct -D golint -Dmaligned -D interfacer"
+	if lintCmd != nil {
+		linter = *lintCmd
+	}
+
+	fmt.Println("Linting:", dirOrFile, "...")
+	ExecCommand(linter + " " + dirOrFile)
+}
+
+func GenGo(conf *config.Config, generator gen.Codegen, outfile string) {
+	PrepareSchemaConfig(conf)
+
+	uglyCode := generator.Generate(conf)
+
+	prettyCode, err := format.Source([]byte(uglyCode))
+	if err != nil {
+		panic(err)
+	}
+
+	WriteToCodgenFile(conf, prettyCode, outfile)
+}
+
+func fnTableJoinFields(baseTable *config.Table, conf *config.Config, table *config.Table, refAlias rune, tableAlias *rune, fks []*config.ForeignKey) {
 	for _, fk := range fks {
 		*tableAlias++
 		if fk.IsUnique {
 			fkRefTableTitle := strings.Title(fk.RefTable)
 			fkRefTable := strings.Title(fk.RefTable)
-			fkSchema := conf.getSchema(fk.RefSchema)
-			pRefTable := fkSchema.getTable(fk.RefTable)
+			fkSchema := conf.GetSchema(fk.RefSchema)
+			pRefTable := fkSchema.GetTable(fk.RefTable)
 			if pRefTable != nil {
 				fkRefTableTitle = pRefTable.Title
 				fkRefTable = pRefTable.Name
 			}
-			t := Join{
+			t := config.Join{
 				Alias:    string(*tableAlias),
 				Name:     fkRefTable,
 				Title:    fkRefTableTitle,
@@ -569,7 +597,7 @@ func fnTableJoinFields(baseTable *Table, conf *Config, table *Table, refAlias ru
 				Table:    pRefTable,
 			}
 			for i := range fk.Fields {
-				t.Fields = append(t.Fields, JoinField{
+				t.Fields = append(t.Fields, config.JoinField{
 					Alias:    string(refAlias),
 					Name:     fk.Fields[i],
 					RefAlias: string(*tableAlias),
@@ -585,7 +613,7 @@ func fnTableJoinFields(baseTable *Table, conf *Config, table *Table, refAlias ru
 	}
 }
 
-func prepareSchemaConfig(conf *Config) {
+func PrepareSchemaConfig(conf *config.Config) {
 	tableNr := 0
 	for _, schema := range conf.Schemas {
 		prefix := conf.Prefix
@@ -614,7 +642,7 @@ func prepareSchemaConfig(conf *Config) {
 			if !table.Generate {
 				continue
 			}
-			table.id = tableNr
+			table.ID = tableNr
 			tableNr++
 
 			// generate helper variables
@@ -627,14 +655,14 @@ func prepareSchemaConfig(conf *Config) {
 			// 	}
 			// }
 			table.Title = prefix + varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(table.Name)
-			table.lower = lowerFirst(table.Title)
+			table.Lower = lowerFirst(table.Title)
 			// table.Initials = Initials(table.Name)
 			// table.Initials += Initials(table.Name[1:])
 			// table.Initials = strings.ToLower(table.Initials)
 			table.Initials = "s"
 			table.Receiver = table.Initials + " *" + table.Title
-			table.store = table.Title + "Store"
-			table.StoreReceiver = table.Initials + " *" + table.store
+			table.Store = table.Title + "Store"
+			table.StoreReceiver = table.Initials + " *" + table.Store
 
 			fieldNames := make([]string, len(table.Fields))
 			for i := range table.Fields {
@@ -707,7 +735,7 @@ func prepareSchemaConfig(conf *Config) {
 				}
 				table.Fields[i].MappingFunc = MappingFunc
 
-				table.numFields = len(table.Fields)
+				table.NumFields = len(table.Fields)
 			}
 		}
 
@@ -731,9 +759,8 @@ func prepareSchemaConfig(conf *Config) {
 				}
 				fk.GenTableName = strings.Title(fk.RefTable)
 
-				litter.Dump(fk.RefSchema)
-				fkSchema := conf.getSchema(fk.RefSchema)
-				if t := fkSchema.getTable(fk.RefTable); t != nil {
+				fkSchema := conf.GetSchema(fk.RefSchema)
+				if t := fkSchema.GetTable(fk.RefTable); t != nil {
 					fk.GenTableName = t.Title
 					fk.GenTable = t
 				}
@@ -802,7 +829,7 @@ func prepareSchemaConfig(conf *Config) {
 	}
 }
 
-func writeBufferToCodgenFile(bb *GenBuffer, conf *Config, filename string) {
+func writeBufferToCodgenFile(bb *GenBuffer, conf *config.Config, filename string) {
 	fileName := filepath.Join(conf.DirOut, fmt.Sprintf(conf.FilePattern, strings.ToLower(strings.Replace(filename, "_", "", -1))))
 	fmt.Println("Writing to", fileName)
 
@@ -864,55 +891,64 @@ func writeBufferToCodgenFile(bb *GenBuffer, conf *Config, filename string) {
 	}
 }
 
-func writeToCodgenFile(buf bytes.Buffer, conf *Config, filename string, subfolder string) {
-	fileName := filepath.Join(conf.DirOut, subfolder, fmt.Sprintf(conf.FilePattern, strings.ToLower(filename)))
-	fmt.Println("Writing to", fileName)
+func WriteToCodgenFile(conf *config.Config, code []byte, outfile string) {
+	fmt.Println("Writing to", outfile)
 
 	// check if file exists and if it already has codegen comments
 	// if not, just write everything to the file
-	if _, err := os.Stat(fileName); os.IsNotExist(err) {
+	if _, err := os.Stat(outfile); os.IsNotExist(err) {
 		fmt.Println(err)
-		err := ioutil.WriteFile(fileName, buf.Bytes(), os.ModePerm)
+		err := ioutil.WriteFile(outfile, code, os.ModePerm)
 		if err != nil {
 			panic(err)
 		}
 	} else {
-		fileContents, err := ioutil.ReadFile(fileName)
+		fileContents, err := ioutil.ReadFile(outfile)
 		if err != nil {
 			panic(err)
 		}
 
-		if bytes.Contains(fileContents, codegenStart) && bytes.Contains(fileContents, codegenEnd) {
-			start := bytes.Index(fileContents, codegenStart)
+		startComment := codegenStart
+		if conf.CommentStart != "" {
+			startComment = []byte(conf.CommentStart)
+		}
+
+		endComment := codegenEnd
+		if conf.CommentEnd != "" {
+			endComment = []byte(conf.CommentEnd)
+		}
+
+		if bytes.Contains(fileContents, startComment) && bytes.Contains(fileContents, endComment) {
+			start := bytes.Index(fileContents, startComment)
 			if start == -1 {
 				panic("start == -1")
 			}
-			end := bytes.LastIndex(fileContents, codegenEnd)
+			end := bytes.LastIndex(fileContents, endComment)
 			if end == -1 {
 				panic("end == -1")
 			}
 
-			newStart := bytes.Index(buf.Bytes(), codegenStart)
+			newStart := bytes.Index(code, startComment)
 			if newStart == -1 {
 				panic("newStart == -1")
 			}
-			newEnd := bytes.LastIndex(buf.Bytes(), codegenEnd)
+			newEnd := bytes.LastIndex(code, endComment)
 			if newEnd == -1 {
 				panic("newEnd == -1")
 			}
 
 			var newContent []byte
 			newContent = append(newContent, fileContents[:start]...)
-			newContent = append(newContent, buf.Bytes()[newStart:newEnd]...)
+			newContent = append(newContent, code[newStart:newEnd]...)
 			newContent = append(newContent, fileContents[end:]...)
 
-			err := ioutil.WriteFile(fileName, newContent, os.ModePerm)
+			err := ioutil.WriteFile(outfile, newContent, os.ModePerm)
 			if err != nil {
 				panic(err)
 			}
 
 		} else {
-			fmt.Println("ERR: existing file (" + fileName + ") does not contain codegen comment.")
+			fmt.Println("ERR: existing file (" + outfile + ") does not contain codegen comment.")
 			fmt.Println("ERR: exiting now, so content does not get overwritten.")
 			os.Exit(1)
 		}

@@ -3,6 +3,7 @@ package codegen
 import (
 	"text/template"
 
+	"bitbucket.org/codegen/config"
 	"github.com/Masterminds/sprig"
 	"github.com/valyala/bytebufferpool"
 )
@@ -14,7 +15,7 @@ func getFuncMap() template.FuncMap {
 	return fmap
 }
 
-func genZerologFields(fields []*Field, prefix string) string {
+func genZerologFields(fields []*config.Field, prefix string) string {
 	bb := NewGenBuffer(bytebufferpool.Get())
 	bb.Log(fields, prefix)
 	s := string(bb.Bytes())

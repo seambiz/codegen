@@ -4,7 +4,6 @@ import (
 	"encoding/json"
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"os"
 
 	"bitbucket.org/codegen"
@@ -24,26 +23,6 @@ var (
 	gitTag       string
 	buildTime    string
 )
-
-func getConfig(filename string) *codegen.Config {
-	var conf codegen.Config
-
-	jsonBytes, err := ioutil.ReadFile(filename)
-	if err != nil {
-		fmt.Println("invalid file")
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	err = json.Unmarshal(jsonBytes, &conf)
-	if err != nil {
-		fmt.Println("config not valid json")
-		fmt.Println(err)
-		os.Exit(1)
-	}
-
-	return &conf
-}
 
 func main() {
 	log.Logger = log.Output(zerolog.ConsoleWriter{Out: os.Stderr})
@@ -98,7 +77,7 @@ func main() {
 	}
 
 	if genCommand.Parsed() {
-		conf := getConfig(*configFile + ".gen")
+		conf := codegen.ReadConfig(*configFile + ".gen")
 		codegen.Generate(conf)
 	}
 
@@ -106,7 +85,7 @@ func main() {
 		var up codegen.UpdateCmd
 		var err error
 
-		conf := getConfig(*configFile)
+		conf := codegen.ReadConfig(*configFile)
 
 		ctx := &codegen.Context{
 			Log: &log.Logger,
@@ -129,7 +108,7 @@ func main() {
 			panic(err)
 		}
 
-		err = ioutil.WriteFile(*configFile+".gen", jsonBytes, 0o644)
+		err = os.WriteFile(*configFile+".gen", jsonBytes, 0o644)
 		if err != nil {
 			panic(err)
 		}
