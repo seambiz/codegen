@@ -97,6 +97,8 @@ type Table struct {
 	NoUpsert      bool     `json:",omitempty"`
 	Audit         bool     `json:",omitempty"`
 	TemplateFiles []string `json:",omitempty"`
+	CommentStart  string
+	CommentEnd    string
 
 	// generated Contents
 	Alias                 string              `json:"-"`
