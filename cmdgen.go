@@ -1011,35 +1011,36 @@ func WriteTableToCodgenFile(conf *config.Config, code []byte, outfile string, sc
 		}
 
 		/**********************************************************************
-		 * check if table specific entry exists
+		 * check if table specific entry exists, otherweise just append
 		**********************************************************************/
-		if !strings.Contains(fileContents, startCommentTable) || !strings.Contains(fileContents, endCommentTable) {
-			WriteToCodgenFile(conf, code, outfile)
-			return
-		}
-
-		start := strings.Index(fileContents, startCommentTable)
-		if start == -1 {
-			panic("start == -1")
-		}
-		end := strings.LastIndex(fileContents, endCommentTable)
-		if end == -1 {
-			panic("end == -1")
-		}
-
-		newStart := strings.Index(string(code), startCommentTable)
-		if newStart == -1 {
-			panic("newStart == -1")
-		}
-		newEnd := strings.LastIndex(string(code), endCommentTable)
-		if newEnd == -1 {
-			panic("newEnd == -1")
-		}
-
 		var newContent []byte
-		newContent = append(newContent, fileContents[:start]...)
-		newContent = append(newContent, code[newStart:newEnd]...)
-		newContent = append(newContent, fileContents[end:]...)
+		if !strings.Contains(fileContents, startCommentTable) || !strings.Contains(fileContents, endCommentTable) {
+			newContent = append(newContent, f...)
+			newContent = append(newContent, code...)
+		} else {
+
+			start := strings.Index(fileContents, startCommentTable)
+			if start == -1 {
+				panic("start == -1")
+			}
+			end := strings.LastIndex(fileContents, endCommentTable)
+			if end == -1 {
+				panic("end == -1")
+			}
+
+			newStart := strings.Index(string(code), startCommentTable)
+			if newStart == -1 {
+				panic("newStart == -1")
+			}
+			newEnd := strings.LastIndex(string(code), endCommentTable)
+			if newEnd == -1 {
+				panic("newEnd == -1")
+			}
+
+			newContent = append(newContent, fileContents[:start]...)
+			newContent = append(newContent, code[newStart:newEnd]...)
+			newContent = append(newContent, fileContents[end:]...)
+		}
 
 		err = ioutil.WriteFile(outfile, newContent, os.ModePerm)
 		if err != nil {

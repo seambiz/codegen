@@ -133,10 +133,11 @@ type ForeignKey struct {
 	ForeignKeys []*ForeignKey `json:",omitempty"`
 
 	// generated Contents
-	GenTableName string `json:"-"`
-	GenTable     *Table `json:"-"`
-	GenName      string `json:"-"`
-	GenFuncName  string `json:"-"`
+	GenTableName string   `json:"-"`
+	GenTable     *Table   `json:"-"`
+	GenName      string   `json:"-"`
+	GenFuncName  string   `json:"-"`
+	FieldsRef    []*Field `json:"-"`
 }
 
 // Field type
@@ -173,6 +174,8 @@ type Index struct {
 	Fields     []string `json:",omitempty"`
 	IsUnique   bool     `json:",omitempty"`
 	Generate   bool
+
+	FieldsRef []*Field `json:"-"`
 }
 
 type IndexField struct {
