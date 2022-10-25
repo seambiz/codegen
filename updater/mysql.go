@@ -1,6 +1,7 @@
 package updater
 
 import (
+	"sort"
 	"strings"
 
 	"github.com/seambiz/codegen"
@@ -146,6 +147,11 @@ func (u MysqlUpdate) Update(conf *config.Config) (config.Config, error) {
 					continue
 				}
 			}
+			if len(schema.IgnoreTableNames) > 0 {
+				if slices.Contains(schema.IgnoreTableNames, table.TableName) {
+					continue
+				}
+			}
 
 			table := u.getTable(schema, table.TableName)
 
@@ -218,7 +224,9 @@ func (u MysqlUpdate) Update(conf *config.Config) (config.Config, error) {
 					tableIndex.Fields = append(tableIndex.Fields, *field.ColumnName)
 				}
 			}
+			sort.Slice(table.Indices, func(i, j int) bool { return table.Indices[i].Name < table.Indices[j].Name })
 		}
+		sort.Slice(schema.Tables, func(i, j int) bool { return schema.Tables[i].Name < schema.Tables[j].Name })
 
 		/* Attention: currently dont do the inverse stuff. it pollutes the code. actually needed foreign keys for eager fetching have to be added manually
 		for _, t := range tables {

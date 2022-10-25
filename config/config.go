@@ -29,18 +29,19 @@ type db struct {
 
 // Schema single schema type
 type Schema struct {
-	Name           string   `json:",omitempty"`
-	Title          string   `json:",omitempty"`
-	TemplateFolder string   `json:",omitempty"`
-	Prefix         string   `json:",omitempty"`
-	IsMultiTenant  bool     `json:",omitempty"`
-	MTVarName      string   `json:",omitempty"`
-	MTVarType      string   `json:",omitempty"`
-	MTSchemaFmt    string   `json:",omitempty"`
-	NoAudit        []string `json:",omitempty"`
-	TableNames     []string `json:",omitempty"`
-	Tables         []*Table `json:",omitempty"`
-	NoTests        bool     `json:",omitempty"`
+	Name             string   `json:",omitempty"`
+	Title            string   `json:",omitempty"`
+	TemplateFolder   string   `json:",omitempty"`
+	Prefix           string   `json:",omitempty"`
+	IsMultiTenant    bool     `json:",omitempty"`
+	MTVarName        string   `json:",omitempty"`
+	MTVarType        string   `json:",omitempty"`
+	MTSchemaFmt      string   `json:",omitempty"`
+	NoAudit          []string `json:",omitempty"`
+	TableNames       []string `json:",omitempty"`
+	IgnoreTableNames []string `json:",omitempty"`
+	Tables           []*Table `json:",omitempty"`
+	NoTests          bool     `json:",omitempty"`
 
 	PreparedTemplatefiles map[string][]string `json:"-"`
 }
@@ -97,8 +98,8 @@ type Table struct {
 	NoUpsert      bool     `json:",omitempty"`
 	Audit         bool     `json:",omitempty"`
 	TemplateFiles []string `json:",omitempty"`
-	CommentStart  string
-	CommentEnd    string
+	CommentStart  string   `json:",omitempty"`
+	CommentEnd    string   `json:",omitempty"`
 
 	// generated Contents
 	Alias                 string              `json:"-"`

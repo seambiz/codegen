@@ -714,17 +714,6 @@ func PrepareSchemaConfig(conf *config.Config) {
 				table.Fields[i].Title = strcase.ToCamel(table.Fields[i].Name)
 				table.Fields[i].Title = strings.ReplaceAll(table.Fields[i].Title, " ", "")
 
-				// uppercase abbreviations
-				for _, substring := range commonInitialisms {
-					if strings.HasSuffix(strings.ToUpper(table.Fields[i].Title), substring) ||
-						strings.HasPrefix(strings.ToUpper(table.Fields[i].Title), substring) {
-						index := strings.Index(strings.ToUpper(table.Fields[i].Title), substring)
-						stemp := table.Fields[i].Title[index : index+len(substring)]
-						table.Fields[i].Title = strings.Replace(table.Fields[i].Title, stemp, substring, 1)
-						break
-					}
-				}
-
 				table.Fields[i].NoAudit = lo.Contains(schema.NoAudit, table.Fields[i].Name)
 				table.Fields[i].ParamName = strings.ToLower(table.Fields[i].Title)
 				table.FieldMapping[table.Fields[i].Name] = i
