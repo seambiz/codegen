@@ -147,21 +147,23 @@ func (u MysqlUpdate) Update(conf *config.Config) (config.Config, error) {
 					continue
 				}
 			}
+
+			genTable := u.getTable(schema, table.TableName)
+
 			if len(schema.IgnoreTableNames) > 0 {
 				if slices.Contains(schema.IgnoreTableNames, table.TableName) {
-					continue
+					// do not skip. add a no generate
+					genTable.Generate = false
 				}
 			}
 
-			table := u.getTable(schema, table.TableName)
-
-			cols, err := u.repoColumns.QueryBySchemaAndTable(u.ctx, schema.Name, table.Name)
+			cols, err := u.repoColumns.QueryBySchemaAndTable(u.ctx, schema.Name, genTable.Name)
 			if err != nil {
 				panic(err)
 			}
 
 			for i := range cols {
-				fRef := u.getField(table, *cols[i].ColumnName)
+				fRef := u.getField(genTable, *cols[i].ColumnName)
 				fRef.IsAutoincrement = false
 				fRef.IsNullable = false
 				fRef.IsPrimaryKey = false
@@ -189,13 +191,13 @@ func (u MysqlUpdate) Update(conf *config.Config) (config.Config, error) {
 				mergo.MergeWithOverwrite(fRef, fNew)
 			}
 
-			foreignKeys, err := u.repoKeyCol.QueryBySchemaAndRefSchemaAndTable(u.ctx, schema.Name, schema.Name, table.Name)
+			foreignKeys, err := u.repoKeyCol.QueryBySchemaAndRefSchemaAndTable(u.ctx, schema.Name, schema.Name, genTable.Name)
 			if err != nil {
 				panic(err)
 			}
 
 			for i := range foreignKeys {
-				fk := u.getForeignKey(table, *foreignKeys[i].ConstraintName)
+				fk := u.getForeignKey(genTable, *foreignKeys[i].ConstraintName)
 				// fk.Fields = fk.Fields[:0]
 				fk.Fields = append(fk.Fields, *foreignKeys[i].ColumnName)
 				// fk.RefFields = fk.RefFields[:0]
@@ -206,25 +208,25 @@ func (u MysqlUpdate) Update(conf *config.Config) (config.Config, error) {
 				fk.Name = *foreignKeys[i].ConstraintName
 			}
 
-			indices, err := u.repoStats.IndexNameBySchemaAndTable(u.ctx, schema.Name, table.Name)
+			indices, err := u.repoStats.IndexNameBySchemaAndTable(u.ctx, schema.Name, genTable.Name)
 			if err != nil {
 				panic(err)
 			}
 
 			for _, indexName := range indices {
-				indexFields, err := u.repoStats.QueryBySchemaAndTableAndIndex(u.ctx, schema.Name, table.Name, *indexName.IndexName)
+				indexFields, err := u.repoStats.QueryBySchemaAndTableAndIndex(u.ctx, schema.Name, genTable.Name, *indexName.IndexName)
 				if err != nil {
 					panic(err)
 				}
 
-				tableIndex := u.getIndex(table, *indexName.IndexName)
+				tableIndex := u.getIndex(genTable, *indexName.IndexName)
 				tableIndex.IsUnique = indexFields[0].NonUnique == 0
 				tableIndex.Fields = make([]string, 0)
 				for _, field := range indexFields {
 					tableIndex.Fields = append(tableIndex.Fields, *field.ColumnName)
 				}
 			}
-			sort.Slice(table.Indices, func(i, j int) bool { return table.Indices[i].Name < table.Indices[j].Name })
+			sort.Slice(genTable.Indices, func(i, j int) bool { return genTable.Indices[i].Name < genTable.Indices[j].Name })
 		}
 		sort.Slice(schema.Tables, func(i, j int) bool { return schema.Tables[i].Name < schema.Tables[j].Name })
 
