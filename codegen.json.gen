@@ -123,11 +123,6 @@
 						{
 							"Name": "GENERATION_EXPRESSION",
 							"DBType": "longtext"
-						},
-						{
-							"Name": "SRS_ID",
-							"DBType": "int unsigned",
-							"IsNullable": true
 						}
 					],
 					"Ignores": {},
