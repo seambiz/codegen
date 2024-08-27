@@ -14,10 +14,10 @@ import (
 	"unicode"
 	"unicode/utf8"
 
-	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/samber/lo"
 	"github.com/seambiz/codegen/config"
 	"github.com/seambiz/codegen/static"
+	"github.com/seambiz/varcaser/varcaser"
 	"github.com/valyala/bytebufferpool"
 )
 
@@ -664,7 +664,6 @@ func PrepareSchemaConfig(conf *config.Config) {
 			tablesCase = varcaser.LowerSnakeCase
 		}
 		if schema.Title == "" {
-			// TODO: schema.Title = strcase.ToCamel(schema.Name)
 			schema.Title = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(schema.Name)
 		}
 
@@ -685,7 +684,6 @@ func PrepareSchemaConfig(conf *config.Config) {
 			// 	}
 			// }
 			table.Title = prefix + varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(table.Name)
-			// TODO: table.Title = prefix + strcase.ToCamel(table.Name)
 			table.Lower = lowerFirst(table.Title)
 			// table.Initials = Initials(table.Name)
 			// table.Initials += Initials(table.Name[1:])
@@ -722,7 +720,6 @@ func PrepareSchemaConfig(conf *config.Config) {
 				// }
 
 				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
-				// TODO: table.Fields[i].Title = strcase.ToCamel(table.Fields[i].Name)
 				table.Fields[i].Title = strings.ReplaceAll(table.Fields[i].Title, " ", "")
 
 				table.Fields[i].NoAudit = lo.Contains(schema.NoAudit, table.Fields[i].Name)
@@ -803,9 +800,6 @@ func PrepareSchemaConfig(conf *config.Config) {
 					table.ForeignKeys[k].CustomName = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
 					table.ForeignKeys[k].Name = varcaser.Caser{From: fieldsCase, To: varcaser.LowerSnakeCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
 				}
-				// TODO: table.ForeignKeys[k].CustomName = strcase.ToCamel(strings.Replace(fk.Name, "fk_", "", 1))
-				// 	table.ForeignKeys[k].Name = strcase.ToSnake(strings.Replace(fk.Name, "fk_", "", 1))
-				// }
 
 				if !fk.IsUnique && len(fk.RefFields) > 1 {
 					panic("FK: too many ref fields")

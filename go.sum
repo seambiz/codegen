@@ -74,6 +74,8 @@ github.com/seambiz/seambiz v1.3.5 h1:9DIFhALmYkBMJYdPPPugjEIwPp2KE1Ic3kBYa9yAWbg
 github.com/seambiz/seambiz v1.3.5/go.mod h1:tkZ8Ehl/DQ+MLGuxfc3JRhUsCsrwr3c3H1yGoWfoBY4=
 github.com/seambiz/strcase v0.2.1 h1:k3HlqSVAfgx+aY+9M49bLGWzmecO2TVQ+OoZmCwiEnw=
 github.com/seambiz/strcase v0.2.1/go.mod h1:IucWHxOi0ZoW5NRbE72uXhAX1bUZnS2LIuL7cpEGCfk=
+github.com/seambiz/varcaser v0.1.0 h1:r47uc1e6Ic41DbFJv25h9yl+xLMO345aBnV/UBHlKzk=
+github.com/seambiz/varcaser v0.1.0/go.mod h1:RIUbQstD7Dp5pV7J9GuTGFpjtQnaGDYMe/xRw88Svrw=
 github.com/sergi/go-diff v1.2.0 h1:XU+rvMAioB0UC3q1MFrIQy4Vo5/4VsRDQQXHsEya6xQ=
 github.com/sergi/go-diff v1.2.0/go.mod h1:STckp+ISIX8hZLjrqAeVduY0gWCT9IjLuqbuNXdaHfM=
 github.com/stretchr/objx v0.1.0/go.mod h1:HFkY916IF+rwdDfMAkV7OtwuqBVzrE8GR6GFx+wExME=
@@ -101,6 +103,8 @@ golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8/go.mod h1:oPkhp1MJrh7nUepCBc
 golang.org/x/text v0.3.0/go.mod h1:NqM8EUOU14njkJ3fqMW+pc6Ldnwhi/IjpwHt7yyuwOQ=
 golang.org/x/text v0.3.7 h1:olpwvP2KacW1ZWvsR7uQhoyTYvKAupfQrRGBFM352Gk=
 golang.org/x/text v0.3.7/go.mod h1:u+2+/6zg+i71rQMx5EYifcz6MCKuco9NR6JIITiCfzQ=
+golang.org/x/text v0.17.0 h1:XtiM5bkSOt+ewxlOE/aE/AKEHibwj/6gvWMl9Rsh0Qc=
+golang.org/x/text v0.17.0/go.mod h1:BuEKDfySbSR4drPmRPG/7iBdf8hvFMuRexcpahXilzY=
 golang.org/x/tools v0.0.0-20190828213141-aed303cbaa74/go.mod h1:b+2E5dAYhXwXZwtnZ6UAqBI28+e2cm9otk0dWdXHAEo=
 golang.org/x/xerrors v0.0.0-20190717185122-a985d3407aa7/go.mod h1:I/5z698sn9Ka8TeJc9MKroUUfqBBauWjQqLJ2OPfmY0=
 gopkg.in/check.v1 v0.0.0-20161208181325-20d25e280405/go.mod h1:Co6ibVJAznAaIkqp8huTwlJQCZ016jof/cbN4VW5Yz0=

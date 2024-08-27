@@ -1,6 +1,6 @@
 module github.com/seambiz/codegen
 
-go 1.19
+go 1.23.0
 
 require (
 	github.com/DATA-DOG/go-sqlmock v1.5.0
@@ -21,6 +21,7 @@ require (
 	github.com/valyala/bytebufferpool v1.0.0
 	golang.org/x/exp v0.0.0-20220921164117-439092de6870
 	golang.org/x/net v0.0.0-20220921203646-d300de134e69
+	github.com/seambiz/varcaser v0.1.0 // indirect
 )
 
 require (
@@ -40,11 +41,7 @@ require (
 	github.com/seambiz/strcase v0.2.1 // indirect
 	golang.org/x/crypto v0.0.0-20220919173607-35f4265a4bc0 // indirect
 	golang.org/x/sys v0.0.0-20220919091848-fb04ddd9f9c8 // indirect
-	golang.org/x/text v0.3.7 // indirect
+	golang.org/x/text v0.17.0 // indirect
 	gopkg.in/check.v1 v1.0.0-20201130134442-10cb98267c6c // indirect
 	gopkg.in/yaml.v3 v3.0.1 // indirect
 )
-
-replace github.com/seambiz/strcase => /home/sl/gospace/strcase
-
-replace github.com/seambiz/gen => /home/sl/gospace/gen
