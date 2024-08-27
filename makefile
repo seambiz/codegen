@@ -134,4 +134,4 @@ daogen:
 	codegen -config codegen.json gen
 
 install:
-	cd dist && cp codegen ~/.bin/ && cd ..
+	cd dist && cp codegen ~/bin/ && cd ..
