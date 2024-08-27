@@ -14,10 +14,10 @@ import (
 	"unicode"
 	"unicode/utf8"
 
+	"github.com/danverbraganza/varcaser/varcaser"
 	"github.com/samber/lo"
 	"github.com/seambiz/codegen/config"
 	"github.com/seambiz/codegen/static"
-	"github.com/seambiz/strcase"
 	"github.com/valyala/bytebufferpool"
 )
 
@@ -353,7 +353,7 @@ func generateTemplatesConfig(conf *config.Config) {
 		var fileNames []string
 
 		if schema.TemplateFolder != "" {
-			files, err := ioutil.ReadDir(schema.TemplateFolder)
+			files, err := os.ReadDir(schema.TemplateFolder)
 			if err != nil {
 				panic(err)
 			}
@@ -659,8 +659,13 @@ func PrepareSchemaConfig(conf *config.Config) {
 		for i := range schema.Tables {
 			tableNames[i] = schema.Tables[i].Name
 		}
+		tablesCase, err := varcaser.Detect(tableNames)
+		if err != nil {
+			tablesCase = varcaser.LowerSnakeCase
+		}
 		if schema.Title == "" {
-			schema.Title = strcase.ToCamel(schema.Name)
+			// TODO: schema.Title = strcase.ToCamel(schema.Name)
+			schema.Title = varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(schema.Name)
 		}
 
 		for _, table := range schema.Tables {
@@ -679,7 +684,8 @@ func PrepareSchemaConfig(conf *config.Config) {
 			// 		parts[i] = strings.Title(parts[i])
 			// 	}
 			// }
-			table.Title = prefix + strcase.ToCamel(table.Name)
+			table.Title = prefix + varcaser.Caser{From: tablesCase, To: varcaser.UpperCamelCase}.String(table.Name)
+			// TODO: table.Title = prefix + strcase.ToCamel(table.Name)
 			table.Lower = lowerFirst(table.Title)
 			// table.Initials = Initials(table.Name)
 			// table.Initials += Initials(table.Name[1:])
@@ -692,6 +698,10 @@ func PrepareSchemaConfig(conf *config.Config) {
 			fieldNames := make([]string, len(table.Fields))
 			for i := range table.Fields {
 				fieldNames[i] = table.Fields[i].Name
+			}
+			fieldsCase, err := varcaser.Detect(fieldNames)
+			if err != nil {
+				fieldsCase = varcaser.LowerSnakeCase
 			}
 
 			// fill mapping for easy access to field properties
@@ -711,7 +721,8 @@ func PrepareSchemaConfig(conf *config.Config) {
 				// 	table.Fields[i].Title = strings.Join(parts, "")
 				// }
 
-				table.Fields[i].Title = strcase.ToCamel(table.Fields[i].Name)
+				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
+				// TODO: table.Fields[i].Title = strcase.ToCamel(table.Fields[i].Name)
 				table.Fields[i].Title = strings.ReplaceAll(table.Fields[i].Title, " ", "")
 
 				table.Fields[i].NoAudit = lo.Contains(schema.NoAudit, table.Fields[i].Name)
@@ -758,6 +769,10 @@ func PrepareSchemaConfig(conf *config.Config) {
 			for i := range table.Fields {
 				fieldNames[i] = table.Fields[i].Name
 			}
+			fieldsCase, err := varcaser.Detect(fieldNames)
+			if err != nil {
+				fieldsCase = varcaser.LowerSnakeCase
+			}
 
 			for k, fk := range table.ForeignKeys {
 				if fk.IsUnique {
@@ -785,9 +800,12 @@ func PrepareSchemaConfig(conf *config.Config) {
 
 				table.ForeignKeys[k].RefTableTitle = fk.GenTableName
 				if fk.CustomName == "" {
-					table.ForeignKeys[k].CustomName = strcase.ToCamel(strings.Replace(fk.Name, "fk_", "", 1))
-					table.ForeignKeys[k].Name = strcase.ToSnake(strings.Replace(fk.Name, "fk_", "", 1))
+					table.ForeignKeys[k].CustomName = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
+					table.ForeignKeys[k].Name = varcaser.Caser{From: fieldsCase, To: varcaser.LowerSnakeCase}.String(strings.Replace(fk.Name, "fk_", "", 1))
 				}
+				// TODO: table.ForeignKeys[k].CustomName = strcase.ToCamel(strings.Replace(fk.Name, "fk_", "", 1))
+				// 	table.ForeignKeys[k].Name = strcase.ToSnake(strings.Replace(fk.Name, "fk_", "", 1))
+				// }
 
 				if !fk.IsUnique && len(fk.RefFields) > 1 {
 					panic("FK: too many ref fields")
