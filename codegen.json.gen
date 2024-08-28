@@ -8,6 +8,7 @@
 	"DirOut": "/home/sl/gospace/codegen",
 	"SubPackage": "db",
 	"FilePattern": "%s.go",
+	"TemplateFolder": "./templates/",
 	"Schemas": [
 		{
 			"Name": "information_schema",
@@ -123,6 +124,11 @@
 						{
 							"Name": "GENERATION_EXPRESSION",
 							"DBType": "longtext"
+						},
+						{
+							"Name": "SRS_ID",
+							"DBType": "int unsigned",
+							"IsNullable": true
 						}
 					],
 					"Ignores": {},
