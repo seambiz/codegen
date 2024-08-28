@@ -31,6 +31,8 @@ func main() {
 	// Subcommands
 	updateCommand := flag.NewFlagSet("update", flag.ExitOnError)
 	genCommand := flag.NewFlagSet("gen", flag.ExitOnError)
+	initCommand := flag.NewFlagSet("init", flag.ExitOnError)
+	dumpTemplatesCommand := flag.NewFlagSet("dumpTemplates", flag.ExitOnError)
 	versionFlag := flag.Bool("v", false, "Print the current version and exit")
 
 	configFile := flag.String("config", "codegen.json", "config file (required)")
@@ -71,9 +73,30 @@ func main() {
 			panic(err)
 		}
 
+	case "init":
+		err := initCommand.Parse(os.Args[2:])
+		if err != nil {
+			panic(err)
+		}
+
+	case "dumpTemplates":
+		err := dumpTemplatesCommand.Parse(os.Args[2:])
+		if err != nil {
+			panic(err)
+		}
+
 	default:
 		flag.PrintDefaults()
 		os.Exit(1)
+	}
+
+	if dumpTemplatesCommand.Parsed() {
+		conf := codegen.ReadConfig(*configFile + ".gen")
+		codegen.DumpTemplates(conf)
+	}
+
+	if initCommand.Parsed() {
+		codegen.WriteConfig(*configFile)
 	}
 
 	if genCommand.Parsed() {

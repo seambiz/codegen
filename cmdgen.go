@@ -341,7 +341,7 @@ Parse the config and add all filtered templates that should be processed to each
 This way the generation code will be much simpler.
 And this function will be easier to test.
 */
-func generateTemplatesConfig(conf *config.Config) {
+func GenerateTemplatesConfig(conf *config.Config) {
 	// not the most performant approach, as templates will be rebuilt for each table, but much more readable than the old code
 	for _, schema := range conf.Schemas {
 
@@ -553,7 +553,7 @@ func generateCode(conf *config.Config) {
 // Generate main call to start generation
 func Generate(conf *config.Config) {
 	PrepareSchemaConfig(conf)
-	generateTemplatesConfig(conf)
+	GenerateTemplatesConfig(conf)
 	generateCode(conf)
 }
 

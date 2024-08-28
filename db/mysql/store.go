@@ -58,7 +58,7 @@ func (s *Store) QueryxInto(dest interface{}, args ...interface{}) error {
 	s.log.Trace().Str("fn", "Store.QueryInto").Str("stmt", s.stmt.String()).Interface("args", args).Msg("sql")
 	return dbx.Select(dest, s.stmt.Query(), args...)
 }
- 
+
 // OnexInto uses sqlx.Get for raw SQL querying. Mapping uses tag (db) or field name.
 func (s *Store) OnexInto(dest interface{}, args ...interface{}) error {
 	dbx := sqlx.NewDb(s.db.(*sql.DB), "mysql")

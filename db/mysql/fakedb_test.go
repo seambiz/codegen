@@ -30,8 +30,7 @@ type Query struct {
 	Vals [][]driver.Value
 }
 
-type mimic struct {
-}
+type mimic struct{}
 
 func (m *mimic) Open(dsn string) (driver.Conn, error) {
 	if len(dsn) == 0 {
