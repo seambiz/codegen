@@ -697,11 +697,6 @@ func PrepareSchemaConfig(conf *config.Config) {
 			for i := range table.Fields {
 				fieldNames[i] = table.Fields[i].Name
 			}
-			fieldsCase, err := varcaser.Detect(fieldNames)
-			if err != nil {
-				fieldsCase = varcaser.LowerSnakeCase
-			}
-
 			// fill mapping for easy access to field properties
 			table.FieldMapping = make(map[string]int)
 			for i := range table.Fields {
@@ -718,6 +713,11 @@ func PrepareSchemaConfig(conf *config.Config) {
 				// 	}
 				// 	table.Fields[i].Title = strings.Join(parts, "")
 				// }
+
+				fieldsCase, err := varcaser.Detect([]string{table.Fields[i].Name})
+				if err != nil {
+					fieldsCase = varcaser.LowerCamelCaseKeepCaps
+				}
 
 				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
 				table.Fields[i].Title = strings.ReplaceAll(table.Fields[i].Title, " ", "")

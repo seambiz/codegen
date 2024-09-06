@@ -3,6 +3,9 @@ package codegen
 import (
 	"reflect"
 	"testing"
+
+	"github.com/seambiz/codegen/config"
+	"github.com/stretchr/testify/assert"
 )
 
 func Test_generateTemplatesConfig(t *testing.T) {
@@ -10,6 +13,7 @@ func Test_generateTemplatesConfig(t *testing.T) {
 	expectedTableTemplatefiles := map[string][]string{}
 
 	expectedSchemaTemplatefiles["once.root.dbconstants"] = []string{"once.root.dbconstants.tmpl"}
+	expectedSchemaTemplatefiles["once.root.audittype"] = []string{"once.root.audittype.tmpl"}
 	expectedSchemaTemplatefiles["once.package.fakedb_test"] = []string{"once.package.fakedb_test.tmpl"}
 	expectedSchemaTemplatefiles["once.package.shared"] = []string{"once.package.shared.tmpl"}
 	expectedSchemaTemplatefiles["once.package.store"] = []string{"once.package.store.tmpl"}
@@ -23,7 +27,7 @@ func Test_generateTemplatesConfig(t *testing.T) {
 	expectedTableTemplatefiles["table.subpackage.repo"] = []string{"table.subpackage.repo.tmpl"}
 
 	type args struct {
-		conf *Config
+		conf *config.Config
 	}
 	tests := []struct {
 		name string
@@ -32,12 +36,12 @@ func Test_generateTemplatesConfig(t *testing.T) {
 		{
 			name: "templates folder",
 			args: args{
-				conf: &Config{
-					Schemas: []*Schema{
+				conf: &config.Config{
+					Schemas: []*config.Schema{
 						{
 							Name:           "testschema",
 							TemplateFolder: "templates",
-							Tables: []*Table{
+							Tables: []*config.Table{
 								{Name: "testtable", Generate: true},
 							},
 						},
@@ -48,12 +52,12 @@ func Test_generateTemplatesConfig(t *testing.T) {
 		{
 			name: "static templates",
 			args: args{
-				conf: &Config{
-					Schemas: []*Schema{
+				conf: &config.Config{
+					Schemas: []*config.Schema{
 						{
 							Name:           "static schema",
 							TemplateFolder: "",
-							Tables: []*Table{
+							Tables: []*config.Table{
 								{Name: "static table", Generate: true},
 							},
 						},
@@ -64,14 +68,13 @@ func Test_generateTemplatesConfig(t *testing.T) {
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
-			generateTemplatesConfig(tt.args.conf)
+			GenerateTemplatesConfig(tt.args.conf)
 			for _, schema := range tt.args.conf.Schemas {
-				if !reflect.DeepEqual(schema.preparedTemplatefiles, expectedSchemaTemplatefiles) {
-					t.Error("schema templates error", schema.preparedTemplatefiles)
-				}
+				assert.EqualValuesf(t, expectedSchemaTemplatefiles, schema.PreparedTemplatefiles, "%v failed")
+
 				for _, table := range schema.Tables {
-					if !reflect.DeepEqual(table.preparedTemplatefiles, expectedTableTemplatefiles) {
-						t.Error("table templates error", table.preparedTemplatefiles, expectedTableTemplatefiles)
+					if !reflect.DeepEqual(table.PreparedTemplatefiles, expectedTableTemplatefiles) {
+						assert.EqualValuesf(t, expectedTableTemplatefiles, table.PreparedTemplatefiles, "%v failed")
 					}
 				}
 			}
