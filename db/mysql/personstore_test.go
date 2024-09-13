@@ -113,7 +113,7 @@ func TestPersonPetsEagerFetch(t *testing.T) {
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
 	}
-	err = store.EagerFetchPets(data)
+	err = store.EagerFetchPets(NewPetStore(ctx, db), data)
 	if err != nil {
 		t.Fatalf("SQL error '%s'", err)
 	}

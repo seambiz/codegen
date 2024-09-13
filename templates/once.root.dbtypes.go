@@ -2,7 +2,7 @@ package templates
 
 import (
 	"github.com/seambiz/codegen"
-	"github.com/seambiz/codegen/gen"
+	"github.com/seambiz/gen"
 )
 
 type DBTypes struct{}

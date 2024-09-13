@@ -8,7 +8,7 @@ import (
 	"testing"
 
 	"github.com/seambiz/codegen"
-	"github.com/seambiz/codegen/gen"
+	"github.com/seambiz/gen"
 	"github.com/sergi/go-diff/diffmatchpatch"
 )
 

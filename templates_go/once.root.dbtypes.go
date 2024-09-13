@@ -2,7 +2,7 @@ package main
 
 import (
 	"github.com/seambiz/codegen/config"
-	"github.com/seambiz/codegen/gen"
+	"github.com/seambiz/gen"
 )
 
 type DBTypes struct{}
