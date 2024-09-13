@@ -721,6 +721,9 @@ func PrepareSchemaConfig(conf *config.Config) {
 
 				table.Fields[i].Title = varcaser.Caser{From: fieldsCase, To: varcaser.UpperCamelCase}.String(table.Fields[i].Name)
 				table.Fields[i].Title = strings.ReplaceAll(table.Fields[i].Title, " ", "")
+				if lo.Contains(commonInitialisms, strings.ToUpper(table.Fields[i].Title)) {
+					table.Fields[i].Title = strings.ToUpper(table.Fields[i].Title)
+				}
 
 				table.Fields[i].NoAudit = lo.Contains(schema.NoAudit, table.Fields[i].Name)
 				table.Fields[i].ParamName = strings.ToLower(table.Fields[i].Title)
