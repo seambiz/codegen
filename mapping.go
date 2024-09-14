@@ -100,21 +100,18 @@ var goDbMappingFunc = map[string]string{
 	"string": "sdb.ToString",
 }
 
-var goSliceScanMapping = map[string]string{
+var goTypeTitle = map[string]string{
 	// numeric types
-	"int":    "int64",
-	"uint":   "int64",
-	"int64":  "int64",
-	"uint64": "uint64",
+	"int":    "Int",
+	"uint":   "UInt",
+	"int64":  "Int64",
+	"uint64": "UInt64",
 
-	"float32": "float64",
-	"float64": "float64",
+	"float32": "Float32",
+	"float64": "Float64",
 
-	"string": "[]uint8",
-	"[]byte": "[]byte",
-	// sepcial
-	"bool":      "",
-	"time.Time": "",
+	"string": "Str",
+	"bool":   "Bool",
 }
 
 // goReservedNames is a map of of go reserved names to "safe" names.

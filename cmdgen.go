@@ -744,6 +744,12 @@ func PrepareSchemaConfig(conf *config.Config) {
 				}
 				table.Fields[i].GoZero = zero
 
+				typeTitle, ok := goTypeTitle[table.Fields[i].GoType]
+				if !ok {
+					panic(fmt.Sprintf("GoType [%s]-> GoTypeTitle %#v", table.Fields[i].GoType, table.Fields[i]))
+				}
+				table.Fields[i].GoTypeTitle = typeTitle
+
 				jsonFunc, ok := goJSONMapping[typename]
 				if !ok {
 					panic(typename)

@@ -154,6 +154,7 @@ type Field struct {
 	Alias       string `json:"-"`
 	Title       string `json:"-"`
 	GoType      string `json:"-"`
+	GoTypeTitle string `json:"-"`
 	GoZero      string `json:"-"`
 	ParamName   string `json:"-"`
 	MappingFunc string `json:"-"`
