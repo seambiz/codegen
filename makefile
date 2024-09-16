@@ -50,6 +50,7 @@ release:
 	$(eval VERSION_FILE := cmd/codegen/VERSION.txt)
 	$(eval VERSION := $(shell cat ${VERSION_FILE}))
 	git tag -a ${VERSION} -m ${VERSION}
+	git push
 	git push origin ${VERSION}
 
 
