@@ -83,7 +83,8 @@ $(BINARIES_BUMP):
 	@echo "Bumping VERSION.txt from $(VERSION) to $(NEW_VERSION)"
 	@echo $(NEW_VERSION) > ${VERSION_FILE}
 	@git add ${VERSION_FILE}
-	@git commit -vsam "Bump '$(patsubst bump-%,%, $@)' version to $(NEW_VERSION)"
+	# do not commit, so it does not trigger a possible build
+	# @git commit -vsam "Bump '$(patsubst bump-%,%, $@)' version to $(NEW_VERSION)"
 
 .PHONY: check-docker
 check-docker:
