@@ -112,6 +112,7 @@ var goTypeTitle = map[string]string{
 
 	"string": "Str",
 	"bool":   "Bool",
+	"[]byte": "Bytes",
 }
 
 // goReservedNames is a map of of go reserved names to "safe" names.
