@@ -91,7 +91,7 @@ var goDbMappingFunc = map[string]string{
 	"int64":  "sdb.ToInt64",
 	"uint64": "sdb.ToUInt64",
 	"bool":   "sdb.ToBool",
-	"[]byte": "", // nothing to be done
+	"[]byte": "cloneBytes", // nothing to be done
 
 	"float32":   "sdb.ToFloat32",
 	"float64":   "sdb.ToFloat64",
